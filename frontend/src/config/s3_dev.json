@@ -1,0 +1,8 @@
+{
+    "s3_info": {
+        "accessKeyId": "AKIAIVOD3GWT55C4GX4A",
+        "secretAccessKey": "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",
+        "region": "ap-northeast-2",
+        "bucket": "prism-dev.day7games.com"
+    }
+}

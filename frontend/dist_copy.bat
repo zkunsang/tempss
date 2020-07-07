@@ -1,0 +1,1 @@
+xcopy dist\*.* dist_git /e /h /k /Y
