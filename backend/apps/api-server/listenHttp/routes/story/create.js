@@ -1,11 +1,18 @@
 const mongo = require('@ss/dbMongo');
 
 module.exports = async (ctx, next) => {
-    const newStory = ctx.requrest.body;
-    
-    const createResult = await mongo.createStory(newStory);
+    const newStory = ctx.request.body;
 
-    console.log(createResult);
+    try {
+        const createResult = await mongo.createStory(newStory);
+        console.log(createResult);
+    }
+    catch (err) {
+        console.error(err);
+    }
+
+    ctx.status = 200;
+    ctx.body = newStory;
 
     await next();
-};
+}
