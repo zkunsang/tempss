@@ -2,7 +2,6 @@ const crc = require('crc');
 const AWS = require('aws-sdk');
 const saveAs = require('file-saver');
 
-console.log(location.host);
 const { s3_info } = require(location.host.match(/^manage-storykr.qpyou.cn/g) ? '../config/s3_qa.json' : '../config/s3_dev.json');
 const s3_source = new AWS.S3(s3_info);
 

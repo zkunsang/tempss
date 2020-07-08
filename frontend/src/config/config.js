@@ -12,7 +12,7 @@ export default {
         else return 'http://localhost:52000'
     })(),
     getCndUrl: (() => {
-        return isLive || isQa ? 'http://prism-qa.day7games.com/' : 'http://prism-dev.day7games.com/'
+        return isLive || isQa ? 'http://prism-qa.day7games.com/' : 'http://story.storyself.com/'
     })()
 };
 

@@ -75,8 +75,6 @@ export default {
 
       this.REGIST({user_id: this.user_id, password: this.password})
         .then((body_data) => {
-          console.log(body_data);
-          console.log(this.rPath);
           this.$router.push(this.rPath)
         })
         .catch((err) => {

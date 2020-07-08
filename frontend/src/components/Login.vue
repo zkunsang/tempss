@@ -64,8 +64,6 @@ export default {
     onLogin() {
       this.LOGIN({userId: this.userId, password: this.password})
         .then((body_data) => {
-          console.log(body_data);
-          console.log(this.rPath);
           this.$router.push('story')
         })
         .catch((err) => {

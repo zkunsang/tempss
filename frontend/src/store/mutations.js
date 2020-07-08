@@ -2,8 +2,6 @@ import { setAuthInHeader } from '../api'
 
 const mutations = {
     LOGIN(state, { sessionId, id }) {
-
-        console.log('mutations', sessionId, id);
         if (!sessionId) return;
 
         state.sessionId = sessionId;
