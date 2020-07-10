@@ -73,8 +73,6 @@ export default {
 
       this.storyData={
         status: 0,
-        code: "",
-        summary: ""
       }
     },
   }

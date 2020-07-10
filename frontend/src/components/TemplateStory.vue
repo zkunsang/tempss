@@ -159,6 +159,8 @@ export default {
       }
 
       const saveFunc = this.isNew ? this.CREATE_STORY : this.UPDATE_STORY;
+      this.storyData ? this.storyData = 1 : this.storyData = 0;
+
       saveFunc(this.storyData).then( async () => {
         if( this.thumbFile ) {
           await s3Upload(this.thumbFile, `images/${this.patchInfo}/${this.thumbFile.name}`);
