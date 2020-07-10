@@ -1,7 +1,7 @@
-const wb = require('@ss');
+const ss = require('@ss');
 const mongo = require('@ss/dbMongo');
 
 module.exports = async () => {
-    await wb.configs.ready();
+    await ss.configs.ready();
     await mongo.ready();
 };

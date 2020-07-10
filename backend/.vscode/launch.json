@@ -7,10 +7,49 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "apiServer",
+            "name": "[local]CMS",
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "env": {
+                "NODE_ENV": "cmsLocal"
+            },
+            "program": "${workspaceFolder}\\apps\\cms-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[dev]CMS",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "cmsDev"
+            },
+            "program": "${workspaceFolder}\\apps\\cms-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[local]API",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "apiLocal"
+            },
+            "program": "${workspaceFolder}\\apps\\api-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[dev]API",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "apiDev"
+            },
             "program": "${workspaceFolder}\\apps\\api-server\\app.js"
         }
     ]

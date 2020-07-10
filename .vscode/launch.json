@@ -7,11 +7,26 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "localApi",
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "env": {
+                "NODE_ENV": "local"
+            },
             "program": "${workspaceFolder}\\backend\\apps\\api-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "localCms",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "local"
+            },
+            "program": "${workspaceFolder}\\backend\\apps\\api\\app.js"
         }
     ]
 }

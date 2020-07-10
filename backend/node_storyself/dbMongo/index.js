@@ -1,6 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-
-const url = "mongodb://192.168.127.129:57017/testdb";
+const ss = require('@ss');
 
 class Mongo {
     constructor() {
@@ -11,8 +10,12 @@ class Mongo {
     }
 
     async ready() {
+        const dbMongo = ss.configs.dbMongo;
+        const url = `mongodb://${dbMongo.url}:${dbMongo.port}/testdb`;
+
         try {
             this.mongoConnect = await MongoClient.connect(url, { useUnifiedTopology: true })
+            
             this.dbStory = await this.mongoConnect.db('story');
             this.collectionUser = await this.dbStory.collection('user');
             this.collectionData = await this.dbStory.collection('data');

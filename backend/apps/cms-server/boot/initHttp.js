@@ -5,8 +5,6 @@ const KoaRouter = require('@ex/koa-router');
 const Cors = require('@koa/cors');
 const ss = require('@ss');
 
-const PORT = 52000;
-
 module.exports = async () => {
     const koa = new Koa();
 
@@ -23,7 +21,7 @@ module.exports = async () => {
         console.error(err);
     });
 
-    http.createServer(koa.callback()).listen(PORT, () => {
-        console.info('Listen API Server OK => ' + 'http:' + PORT);
+    http.createServer(koa.callback()).listen(ss.configs.apiServer.port, () => {
+        console.info('Listen API Server OK => ' + 'http:' + ss.configs.apiServer.port);
     });
 };

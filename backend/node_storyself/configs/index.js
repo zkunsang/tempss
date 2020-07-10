@@ -1,12 +1,19 @@
 const path = require('path');
 
 class ApiServerConfig {
-    constructor() {
-        this.mode = 'local';
-        this.port = 80;
-        this.isSsl = false;
-        this.sslKey = null;
-        this.sslCert = null;
+    constructor(config) {
+        this.mode = config.mode;
+        this.port = config.port;
+        this.isSsl = config.isSsl;
+        this.sslKey = config.sslKey;
+        this.sslCert = config.sslCert;
+    }
+}
+
+class MongoConfig {
+    constructor(config) {
+        this.url = config.url;
+        this.port = config.port;
     }
 }
 
@@ -21,12 +28,12 @@ module.exports = class Config {
 
     ready(name) {
         let msg = 'configs: [' + name + '] ';
-        let _path = path.normalize(this.configPath + '/' + name);
         try {
-            // this.apiServer = Object.$syncProperties(new ApiServerConfig(), require(_path + '/apiServer.json'));
-            // this.apiServer = require(_path + '/apiServer.json');
+            this.apiServer = new ApiServerConfig(require(`@cf/${this.configPath}/apiServer.json`));
+            this.dbMongo = new MongoConfig(require(`@cf/${this.configPath}/dbMongo.json`));
         } catch (e) {
-            throw msg + e.message.red;
+            console.error(e);
+            throw msg + e.message;
         }
 
         this._isReady = true;
