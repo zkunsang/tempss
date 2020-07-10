@@ -1,5 +1,5 @@
 {
     "mode": "dev",
-    "port" : 53000,
+    "port" : 45000,
     "isSsl" : false
 }
