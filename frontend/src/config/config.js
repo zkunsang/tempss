@@ -9,7 +9,7 @@ export default {
         if(isLive) { return 'http://manage-storykr.qpyou.cn:3200'; }
         else if(isQa) { return 'http://manage-storykr.qpyou.cn:3100'; }
         else if(isDev) { return 'http://prism-cms.day7games.com:3000'; }
-        else return 'http://localhost:52000'
+        else return 'http://localhost:45000'
     })(),
     getCndUrl: (() => {
         return isLive || isQa ? 'http://prism-qa.day7games.com/' : 'http://story.storyself.com/'

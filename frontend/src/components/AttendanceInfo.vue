@@ -142,7 +142,7 @@ import _ from 'lodash'
 const no_image = require(`../assets/no_image.jpg`);
 import config from '../../src/config/config';
 var crc = require('crc');
-const {s3_upload} = require("../util/fileutil");
+const {s3Upload} = require("../util/fileutil");
 
 const attendance_file_name = `ATTENDANCE.xlsx`;
 const attendance_item_file_name = `ATTENDANCE_ITEM.xlsx`;

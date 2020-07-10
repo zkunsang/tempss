@@ -88,7 +88,7 @@ import {mapActions, mapState} from 'vuex'
 import AosUploadVue from './AosUpload.vue';
 
 var crc = require('crc');
-const {s3_upload} = require("../util/fileutil");
+const {s3Upload} = require("../util/fileutil");
 
 const no_image = require(`../assets/no_image.jpg`);
 export default {
@@ -161,7 +161,7 @@ export default {
       const saveFunc = this.isNew ? this.CREATE_STORY : this.UPDATE_STORY;
       saveFunc(this.storyData).then( async () => {
         if( this.thumbFile ) {
-          await s3_upload(this.thumbFile, `images/${this.patchInfo}/${this.thumbFile.name}`);
+          await s3Upload(this.thumbFile, `images/${this.patchInfo}/${this.thumbFile.name}`);
         }
         this.dialog = false
         // 성공하면 파일 업로드

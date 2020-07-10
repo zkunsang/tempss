@@ -105,7 +105,7 @@
 <script>
 import { mapActions } from 'vuex';
 import _ from 'lodash'
-const {s3_upload, readFileAsync} = require("../util/fileutil");
+const {s3Upload, readFileAsync} = require("../util/fileutil");
 
 var crc = require('crc');
 
@@ -162,26 +162,25 @@ export default {
       'GET_AOS_RESOURCE',
       'UPDATE_AOS_RESOURCE'
     ]),
+    async s3Uploads(list) {
+      for(let i in list) {
+        let item = list[i];
+        
+        item.storyId = this.storyData.storyId;
+        await s3Upload(item.file, `${this.storyData.storyId}/aos/${item.version}/${item.resourceId}`);
+        this.updateProgress = parseInt(( parseInt(i) + 1 ) / list.length * 100);
+        delete item.file;
+      }
+      
+    },
     async uploadFile() {
       this.uploading = true;
       this.updateProgress = 0;
       this.insertProgress = 0;
       
-      for(var i in this.updateList) {
-        let updateFile = this.updateList[i];
-        await s3_upload(updateFile.file, `aos/${updateFile.resourceId}`);
-        this.updateProgress = parseInt(( parseInt(i) + 1 ) / this.updateList.length * 100);
-        updateFile.storyId = this.storyData.storyId;
-        delete updateFile.file;
-      }
+      await this.s3Uploads(this.updateList);
+      await this.s3Uploads(this.insertList);
 
-      for(var j in this.insertList) {
-        let insertFile = this.insertList[j];
-        await s3_upload(insertFile.file, `aos/${insertFile.resourceId}`)
-        this.insertProgress = parseInt(( parseInt(j) + 1 ) / this.insertList.length * 100) ;
-        insertFile.storyId = this.storyData.storyId;
-        delete insertFile.file;
-      }
       this.UPDATE_AOS_RESOURCE({
           insertList: this.insertList, 
           updateList: this.updateList, 

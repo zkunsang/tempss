@@ -12,7 +12,7 @@ async function get_crc(input_file) {
     return crc.crc32(input_file);
 }
 
-async function s3_upload(input_file, key) {
+async function s3Upload(input_file, key) {
     console.log('s3_info: ', s3_info);
 
     const param = { Bucket: s3_info.bucket, Key: key, Body: input_file };
@@ -51,4 +51,4 @@ function exportPurgeTxt(purge_list, fileName ) {
     exportTxt(purge_list.join("\r\n"), fileName);
 }
 
-module.exports = { s3_upload, readFileAsync, exportTxt, exportPurgeTxt};
+module.exports = { s3Upload, readFileAsync, exportTxt, exportPurgeTxt};
