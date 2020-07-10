@@ -21,7 +21,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cmsLocal": "env NODE_ENV=cmsDev node apps/api-server/app.js"
   },
   "author": "",
   "license": "ISC"

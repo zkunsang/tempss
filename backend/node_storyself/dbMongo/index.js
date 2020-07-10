@@ -15,7 +15,7 @@ class Mongo {
 
         try {
             this.mongoConnect = await MongoClient.connect(url, { useUnifiedTopology: true })
-            
+
             this.dbStory = await this.mongoConnect.db('story');
             this.collectionUser = await this.dbStory.collection('user');
             this.collectionData = await this.dbStory.collection('data');
@@ -60,6 +60,10 @@ class Mongo {
 
     async getStoryResource(storyId) {
         return await this.collectionResource.find({ storyId }).toArray();
+    }
+
+    async getStoryResourceList() {
+        return await this.collectionResource.find().toArray();
     }
 
     async insertStoryResource(resourceData) {

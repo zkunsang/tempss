@@ -1,5 +1,4 @@
 const mongo = require('@ss/dbMongo');
-const _ = require("lodash");
 
 module.exports = async (ctx, next) => {
     let { insertList, updateList } = ctx.request.body;

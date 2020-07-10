@@ -7,6 +7,7 @@ module.exports = async (ctx, next) => {
         const findQuery = { storyId: story.storyId };
         delete story.storyId;
         delete story._id;
+        
         const createResult = await mongo.updateStory(findQuery, story);
         console.log(createResult);
     }

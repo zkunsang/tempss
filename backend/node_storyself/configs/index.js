@@ -7,6 +7,8 @@ class ApiServerConfig {
         this.isSsl = config.isSsl;
         this.sslKey = config.sslKey;
         this.sslCert = config.sslCert;
+        this.cdnUrl = config.cdnUrl;
+        this.appVersion = config.appVersion;
     }
 }
 
@@ -16,7 +18,6 @@ class MongoConfig {
         this.port = config.port;
     }
 }
-
 
 module.exports = class Config {
     constructor(configPath) {
