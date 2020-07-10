@@ -4,6 +4,7 @@ require('../startup');
 (async () => {
     try {
         await require('./boot/initSS')();
+        //await require('./boot/initSwagger')();
         await require('./boot/initHttp')();
     } catch (error) {
         console.error(error);

@@ -2,5 +2,5 @@
     "mode": "dev",
     "port" : 43000,
     "isSsl" : false,
-    "cdnUrl" : "story.storyself.com"
+    "cdnUrl" : "http://story.storyself.com"
 }

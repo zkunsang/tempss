@@ -5,6 +5,8 @@ const KoaRouter = require('@ex/koa-router');
 const Cors = require('@koa/cors');
 const ss = require('@ss');
 
+const swagger = require('swagger-koa');
+
 module.exports = async () => {
     const koa = new Koa();
 
@@ -16,6 +18,24 @@ module.exports = async () => {
 
     router.mapping(path + '/routes');
     koa.use(router.routes());
+
+    // koa.use(views('views', { default: 'jade' }));
+
+    koa.use(swagger.init({
+        apiVersion: '1.0',
+        swaggerVersion: '1.0',
+        swaggerURL: '/swagger',
+        swaggerJSON: '/api-docs.json',
+        swaggerUI: './public/swagger/',
+        basePath: 'http://localhost:45000',
+        info: {
+            title: 'swagger-koa sample app',
+            description: 'Swagger + Koa = {swagger-koa}'
+        },
+        apis: ['./apps/api-server/listenHttp/routes/config.js']
+    }));
+
+    // koa.use(serve(path.join(__dirname, 'public')));
 
     koa.on('error', (err, ctx) => {
         console.error(err);

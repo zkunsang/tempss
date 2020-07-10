@@ -15,9 +15,13 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.13.1",
     "koa-static": "^5.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "module-alias": "^2.2.2",
-    "mongo": "^0.1.0"
+    "mongo": "^0.1.0",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-koa": "^2.1.0",
+    "swagger2": "^2.0.0",
+    "swagger2-koa": "^2.0.0"
   },
   "devDependencies": {},
   "scripts": {
