@@ -1,3 +1,47 @@
+/**
+ * @swagger
+ * resourcePath: /api
+ * description: All about API
+ */
+
+/**
+ * @swagger
+ * path: /config
+ * operations:
+ *   -  httpMethod: GET
+ *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *      notes: |
+ *        <br>appVersion: appVersion
+ *        <br>cdnUrl: cdn주소입니다.
+ *      responseClass: appInfo
+ *      nickname: config
+ *      consumes: 
+ *        - text/html
+ */
+ 
+/**
+ * @swagger
+ * models:
+ *   resource:
+ *     id: resource
+ *     properties:
+ *       resourceId:
+ *         type: String
+ *       version:
+ *         type: int
+ *       crc32:
+ *         type: String
+ *       fileSize: 
+ *         type: int
+ *   storyInfo:
+ *     id: storyInfo
+ *     properties:
+ *       status:
+ *         type: int
+ *       resourceList:
+ *         type: resource  
+ */
+
 const mongo = require('@ss/dbMongo');
 const _ = require('lodash');
 
@@ -35,7 +79,6 @@ module.exports = async (ctx, next) => {
     catch(err) {
         console.error(err);
     }
-    
     
     await next();
 }

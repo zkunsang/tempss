@@ -1,8 +1,3 @@
-const mongo = require('@ss/dbMongo');
-const _ = require('lodash');
-const ss = require('@ss');
-
-
 /**
  * @swagger
  * resourcePath: /api
@@ -13,26 +8,34 @@ const ss = require('@ss');
  * @swagger
  * path: /config
  * operations:
- *   -  httpMethod: POST
- *      summary: Login with username and password
- *      notes: Returns a user based on username
- *      responseClass: User
- *      nickname: login
+ *   -  httpMethod: GET
+ *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *      notes: |
+ *        <br>appVersion: appVersion
+ *        <br>cdnUrl: cdn주소입니다.
+ *      responseClass: appInfo
+ *      nickname: config
  *      consumes: 
  *        - text/html
- *      parameters:
- *        - name: username
- *          description: Your username
- *          paramType: query
- *          required: true
- *          dataType: string
- *        - name: password
- *          description: Your password
- *          paramType: query
- *          required: true
- *          dataType: string
+ */
+ 
+/**
+ * @swagger
+ * models:
+ *   appInfo:
+ *     id: AppInfo
+ *     properties:
+ *       appVersion:
+ *         type: String
+ *         required: true
+ *       cdnUrl:
+ *         type: String  
+ *         required: true  
  */
 
+const mongo = require('@ss/dbMongo');
+const _ = require('lodash');
+const ss = require('@ss');
 
 module.exports = async (ctx, next) => {
     try {
@@ -48,15 +51,3 @@ module.exports = async (ctx, next) => {
     
     await next();
 }
-
-/**
- * @swagger
- * models:
- *   User:
- *     id: User
- *     properties:
- *       username:
- *         type: String
- *       password:
- *         type: String    
- */
