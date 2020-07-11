@@ -21,13 +21,16 @@ module.exports = async () => {
 
     // koa.use(views('views', { default: 'jade' }));
 
+    console.log(ss.configs.apiServer.apiUrl);
     koa.use(swagger.init({
         apiVersion: '1.0',
         swaggerVersion: '1.0',
         swaggerURL: '/swagger',
         swaggerJSON: '/api-docs.json',
         swaggerUI: './public/swagger/',
-        basePath: 'http://localhost:45000',
+        // basePath: `${ss.configs.apiServer.apiUrl}`,
+        // basePath: 'http://localhost:43000',
+        basePath: `${ss.configs.apiServer.apiUrl}`,
         info: {
             title: 'swagger-koa sample app',
             description: 'Swagger + Koa = {swagger-koa}'

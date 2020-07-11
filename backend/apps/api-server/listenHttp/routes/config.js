@@ -5,13 +5,13 @@ const ss = require('@ss');
 
 /**
  * @swagger
- * resourcePath: /apiJs
+ * resourcePath: /api
  * description: All about API
  */
 
 /**
  * @swagger
- * path: /login
+ * path: /config
  * operations:
  *   -  httpMethod: POST
  *      summary: Login with username and password
@@ -46,10 +46,8 @@ module.exports = async (ctx, next) => {
         console.error(err);
     }
     
-    
     await next();
 }
-
 
 /**
  * @swagger
