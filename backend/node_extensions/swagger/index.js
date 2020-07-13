@@ -6,7 +6,8 @@ module.exports = {
     routes(path) {
         path = fs.realpathSync(path);
         let files = fs.globSync(path, '**/*.js');
-        const apis = files.filter(m => (m.substr(-4) !== '_.js'));
+        let apis = files.filter(m => (m.substr(-4) !== '_.js'));
+        apis = apis.map(m => `${path}/${m}`);
 
         return swagger.init({
             apiVersion: '1.0',

@@ -6,14 +6,19 @@
 
 /**
  * @swagger
- * path: /config
+ * path: /story/list
  * operations:
  *   -  httpMethod: GET
- *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *      summary: 로비 구성되는 스토리 정보
  *      notes: |
- *        <br>appVersion: appVersion
- *        <br>cdnUrl: cdn주소입니다.
- *      responseClass: appInfo
+ *        <br> api /config에서 받은 cdnUrl과
+ *        <br> api /story/list에서 받은 resourceList의 storyId, version, resourceId를 조립해 url을 생성합니다.
+ *        <br> 생성된 url로 파일 다운로드를 하시면 됩니다.
+ *        <br>${cdnUrl}/${storyId}/{aos|ios}/${version}/${resourceId}
+ *        <br>http://story.storyself.com/GoldilocksAndTheThreeBears/aos/1/scene
+ * 
+ *        <br> crc32코드를 스토리 진입전에 확인하시고 맞지 않다면 다시 다운 받아 진행하시면 됩니다.
+ *      responseClass: Response
  *      nickname: config
  *      consumes: 
  *        - text/html
@@ -22,24 +27,42 @@
 /**
  * @swagger
  * models:
- *   resource:
- *     id: resource
- *     properties:
- *       resourceId:
- *         type: String
- *       version:
- *         type: int
- *       crc32:
- *         type: String
- *       fileSize: 
- *         type: int
- *   storyInfo:
- *     id: storyInfo
+ *   Response:
+ *     properties: 
+ *       StoryData: 
+ *         type: array
+ *         required: true
+ *         items: 
+ *           $ref: 'StoryData'
+ *   StoryData:
+ *     id: StoryData
  *     properties:
  *       status:
  *         type: int
+ *         required: true
+ *         description: '0: 비활성화, 1: 활성화'
+ *       storyId:
+ *         type: String
+ *         required: true
  *       resourceList:
- *         type: resource  
+ *         type: array
+ *         items:
+ *           $ref: 'ResourceData'
+ *   ResourceData: 
+ *     id: ResourceData
+ *     properties:
+ *       resourceId:
+ *         type: String
+ *         required: true
+ *       crc32:
+ *         type: String
+ *         required: true
+ *       size:
+ *         type: int
+ *         required: true
+ *       version:
+ *         type: int
+ *         required: true
  */
 
 const mongo = require('@ss/dbMongo');
