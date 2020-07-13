@@ -9,6 +9,7 @@ class ApiServerConfig {
         this.sslCert = config.sslCert;
         this.cdnUrl = config.cdnUrl;
         this.appVersion = config.appVersion;
+        this.apiUrl = config.apiUrl;
     }
 }
 
@@ -27,8 +28,8 @@ module.exports = class Config {
         this.apiServer = null;
     }
 
-    ready(name) {
-        let msg = 'configs: [' + name + '] ';
+    ready() {
+        let msg = 'configs: [' + this.configPath + '] ';
         try {
             this.apiServer = new ApiServerConfig(require(`@cf/${this.configPath}/apiServer.json`));
             this.dbMongo = new MongoConfig(require(`@cf/${this.configPath}/dbMongo.json`));

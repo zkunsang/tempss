@@ -2,9 +2,6 @@ const fs = require('@ex/fs');
 const KoaRouter = require('@koa/router');
 
 module.exports = class Router extends KoaRouter {
-    /**
-     * @param {string} path
-     */
     mapping(path, fn, fnChangeRouteName) {
         if (!fs.existsSync(path))
             return;

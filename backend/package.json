@@ -15,17 +15,21 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.13.1",
     "koa-static": "^5.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "module-alias": "^2.2.2",
-    "mongo": "^0.1.0"
+    "mongo": "^0.1.0",
+    "swagger-jsdoc": "^4.0.0",
+    "swagger-koa": "^2.1.0",
+    "swagger2": "^2.0.0",
+    "swagger2-koa": "^2.0.0"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cmsLocal": "env NODE_ENV=cmsLocal node apps/cms-server/app.js",
-    "apiLocal": "env NODE_ENV=apiLocal node apps/cms-server/app.js",
-    "cmsDev": "env NODE_ENV=cmsDev node apps/api-server/app.js",
-    "apiDev": "env NODE_ENV=apiDev node apps/api-server/app.js"
+    "cmsLocal": "env NODE_ENV=cmsLocal pm2 start apps/cms-server/app.js",
+    "cmsDev": "env NODE_ENV=cmsDev pm2 start apps/cms-server/app.js -i max",
+    "apiLocal": "env NODE_ENV=apiLocal pm2 start apps/api-server/app.js",
+    "apiDev": "env NODE_ENV=apiDev pm2 start apps/api-server/app.js  -i max"
   },
   "author": "",
   "license": "ISC"

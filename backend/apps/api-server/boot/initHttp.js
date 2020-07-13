@@ -5,6 +5,8 @@ const KoaRouter = require('@ex/koa-router');
 const Cors = require('@koa/cors');
 const ss = require('@ss');
 
+const swagger = require('@ex/swagger');
+
 module.exports = async () => {
     const koa = new Koa();
 
@@ -15,7 +17,9 @@ module.exports = async () => {
     router.use(koaBodyParser());
 
     router.mapping(path + '/routes');
+
     koa.use(router.routes());
+    koa.use(swagger.routes(path));
 
     koa.on('error', (err, ctx) => {
         console.error(err);
