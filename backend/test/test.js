@@ -19,7 +19,7 @@ after(() => {
 describe('Array', function() {
     describe('#indexOf()', () => {
         it('test', async () => {
-            const res = await request.get('/config').expect(200);
+            const res = await request.get('/config').expect(400);
         })
 
         it('test', async () => {
