@@ -4,10 +4,9 @@ const koaBodyParser = require('koa-bodyparser');
 const KoaRouter = require('@ex/koa-router');
 const Cors = require('@koa/cors');
 const ss = require('@ss');
-
 const swagger = require('@ex/swagger');
 
-module.exports = async () => {
+function initKoa() {
     const koa = new Koa();
 
     let path = __dirname + '/../listenHttp';
@@ -25,7 +24,14 @@ module.exports = async () => {
         console.error(err);
     });
 
+    return koa;
+}
+
+module.exports = async () => {
+    const koa = initKoa();
     http.createServer(koa.callback()).listen(ss.configs.apiServer.port, () => {
         console.info('Listen API Server OK => ' + 'http:' + ss.configs.apiServer.port);
     });
 };
+
+module.exports.initKoa = initKoa;
