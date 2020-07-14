@@ -12,9 +12,9 @@
  *      summary: 로비 구성되는 스토리 정보
  *      notes: |
  *        <br> api /config에서 받은 cdnUrl과
- *        <br> api /story/list에서 받은 resourceList의 storyId, version, resourceId를 조립해 url을 생성합니다.
+ *        <br> api /story/list에서 받은 resourceList의 story.id, version, resource.id를 조립해 url을 생성합니다.
  *        <br> 생성된 url로 파일 다운로드를 하시면 됩니다.
- *        <br>${cdnUrl}/${storyId}/{aos|ios}/${version}/${resourceId}
+ *        <br>${cdnUrl}/${story.id}/{aos|ios}/${version}/${resource.id}
  *        <br>http://story.storyself.com/GoldilocksAndTheThreeBears/aos/1/scene
  * 
  *        <br> crc32코드를 스토리 진입전에 확인하시고 맞지 않다면 다시 다운 받아 진행하시면 됩니다.
@@ -41,7 +41,7 @@
  *         type: int
  *         required: true
  *         description: '0: 비활성화, 1: 활성화'
- *       storyId:
+ *       id:
  *         type: String
  *         required: true
  *       resourceList:
@@ -51,7 +51,7 @@
  *   ResourceData: 
  *     id: ResourceData
  *     properties:
- *       resourceId:
+ *       id:
  *         type: String
  *         required: true
  *       crc32:
@@ -72,6 +72,8 @@ module.exports = async (ctx, next) => {
     try {
         const storyList = await mongo.getStoryList();
         storyList.map((item) => {
+            item.id = item.storyId;
+            delete item.storyId;
             delete item.code;
             delete item.summary;
             delete item._id;
@@ -85,14 +87,17 @@ module.exports = async (ctx, next) => {
                 (resourceMap[item.storyId] = []))
                 .push(item);
 
+            item.id = item.resourceId;
+
+            delete item.resourceId;
             delete item._id;
             delete item.storyId;
         })
         
         
         storyList.map((item) => {
-            if(resourceMap[item.storyId]) {
-                item.resourceList = resourceMap[item.storyId];
+            if(resourceMap[item.id]) {
+                item.resourceList = resourceMap[item.id];
             }
         })
 

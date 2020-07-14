@@ -11,8 +11,8 @@
  *   -  httpMethod: GET
  *      summary: 로비 진입전 앱에 필요한 기본 정보.
  *      notes: |
- *        <br>appVersion: appVersion
- *        <br>cdnUrl: cdn주소입니다.
+ *        <br>version: version
+ *        <br>url: cdn주소입니다.
  *      responseClass: appInfo
  *      nickname: config
  *      consumes: 
@@ -25,10 +25,10 @@
  *   appInfo:
  *     id: AppInfo
  *     properties:
- *       appVersion:
+ *       version:
  *         type: String
  *         required: true
- *       cdnUrl:
+ *       url:
  *         type: String  
  *         required: true  
  */
@@ -41,8 +41,8 @@ module.exports = async (ctx, next) => {
     try {
         ctx.status = 200;
         ctx.body = {
-            cdnUrl: ss.configs.apiServer.cdnUrl,
-            appVersion: ss.configs.apiServer.appVersion
+            url: ss.configs.apiServer.cdnUrl,
+            version: ss.configs.apiServer.appVersion
         };    
     }
     catch(err) {
