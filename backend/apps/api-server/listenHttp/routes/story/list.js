@@ -70,7 +70,7 @@ const _ = require('lodash');
 
 module.exports = async (ctx, next) => {
     try {
-        const storyList = await mongo.getStoryList();
+        const storyList = await mongo.daoStory.getList();
         storyList.map((item) => {
             item.id = item.storyId;
             delete item.storyId;
@@ -79,7 +79,7 @@ module.exports = async (ctx, next) => {
             delete item._id;
         })
 
-        const resourceList = await mongo.getStoryResourceList();
+        const resourceList = await mongo.daoResource.getList();
 
         let resourceMap = {};
         resourceList.map((item) => {

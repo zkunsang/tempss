@@ -1,10 +1,9 @@
 const mongo = require('@ss/dbMongo');
 
 module.exports = async (ctx, next) => {
-    
     let storyList = null;
     try {
-        storyList = await mongo.getStoryList();
+        storyList = await mongo.daoStory.getList();
     }
     catch(err) {
         console.error(err);

@@ -1,0 +1,8 @@
+{
+    "mode": "dev",
+    "port": 43000,
+    "isSsl": false,
+    "cdnUrl": "http://story.storyself.com",
+    "appVersion": "1.0.0",
+    "apiUrl": "http://api-dev.storyself.com"
+}

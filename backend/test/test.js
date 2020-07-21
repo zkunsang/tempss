@@ -18,12 +18,12 @@ after(() => {
 
 describe('Array', function() {
     describe('#indexOf()', () => {
-        it('test', async () => {
-            const res = await request.get('/config').expect(200);
+        it('test1', async () => {
+            await request.get('/config').expect(200);
         })
 
-        it('test', async () => {
-            const res = await request.get('/story/list').expect(200);
+        it('test2', async () => {
+            await request.get('/story/list').expect(200);
         })
     })
 })

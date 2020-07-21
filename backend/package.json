@@ -31,7 +31,7 @@
     "supertest": "^4.0.2"
   },
   "scripts": {
-    "test": "env NODE_ENV=apiLocal mocha --reporter dot --exit",
+    "test": "env NODE_ENV=testLocal mocha --reporter dot --exit",
     "coverage": "nyc --reporter html --reporter text npm test",
     "cmsLocal": "env NODE_ENV=cmsLocal pm2 start apps/cms-server/app.js",
     "cmsDev": "env NODE_ENV=cmsDev pm2 start apps/cms-server/app.js -i max",
