@@ -35,8 +35,6 @@ class Mongo {
             this.daoAdmin = new AdminDao(this.storyConnect);
 
             this.daoUser = new UserDao(this.userConnect);
-            this.daoUser.test();
-            
         }
         catch (err) {
             helper.slack.sendMessage(err);
