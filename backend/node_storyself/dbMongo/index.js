@@ -1,81 +1,47 @@
 const MongoClient = require('mongodb').MongoClient;
+
+const UserDao = require('../dao/UserDao');
+
+const StoryDao = require('../dao/StoryDao');
+const ResourceDao = require('../dao/ResourceDao');
+const AdminDao = require('../dao/AdminDao');
+
 const ss = require('@ss');
+const helper = require('@ss/helper');
 
 class Mongo {
     constructor() {
-        this.mongoConnect = null;
-        this.dbStory = null;
-        this.collectionUser = null;
-        this.collectionData = null;
+        console.log('mongo constructor');
+        this.userConnect = null;
+        this.storyConnect = null;
+        
+        this.daoStory = null;
+        this.daoResource = null;
+        this.daoAdmin = null;
+
+        this.daoUser = null;
     }
 
     async ready() {
         const dbMongo = ss.configs.dbMongo;
-        const url = `mongodb://${dbMongo.url}:${dbMongo.port}/testdb`;
-
+        const url = `mongodb://${dbMongo.url}:${dbMongo.port}`;
+        
         try {
-            this.mongoConnect = await MongoClient.connect(url, { useUnifiedTopology: true })
+            this.userConnect = await MongoClient.connect(url, { useUnifiedTopology: true });
+            this.storyConnect = await MongoClient.connect(url, { useUnifiedTopology: true });
+            
+            this.daoStory = new StoryDao(this.storyConnect);
+            this.daoResource = new ResourceDao(this.storyConnect);
+            this.daoAdmin = new AdminDao(this.storyConnect);
 
-            this.dbStory = await this.mongoConnect.db('story');
-            this.collectionUser = await this.dbStory.collection('user');
-            this.collectionData = await this.dbStory.collection('data');
-            this.collectionResource = await this.dbStory.collection('resource');
+            this.daoUser = new UserDao(this.userConnect);
+            this.daoUser.test();
+            
         }
         catch (err) {
-            console.error(err);
+            helper.slack.sendMessage(err);
         }
     }
-
-    async findUser(findQuery) {
-        return await this.collectionUser.findOne(findQuery);
-    }
-
-    async updateUser(findQuery, updateQuery) {
-        return await this.collectionUser.updateOne(findQuery, updateQuery);
-    }
-
-    async createUser(insertQuery) {
-        return await this.collectionUser.insertOne(insertQuery);
-    }
-
-    async findStory(findQuery) {
-        return await this.collectionData.findOne(findQuery);
-    }
-
-    async getStoryList() {
-        return await this.collectionData.find().toArray();
-    }
-
-    async getStoryInfo(storyId) {
-        return await this.collectionData.findOne({ storyId });
-    }
-
-    async updateStory(findQuery, updateQuery) {
-        return await this.collectionData.updateOne(findQuery, {$set: updateQuery});
-    }
-
-    async createStory(insertQuery) {
-        return await this.collectionData.insertOne(insertQuery);
-    }
-
-    async getStoryResource(storyId) {
-        return await this.collectionResource.find({ storyId }).toArray();
-    }
-
-    async getStoryResourceList() {
-        return await this.collectionResource.find().toArray();
-    }
-
-    async insertStoryResource(resourceData) {
-        return await this.collectionResource.insertOne(resourceData);
-    }
-
-    async updateStoryResource(resourceData) {
-        const findQuery = { resourceId: resourceData.resourceId };
-        return await this.collectionResource.updateOne(findQuery, resourceData);
-    }
-
 }
 
 module.exports = new Mongo();
-

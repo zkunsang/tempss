@@ -20,12 +20,19 @@ class MongoConfig {
     }
 }
 
+class SlackConfig {
+    constructor(config) {
+        this.webhookUrl = config.webhookUrl;
+        this.useSlack = config.useSlack;
+    }
+}
+
 module.exports = class Config {
     constructor(configPath) {
         this.configPath = configPath;
-        this._isReady = false;
-
         this.apiServer = null;
+        this.dbMongo = null;
+        this.slack = null;
     }
 
     ready() {
@@ -33,16 +40,12 @@ module.exports = class Config {
         try {
             this.apiServer = new ApiServerConfig(require(`@cf/${this.configPath}/apiServer.json`));
             this.dbMongo = new MongoConfig(require(`@cf/${this.configPath}/dbMongo.json`));
+            this.slack = new SlackConfig(require(`@cf/${this.configPath}/slack.json`));
         } catch (e) {
             console.error(e);
             throw msg + e.message;
         }
 
-        this._isReady = true;
         console.log(msg + 'ready');
-    }
-
-    isReady() {
-        return this._isReady;
     }
 }

@@ -6,6 +6,7 @@
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "@koa/router": "^9.3.1",
+    "@slack/webhook": "^5.0.3",
     "@types/fs-extra": "^9.0.1",
     "@types/ioredis": "^4.17.0",
     "fs-extra": "^9.0.1",
