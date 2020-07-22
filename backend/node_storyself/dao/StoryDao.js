@@ -1,4 +1,6 @@
 const Story = require("../models/mongo/story");
+const Error = require('@ss/error');
+
 
 class StoryDao {
     constructor(connection) {
@@ -12,15 +14,15 @@ class StoryDao {
     }
 
     async insertMany(storyList) {
-        for(const story of storyList) {
+        for (const story of storyList) {
             story.insertValid();
         }
-        
+
         const result = await this.collection.insertMany(storyList);
     }
 
     async update(where, $set) {
-        const result = await this.collection.updateOne(where, {$set});
+        const result = await this.collection.updateOne(where, { $set });
     }
 
     async getList(where) {
@@ -30,9 +32,9 @@ class StoryDao {
 
     async getOne(where) {
         const result = await this.collection.find(where).toArray();
-        throw new Error('test Error');
-        if(result.length > 1) {
-            
+
+        if (result.length > 1) {
+
         }
         return result;
     }

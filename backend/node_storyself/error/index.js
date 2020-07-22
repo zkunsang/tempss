@@ -1,5 +1,6 @@
-module.exports.ModelError = require('./modelError');
-module.exports.ServiceError = require('./serviceError');
-module.exports.DaoError = require('./daoError');
-module.exports.ControllerError = require('./controllerError');
-module.exports.RunTimeError = require('./runTimeError');
+module.exports.RunTime = require('./runTimeError');
+module.exports.Model = require('./modelError');
+module.exports.Service = require('./serviceError');
+module.exports.Dao = require('./daoError');
+module.exports.Controller = require('./controllerError');
+module.exports.RunTime = require('./runTimeError');

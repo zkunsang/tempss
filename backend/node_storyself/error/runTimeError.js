@@ -1,9 +1,10 @@
 class RunTimeError extends Error {
-    constructor(errorType, {message, name, code}) {
-        super(message);
+    constructor(errorType, {name, code}, errObj) {
+        super(errObj.message);
         this.errorType = errorType;
         this.name = name;
         this.code = code;
+
         this.errorIndex = null;
         this.errorDate = null;
 

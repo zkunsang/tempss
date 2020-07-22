@@ -1,9 +1,12 @@
 const RunTimeError = require('./runTimeError');
 
 class ControllerError extends RunTimeError {
-    constructor(errObj) {
-        super('ControllerError', errObj);
+    constructor(errCode, errObj) {
+        super('ControllerError', errCode, errObj);
     }
 }
 
 module.exports = ControllerError;
+module.exports.Code = {
+    
+}

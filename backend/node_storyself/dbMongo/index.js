@@ -1,10 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
 
-const UserDao = require('../dao/UserDao');
-const StoryDao = require('../dao/StoryDao');
-const ResourceDao = require('../dao/ResourceDao');
-const AdminDao = require('../dao/AdminDao');
-
 const ss = require('@ss');
 const helper = require('@ss/helper');
 
