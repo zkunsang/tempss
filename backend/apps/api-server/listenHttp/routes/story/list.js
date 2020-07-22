@@ -1,3 +1,57 @@
+const mongo = require('@ss/dbMongo');
+const _ = require('lodash');
+
+const StoryDao = require('@ss/dao/StoryDao');
+const ResourceDao = require('@ss/dao/ResourceDao');
+
+module.exports = async (ctx, next) => {
+    try {
+        const storyDao = new StoryDao(mongo.storyConnect);
+        const resourceDao = new ResourceDao(mongo.storyConnect);
+
+        const storyList = await storyDao.getList();
+
+        storyList.map((item) => {
+            item.id = item.storyId;
+            delete item.storyId;
+            delete item.code;
+            delete item.summary;
+            delete item._id;
+        })
+
+        const resourceList = await resourceDao.getList();
+
+        let resourceMap = {};
+        resourceList.map((item) => {
+            (resourceMap[item.storyId] ||
+                (resourceMap[item.storyId] = []))
+                .push(item);
+
+            item.id = item.resourceId;
+
+            delete item.resourceId;
+            delete item._id;
+            delete item.storyId;
+        })
+
+
+        storyList.map((item) => {
+            if (resourceMap[item.id]) {
+                item.resourceList = resourceMap[item.id];
+            }
+        })
+
+        ctx.status = 200;
+        ctx.body = storyList;
+    }
+    catch (err) {
+        console.error(err);
+    }
+
+    await next();
+}
+
+
 /**
  * @swagger
  * resourcePath: /api
@@ -16,23 +70,23 @@
  *        <br> 생성된 url로 파일 다운로드를 하시면 됩니다.
  *        <br>${cdnUrl}/${story.id}/{aos|ios}/${version}/${resource.id}
  *        <br>http://story.storyself.com/GoldilocksAndTheThreeBears/aos/1/scene
- * 
+ *
  *        <br> crc32코드를 스토리 진입전에 확인하시고 맞지 않다면 다시 다운 받아 진행하시면 됩니다.
  *      responseClass: Response
  *      nickname: config
- *      consumes: 
+ *      consumes:
  *        - text/html
  */
- 
+
 /**
  * @swagger
  * models:
  *   Response:
- *     properties: 
- *       StoryData: 
+ *     properties:
+ *       StoryData:
  *         type: array
  *         required: true
- *         items: 
+ *         items:
  *           $ref: 'StoryData'
  *   StoryData:
  *     id: StoryData
@@ -48,7 +102,7 @@
  *         type: array
  *         items:
  *           $ref: 'ResourceData'
- *   ResourceData: 
+ *   ResourceData:
  *     id: ResourceData
  *     properties:
  *       id:
@@ -64,49 +118,3 @@
  *         type: int
  *         required: true
  */
-
-const mongo = require('@ss/dbMongo');
-const _ = require('lodash');
-
-module.exports = async (ctx, next) => {
-    try {
-        const storyList = await mongo.daoStory.getList();
-        storyList.map((item) => {
-            item.id = item.storyId;
-            delete item.storyId;
-            delete item.code;
-            delete item.summary;
-            delete item._id;
-        })
-
-        const resourceList = await mongo.daoResource.getList();
-
-        let resourceMap = {};
-        resourceList.map((item) => {
-            (resourceMap[item.storyId] || 
-                (resourceMap[item.storyId] = []))
-                .push(item);
-
-            item.id = item.resourceId;
-
-            delete item.resourceId;
-            delete item._id;
-            delete item.storyId;
-        })
-        
-        
-        storyList.map((item) => {
-            if(resourceMap[item.id]) {
-                item.resourceList = resourceMap[item.id];
-            }
-        })
-
-        ctx.status = 200;
-        ctx.body = storyList;    
-    }
-    catch(err) {
-        console.error(err);
-    }
-    
-    await next();
-}

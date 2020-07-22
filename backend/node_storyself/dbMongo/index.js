@@ -13,12 +13,6 @@ class Mongo {
         console.log('mongo constructor');
         this.userConnect = null;
         this.storyConnect = null;
-        
-        this.daoStory = null;
-        this.daoResource = null;
-        this.daoAdmin = null;
-
-        this.daoUser = null;
     }
 
     async ready() {
@@ -28,12 +22,6 @@ class Mongo {
         try {
             this.userConnect = await MongoClient.connect(url, { useUnifiedTopology: true });
             this.storyConnect = await MongoClient.connect(url, { useUnifiedTopology: true });
-            
-            this.daoStory = new StoryDao(this.storyConnect);
-            this.daoResource = new ResourceDao(this.storyConnect);
-            this.daoAdmin = new AdminDao(this.storyConnect);
-
-            this.daoUser = new UserDao(this.userConnect);
         }
         catch (err) {
             helper.slack.sendMessage(err);

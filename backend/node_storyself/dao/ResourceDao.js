@@ -6,9 +6,9 @@ class ResourceDao {
         this.collection = this.db.collection('resource');
     }
 
-    async insert(user) {
-        user.insertValid();
-        await this.collection.insert(user);
+    async insert(resource) {
+        resource.insertValid();
+        await this.collection.insertOne(resource);
     }
 
     async update(where, $set) {

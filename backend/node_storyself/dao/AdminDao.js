@@ -6,9 +6,9 @@ class AdminDao {
         this.collection = this.db.collection('resource');
     }
 
-    async insert(user) {
-        user.insertValid();
-        await this.collection.insert(user);
+    async insert(admin) {
+        admin.insertValid();
+        await this.collection.insertOne(admin);
     }
 
     async update(where, $set) {
