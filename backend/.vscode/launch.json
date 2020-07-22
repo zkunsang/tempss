@@ -5,6 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "args": [
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceFolder}/test",
+                "--exit"
+            ],
+            "internalConsoleOptions": "openOnSessionStart",
+            "name": "Mocha Tests",
+            "program": "${workspaceFolder}\\node_modules\\mocha\\bin\\mocha",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "testLocal"
+            },
+            "type": "pwa-node"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "[local]CMS",
@@ -37,18 +57,6 @@
             ],
             "env": {
                 "NODE_ENV": "apiLocal"
-            },
-            "program": "${workspaceFolder}\\apps\\api-server\\app.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "[dev]API",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "env": {
-                "NODE_ENV": "apiDev"
             },
             "program": "${workspaceFolder}\\apps\\api-server\\app.js"
         }
