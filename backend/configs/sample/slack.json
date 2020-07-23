@@ -1,0 +1,4 @@
+{
+    "webhookUrl": "https://hooks.slack.com/slackurl#####",
+    "useSlack": true
+}

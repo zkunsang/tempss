@@ -27,11 +27,12 @@ class StoryDao {
         StoryDao.checkSet($set);
 
         const result = await this.collection.updateOne(where, { $set });
+        console.log(result.modifiedCount);
 
         if (result.modifiedCount != updateCount) {
             throw new SSError.Dao(SSError.Dao.Code.updateManyCount, 
                 `${result.modifiedCount} expect ${updateCount},
-                where: ${where}, $set: ${set}`);
+                where: ${where}, $set: ${$set}`);
         }
     }
 

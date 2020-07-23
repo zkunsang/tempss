@@ -9,8 +9,8 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test/daoStoryTest.js",
-                "--exit"
+                "${workspaceFolder}/test/daoStoryTest.spec.js",
+                // "--exit"
             ],
             "internalConsoleOptions": "openOnSessionStart",
             "name": "[test]API",
