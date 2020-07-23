@@ -1,6 +1,5 @@
 node_modules
 .nyc_output
 coverage
-tksjdlfaa
-aaasdf;asdfadsfasdfsdfasdf
-sdfasdfasdfadf
+backend/configs/*
+!backend/configs/sample

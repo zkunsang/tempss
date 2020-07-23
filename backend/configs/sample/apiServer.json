@@ -1,0 +1,8 @@
+{
+    "mode": "dev",
+    "port": 8888,
+    "isSsl": false,
+    "cdnUrl": "http://cdn.url.com",
+    "appVersion": "1.0.0",
+    "apiUrl": "http://api.url.com"
+}
