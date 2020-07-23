@@ -7,8 +7,8 @@ class Wrapper {
         for (const property of propertyList) {
             let oldFn = prototype[property];
             if (property !== 'constructor' && typeof (oldFn) === 'function') {
-                prototype[property] = async function (args) {
-                    return await prototype.execute.call(this, oldFn, args);
+                prototype[property] = async function (...args) {
+                    return await prototype.execute.call(this, oldFn, ...args);
                 };
             }
         }

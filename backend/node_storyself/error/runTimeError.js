@@ -1,9 +1,10 @@
 class RunTimeError extends Error {
-    constructor(errorType, {name, code}, errObj) {
-        super(errObj.message);
+    constructor(errorType, {name, code, message}) {
+        super(name);
         this.errorType = errorType;
         this.name = name;
         this.code = code;
+        this.message = message;
 
         this.errorIndex = null;
         this.errorDate = null;
@@ -12,7 +13,7 @@ class RunTimeError extends Error {
         this.additionalMessage = null;
     }
 
-    toString() {
+    makeErrorMessage() {
         const message = [];
         if(this.errorIndex) message.push(`ErrIndex: ${this.errorIndex}`);
         if(this.errorDate) message.push(`ErrDate: ${this.errorDate}`);

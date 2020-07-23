@@ -6,28 +6,35 @@ const UserDao = require('../dao/UserDao');
 const Wrapper = require('./wrapper')
 const SSError = require('../error');
 
+const helper = require('@ss/helper');
+
 class DaoWrapper extends Wrapper {
-    constructor() { super(); }
+    constructor() { 
+        super(); 
+        this.initiated = false;
+    }
 
     init() {
+        if(this.initiated) return;
+        
         this.tryCatchWrapper(StoryDao.prototype, this.execute);
         this.tryCatchWrapper(AdminDao.prototype, this.execute);
         this.tryCatchWrapper(ResourceDao.prototype, this.execute);
         this.tryCatchWrapper(UserDao.prototype, this.execute);
+
+        this.initiated = true;
     }
 
-    async execute(fn, args) {
+    async execute(fn, ...args) {
         try {
-            return await fn.call(this, args);;
+            return await fn.call(this, ...args);;
         } catch (err) {
             if(err instanceof SSError.RunTime) {
-                if (err instanceof SSError.Model) { }
-                if (err instanceof SSError.Dao) { }
+                throw err
             } else {
-                throw new SSError.Dao(SSError.Dao.Code.uncaught, err);
+                helper.slack.sendMessage(err);
+                throw new SSError.Uncaught(err);
             }
-
-            
         }
     }
 }

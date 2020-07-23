@@ -1,17 +1,18 @@
 const RunTimeError = require('./runTimeError');
 
 class DaoError extends RunTimeError {
-    constructor(errCode, errObj) {
-        super('DaoError', errCode , errObj);
+    constructor(errObj) {
+        super('DaoError', errObj);
     }
 }
 
 module.exports = DaoError;
 module.exports.Code = {
-    uncaught: { code: 20000, name: 'uncaught' },
-    insert: { code: 20001, name: 'insert' },
-    update: { code: 20002, name: 'update' },
-    delete: { code: 20003, name: 'delete' },
-    read: { code: 20004, name: 'read' },
+    getOneLength: { code: 20001, name: 'getOneLength', message: 'expect just one row'},
+    updateOneCount: { code: 20002, name: 'updateOneCount', message: 'expect update just one' },
+    updateManyCount: { code: 20003, name: 'updateManyCount', message: 'update more or less than expected' },
+    setNoExistData: { code: 20004, name: 'setNoExistData', message: 'set can\'t be null' },
+    setPrimaryKey: { code: 20005, name: 'setPrimaryKey', message: 'primary key doesn\'t allow change' },
+    whereNoExistData: { code: 2006, name: 'whereNoExistData', message: 'no match where phrase'},
 }
 

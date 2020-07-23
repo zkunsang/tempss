@@ -1,16 +1,20 @@
 const SSError = require('@ss/error');
 
 class Story {
-    constructor(storyId, status) {
+    constructor({ storyId, status }) {
         this.storyId = storyId;
         this.status = status;
     }
 
-    insertValid() {
-        // if (this.storyId) throw new SSError.Model(SSError.Model.Code.insert, 'storyId empty');
-        if (this.storyId) throw Error({});
-        if (!this.status) throw new SSError.Model(SSError.Model.Code.insert, 'status empty');
-    }
+    static typeValid(story) {
+        if ( story.storyId !== undefined && typeof story.storyId !== 'string') {
+            throw new SSError.Model(SSError.Model.Code.typeError, 'storyId is string');
+        }
+
+        if ( story.status !== undefined && typeof story.status !== 'number') {
+            throw new SSError.Model(SSError.Model.Code.typeError, 'status is number');
+        }
+    }    
 }
 
 module.exports = Story;

@@ -2,13 +2,15 @@ const DaoWrapper = require('./daoWrapper');
 
 class Wrapper {
     constructor() {
-        this.userConnect = null;
-        this.storyConnect = null;
+        this.daoWrapper = null;
     }
 
     async ready() {
         try {
-            new DaoWrapper().init();
+            if(!this.daoWrapper) { 
+                this.daoWrapper = new DaoWrapper(); 
+                this.daoWrapper.init();
+            }
         }
         catch (err) {
             helper.slack.sendMessage(err);
