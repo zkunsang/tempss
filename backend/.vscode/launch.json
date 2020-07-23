@@ -10,7 +10,7 @@
                 "999999",
                 "--colors",
                 "${workspaceFolder}/test/daoStoryTest.spec.js",
-                // "--exit"
+                "--exit"
             ],
             "internalConsoleOptions": "openOnSessionStart",
             "name": "[test]API",

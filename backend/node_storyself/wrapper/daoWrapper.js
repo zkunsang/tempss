@@ -30,6 +30,7 @@ class DaoWrapper extends Wrapper {
             return await fn.call(this, ...args);;
         } catch (err) {
             if(err instanceof SSError.RunTime) {
+                helper.slack.sendMessage(err.makeErrorMessage());
                 throw err
             } else {
                 helper.slack.sendMessage(err);

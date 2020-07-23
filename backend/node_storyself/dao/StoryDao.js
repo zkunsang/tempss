@@ -26,23 +26,28 @@ class StoryDao {
         StoryDao.checkWhere(where);
         StoryDao.checkSet($set);
 
-        const result = await this.collection.updateOne(where, { $set });
-        console.log(result.modifiedCount);
+        const result = await this.collection.updateMany(where, { $set });
 
         if (result.modifiedCount != updateCount) {
-            throw new SSError.Dao(SSError.Dao.Code.updateManyCount, 
+            throw new SSError.Dao(SSError.Dao.Code.updateManyCount,
                 `${result.modifiedCount} expect ${updateCount},
                 where: ${where}, $set: ${$set}`);
         }
+    }
+
+    async updateAll($set) {
+        StoryDao.checkSet($set);
+
+        const result = await this.collection.updateMany({}, { $set });
     }
 
     async updateOne(where, $set) {
         StoryDao.checkWhere(where);
         StoryDao.checkSet($set);
 
-        const result = await this.collection.updateOne(where, { $set });
+        const result = await this.collection.updateMany(where, { $set });
         if (result.modifiedCount != 1) {
-            throw new SSError.Dao(SSError.Dao.Code.updateOneCount, 
+            throw new SSError.Dao(SSError.Dao.Code.updateOneCount,
                 `${result.modifiedCount} expect 1
                 where: ${where}, set: ${$set}
                 `);
@@ -85,17 +90,22 @@ class StoryDao {
     static insertValid(story) {
         Story.typeValid(story);
         if (!story.storyId) {
-            throw new SSError.Dao(SSError.Dao.Code.insertEmpty, 'storyId empty');
+            throw new SSError.Dao(SSError.Dao.Code.insertNeedData, 'Story - storyId required');
         }
 
-        if (!story.status) {
-            throw new SSError.Dao(SSError.Dao.Code.insertEmpty, 'status empty');
+        if (story.status === undefined) {
+            throw new SSError.Dao(SSError.Dao.Code.insertNeedData, 'Story - status required');
+        }
+
+        if (story.status !== Story.Status.activate
+            && story.status !== Story.Status.deactivate) {
+            throw new SSError.Dao(SSError.Dao.Code.setValidValue, 'Story - status 0:deactivate 1:activate');
         }
     }
 
     static checkWhere(where) {
         if (!where) return;
-        
+
         Story.typeValid(where);
 
         let whereCount = 0;
@@ -113,7 +123,7 @@ class StoryDao {
 
     static checkSet($set) {
         if (!$set) {
-            throw new SSError.Dao(SSError.Dao.Code.setNoExistData);
+            throw new SSError.Dao(SSError.Dao.Code.setCantBeNull);
         }
         if ($set.storyId) {
             throw new SSError.Dao(SSError.Dao.Code.setPrimaryKey);
@@ -126,6 +136,13 @@ class StoryDao {
 
         if (setCount == 0) {
             throw new SSError.Dao(SSError.Dao.Code.setNoExistData);
+        }
+
+        if ($set.status) {
+            if ($set.status !== Story.Status.activate
+                && $set.status !== Story.Status.deactivate) {
+                throw new SSError.Dao(SSError.Dao.Code.setValidValue, 'Story - status 0:deactivate 1:activate');
+            }
         }
     }
 }

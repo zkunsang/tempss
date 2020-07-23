@@ -13,6 +13,9 @@ module.exports.Code = {
     updateManyCount: { code: 20003, name: 'updateManyCount', message: 'update more or less than expected' },
     setNoExistData: { code: 20004, name: 'setNoExistData', message: 'set can\'t be null' },
     setPrimaryKey: { code: 20005, name: 'setPrimaryKey', message: 'primary key doesn\'t allow change' },
-    whereNoExistData: { code: 2006, name: 'whereNoExistData', message: 'no match where phrase'},
+    whereNoExistData: { code: 20006, name: 'whereNoExistData', message: 'no match where phrase'},
+    insertNeedData: { code: 20007, name: 'insertNeedData', message: 'insert need required data'},
+    setCantBeNull: { code: 20008, name: 'setCantBeNull', message: 'update set can\'t be null'},
+    setValidValue: { code: 20009, name: 'setValidValue', message: 'check valid value'},
 }
 

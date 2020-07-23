@@ -44,6 +44,7 @@ describe('dao', () => {
 
 describe('daoStory', () => {
     async function CRUDBefore() {
+        await storyDao.deleteAll();
         const idList = ['storyId1', 'storyId2', 'storyId3', 'storyId4', 'storyId5', 'storyId6'];
 
         for (const item of idList) {
@@ -136,7 +137,7 @@ describe('daoStory', () => {
         })
 
         describe('update', () => {
-            it('update', async () => {
+            it('updateOne', async () => {
                 const beforeStoryList = await storyDao.getList();
                 const beforeLength = beforeStoryList.length;
 
@@ -165,7 +166,7 @@ describe('daoStory', () => {
                 const beforeLength = beforeStoryList.length;
 
                 const expectUpdateCount = beforeStoryList.reduce(
-                    (item, cnt) => item.status === 1 ? ++cnt : cnt);
+                    (cnt, item) => item.status === 1 ? ++cnt : cnt, 0);
 
                 await storyDao.updateMany({ status: 1 }, { status: 0 }, expectUpdateCount);
 
@@ -179,7 +180,24 @@ describe('daoStory', () => {
                     const compareItem = afterStoryObj[item.storyId];
                     assert.isNotNull(compareItem);
                     assert.equal(compareItem.storyId, item.storyId);
-                    assert.notEqual(item.status, 0);
+                    assert.equal(compareItem.status, 0);
+                }
+            });
+
+            it('update all', async () => {
+                const beforeStoryList = await storyDao.getList();
+                const beforeLength = beforeStoryList.length;
+
+                await storyDao.insert(new Story({ storyId: 'updateAllId', status: 0 }));
+                await storyDao.updateAll({ status: 1 });
+
+                const afterStoryList = await storyDao.getList();
+                const afterLength = afterStoryList.length;
+
+                assert.equal(beforeLength + 1, afterLength);
+
+                for (const item of afterStoryList) {
+                    assert.equal(item.status, 1);
                 }
             })
         })
@@ -244,12 +262,11 @@ describe('daoStory', () => {
             await afterException();
         })
 
-
         describe('getOne', () => {
             it('throw whereNoExistData', async () => {
                 try {
                     await storyDao.getOne({})
-                    throw new Error();
+                    throw new Error('need exception!');
                 } catch (err) {
                     const expectError = new SSError.Dao(SSError.Dao.Code.whereNoExistData);
                     TestHelper.isSameError(err, expectError);
@@ -259,26 +276,214 @@ describe('daoStory', () => {
             it('throw getOneLength', async () => {
                 try {
                     await storyDao.getOne({ status: 1 });
-                    throw new Error();
-                }
-                catch (err) {
+                    throw new Error('need exception!');
+                } catch (err) {
                     const expectError = new SSError.Dao(SSError.Dao.Code.getOneLength);
                     TestHelper.isSameError(err, expectError);
+                }
+            });
+
+            it('throw getOneLength', async () => {
+                try {
+                    const idList = ['getOneExceptionId1', 'getOneExceptionId2', 'getOneExceptionId3'];
+                    const storyList = [];
+                    for (const item of idList) {
+                        storyList.push(new Story({ storyId: item, status: 0 }));
+                    }
+
+                    await storyDao.insertMany(storyList);
+                    await storyDao.getOne({ status: 0 });
+                    throw new Error('need exception!');
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.getOneLength);
+                    TestHelper.isSameError(expectError, err);
                 }
             })
         })
 
-        describe('getList', () => {
-            it('throw whereNoExistData', async () => {
-                // try {
-                //     await storyDao.getList({});
-                // }
-                // catch(err) {
+        describe('updateMany', () => {
+            before(async () => {
+                const storyList = await storyDao.getList();
+            })
 
-                //     assert.equal(typeof err, SSError.Dao.whereNoExistData);
-                // }
+            it('throw updateManyCount', async () => {
+                try {
+                    const idList = ['updateMnayExceptionId1',
+                        'updateMnayExceptionId2',
+                        'updateMnayExceptionId3'];
+
+                    const itemList = [];
+                    for (const item in idList) {
+                        itemList.push(new Story({ storyId: item, status: 1 }));
+                    }
+
+                    await storyDao.insertMany(itemList);
+                    await storyDao.updateMany({ status: 1 }, { status: 0 }, idList.length + 1);
+                    throw new Error('need exception!');
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.updateManyCount);
+                    TestHelper.isSameError(err, expectError);
+                }
+            });
+
+            it('throw whereNoExistData', async () => {
+                try {
+                    const beforeStoryList = await storyDao.getList();
+                    const beforeLength = beforeStoryList.length;
+                    
+                    await storyDao.updateMany({ status1: 1 }, { status1: 0 });
+                    throw new Error('need exception');
+                } catch(err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.whereNoExistData);
+                    TestHelper.isSameError(err, expectError);
+                }
+            });
+
+            it('throw setCantBeNull', async () => {
+                try {
+                    await storyDao.updateMany({ storyId: 'setCantBeNull' });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setCantBeNull);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw setPrimaryKey', async () => {
+                try {
+                    await storyDao.updateMany(
+                        { storyId: 'setNoExistDataId1' },
+                        { storyId: 'setNoExistDataId2' });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setPrimaryKey);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw setNoExistData', async () => {
+                try {
+                    await storyDao.updateMany(
+                        { storyId: 'setNoExistDataId1' },
+                        { sadfasdfasdf: 'test' });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setNoExistData);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw setValidValue status', async () => {
+                try {
+                    await storyDao.updateMany(
+                        { storyId: 'setNoExistDataId1' },
+                        { status: 999 });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setValidValue);
+                    TestHelper.isSameError(expectError, err);
+                }
             });
         });
+
+        describe('insert', () => {
+            it('throw insertNeedData Story - storyId', async () => {
+                try {
+                    await storyDao.insert({ status: 1 });
+                    throw new Error('need exception!');
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.insertNeedData);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw insertNeedData Story - status', async () => {
+                try {
+                    await storyDao.insert({ storyId: 'insertNeedDataId1' });
+                    throw new Error('need exception!');
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.insertNeedData);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw setValidValue status', async() => {
+                try {
+                    await storyDao.insert({ storyId: 'test', status: 3 });
+                    throw new Error('need exception!');
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setValidValue);
+                    TestHelper.isSameError(expectError, err);
+                }
+            })
+        })
+
+        describe('updateOne', () => {
+            it('throw updateOneCount', async () => {
+                try {
+                    const idList = ['updateOneExceptionId1', 'updateOneExceptionId2', 'updateOneExceptionId3'];
+                    const storyList = [];
+                    for (const item of idList) {
+                        storyList.push(new Story({ storyId: item, status: 0 }));
+                    }
+
+                    await storyDao.insertMany(storyList);
+                    await storyDao.updateOne({ status: 0 }, { status: 1 });
+                    throw new Error('need exception!');
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.updateOneCount);
+                    TestHelper.isSameError(err, expectError);
+                }
+            });
+            
+            it('throw whereNoExistData', async () => {
+                try {
+                    await storyDao.updateOne({});
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.whereNoExistData);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+
+            it('throw setCantBeNull', async () => {
+                try {
+                    await storyDao.updateOne({ storyId: 'setCantBeNull' });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setCantBeNull);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw setPrimaryKey', async () => {
+                try {
+                    await storyDao.updateOne(
+                        { storyId: 'setNoExistDataId1' },
+                        { storyId: 'setNoExistDataId2' });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setPrimaryKey);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw setNoExistData', async () => {
+                try {
+                    await storyDao.updateOne(
+                        { storyId: 'setNoExistDataId1' },
+                        { sadfasdfasdf: 'test' });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setNoExistData);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+
+            it('throw setValidValue status', async () => {
+                try {
+                    await storyDao.updateOne(
+                        { storyId: 'setNoExistDataId1' },
+                        { status: 999 });
+                } catch (err) {
+                    const expectError = new SSError.Dao(SSError.Dao.Code.setValidValue);
+                    TestHelper.isSameError(expectError, err);
+                }
+            });
+        })
     })
 });
 
