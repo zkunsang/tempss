@@ -1,9 +1,9 @@
 require('../../apps/startup');
 const assert = require('assert');
-const TestHelper = require('.././testHelper');
+const TestHelper = require('../testHelper');
 const SSError = require('@ss/error');
-const UserDao = require('../../node_storyself/dao/UserDao');
-const User = require('../../node_storyself/models/mongo/user');
+const UserDao = require('@ss/dao/UserDao');
+const User = require('@ss/models/mongo/user');
 
 const moment = require('moment');
 
@@ -11,8 +11,8 @@ let dbMongo = null;
 let userDao = null;
 
 before(async () => {
-    await require('../../apps/api-server/boot/initSS')();
-    dbMongo = require('../../node_storyself/dbMongo');
+    await require('@app/api-server/boot/initSS')();
+    dbMongo = require('@ss/dbMongo');
 
     userDao = new UserDao(dbMongo.userConnect);
 });
@@ -42,30 +42,29 @@ describe('dao', () => {
 })
 
 function checkSameUser(user, compareUser) {
-    assert.equal(user[User.Schema.UID], compareUser[User.Schema.UID]);
-    assert.equal(user[User.Schema.EMAIL], compareUser[User.Schema.EMAIL]);
-    assert.equal(user[User.Schema.PROVIDER], compareUser[User.Schema.PROVIDER]);
-    assert.equal(user[User.Schema.CREATE_DATE], compareUser[User.Schema.CREATE_DATE]);
-    assert.equal(user[User.Schema.LAST_LOGIN_DATE], compareUser[User.Schema.LAST_LOGIN_DATE]);
-    assert.equal(user[User.Schema.POLICY_VERSION], compareUser[User.Schema.POLICY_VERSION]);
+    assert.equal(user[User.Schema.UID.key], compareUser[User.Schema.UID.key]);
+    assert.equal(user[User.Schema.EMAIL.key], compareUser[User.Schema.EMAIL.key]);
+    assert.equal(user[User.Schema.PROVIDER.key], compareUser[User.Schema.PROVIDER.key]);
+    assert.equal(user[User.Schema.CREATE_DATE.key], compareUser[User.Schema.CREATE_DATE.key]);
+    assert.equal(user[User.Schema.LAST_LOGIN_DATE.key], compareUser[User.Schema.LAST_LOGIN_DATE.key]);
+    assert.equal(user[User.Schema.POLICY_VERSION.key], compareUser[User.Schema.POLICY_VERSION.key]);
 }
 
-function createTempUserObj(uid) {
+function createTempUserObj(uid, policyVersion, status) {
     const unixTimeStamp = moment().unix();
     const email = `${uid}@test.com`;
     const provider = 'google';
     const createDate = unixTimeStamp;
     const lastLoginDate = unixTimeStamp;
-    const policyVersion = 1;
-
-    return { uid, email, provider, createDate, lastLoginDate, policyVersion };
+    
+    return { uid, email, provider, createDate, lastLoginDate, policyVersion, status };
 }
 
 describe('daoUser', () => {
     describe('basic', () => {
         let testNewUser = null;
         before(async () => {
-            testNewUser = new User(createTempUserObj('testId1'));
+            testNewUser = new User(createTempUserObj('testId1', 1, 1));
             await userDao.insertOne(testNewUser);
         });
 
@@ -75,47 +74,47 @@ describe('daoUser', () => {
 
         describe('find', () => {
             it('findOne - uid', async () => {
-                const findUser = await userDao.findOne({ uid: testNewUser[User.Schema.UID] });
+                const findUser = await userDao.findOne({ uid: testNewUser[User.Schema.UID.key] });
                 checkSameUser(findUser, testNewUser);
             });
 
             it('findOne - email', async () => {
-                const findUser = await userDao.findOne({ email: testNewUser[User.Schema.EMAIL] });
+                const findUser = await userDao.findOne({ email: testNewUser[User.Schema.EMAIL.key] });
                 checkSameUser(findUser, testNewUser);
             });
         })
 
         describe('insert', () => {
             it('insertOne', async () => {
-                const newUser = new User(createTempUserObj('testId2'));
+                const newUser = new User(createTempUserObj('testId2', 1, 1));
                 await userDao.insertOne(newUser);
 
-                const findUser = await userDao.findOne({ uid: newUser[User.Schema.UID] });
+                const findUser = await userDao.findOne({ uid: newUser[User.Schema.UID.key] });
                 checkSameUser(findUser, newUser);
             })
         });
 
         describe('update', () => {
             it('updateOne', async () => {
-                const newUser = new User(createTempUserObj('testId3'));
+                const newUser = new User(createTempUserObj('testId3', 1, 1));
                 await userDao.insertOne(newUser);
 
-                await userDao.updateOne({ uid: newUser[User.Schema.UID] }, { policyVersion: 2 });
+                await userDao.updateOne({ uid: newUser[User.Schema.UID.key] }, { policyVersion: 2 });
 
-                const findUser = await userDao.findOne({ uid: newUser[User.Schema.UID] });
+                const findUser = await userDao.findOne({ uid: newUser[User.Schema.UID.key] });
 
-                assert.equal(findUser[User.Schema.POLICY_VERSION], 2);
-                assert.equal(findUser[User.Schema.UID], newUser[User.Schema.UID]);
-                assert.equal(findUser[User.Schema.EMAIL], newUser[User.Schema.EMAIL]);
-                assert.equal(findUser[User.Schema.CREATE_DATE], newUser[User.Schema.CREATE_DATE]);
-                assert.equal(findUser[User.Schema.LAST_LOGIN_DATE], newUser[User.Schema.LAST_LOGIN_DATE]);
-                assert.equal(findUser[User.Schema.PROVIDER], newUser[User.Schema.PROVIDER]);
+                assert.equal(findUser[User.Schema.POLICY_VERSION.key], 2);
+                assert.equal(findUser[User.Schema.UID.key], newUser[User.Schema.UID.key]);
+                assert.equal(findUser[User.Schema.EMAIL.key], newUser[User.Schema.EMAIL.key]);
+                assert.equal(findUser[User.Schema.CREATE_DATE.key], newUser[User.Schema.CREATE_DATE.key]);
+                assert.equal(findUser[User.Schema.LAST_LOGIN_DATE.key], newUser[User.Schema.LAST_LOGIN_DATE.key]);
+                assert.equal(findUser[User.Schema.PROVIDER.key], newUser[User.Schema.PROVIDER.key]);
             });
         });
 
         describe('delete', () => {
             it('deleteOne', async () => {
-                const newUser = new User(createTempUserObj('testId4'));
+                const newUser = new User(createTempUserObj('testId4', 1, 1));
                 await userDao.insertOne(newUser);
                 await userDao.deleteOne(newUser);
             })
@@ -124,17 +123,16 @@ describe('daoUser', () => {
 
     describe('exception', () => {
         describe('findOne', () => {
-
             describe('checkWhere', () => {
                 describe('checkAllowWhereField', () => {
                     const allScemaList = Object.values(User.Schema);
                     const allowScemaList = UserDao.allowWhereFieldList();
-                    const notAllow = allScemaList.filter(item => !allowScemaList.includes(item));
+                    const notAllow = allScemaList.filter(item => !allowScemaList.includes(item.key));
                     for (const item of notAllow) {
-                        it(`${item}`, async () => {
+                        it(`${item.key}`, async () => {
                             try {
                                 let tempObj = {};
-                                tempObj[item] = item;
+                                tempObj[item.key] = item.key;
                                 await userDao.findOne(tempObj);
                                 TestHelper.throwNeedError();
                             }
@@ -154,8 +152,8 @@ describe('daoUser', () => {
                 describe('validValue', () => {
                     describe('validsString', () => {
                         const itemList = [];
-                        itemList.push(createWhereObj(User.Schema.UID, 10));
-                        itemList.push(createWhereObj(User.Schema.EMAIL, 10));
+                        itemList.push(createWhereObj(User.Schema.UID.key, 10));
+                        itemList.push(createWhereObj(User.Schema.EMAIL.key, 10));
                         
                         for (const item of itemList) {
                             const _key = Object.keys(item)[0];
@@ -176,10 +174,10 @@ describe('daoUser', () => {
 
                 describe('validEmail', () => {
                     const itemList = [];
-                    itemList.push(createWhereObj(User.Schema.EMAIL, 'abc'));
-                    itemList.push(createWhereObj(User.Schema.EMAIL, 'asdfb@'));
-                    itemList.push(createWhereObj(User.Schema.EMAIL, 'asdfb@dfkjkdf'));
-                    itemList.push(createWhereObj(User.Schema.EMAIL, '123@123'));
+                    itemList.push(createWhereObj(User.Schema.EMAIL.key, 'abc'));
+                    itemList.push(createWhereObj(User.Schema.EMAIL.key, 'asdfb@'));
+                    itemList.push(createWhereObj(User.Schema.EMAIL.key, 'asdfb@dfkjkdf'));
+                    itemList.push(createWhereObj(User.Schema.EMAIL.key, '123@123'));
                     
                     for (const item of itemList) {
                         const _key = Object.keys(item)[0];

@@ -1,17 +1,17 @@
-require('../apps/startup');
+require('../../apps/startup');
 const { assert, expect } = require('chai');
-const StoryDao = require('../node_storyself/dao/StoryDao');
-const Story = require('../node_storyself/models/mongo/story');
-const SSError = require('../node_storyself/error');
-const TestHelper = require('./testHelper');
+const StoryDao = require('@ss/dao/StoryDao');
+const Story = require('@ss/models/mongo/story');
+const SSError = require('@ss/error');
+const TestHelper = require('../testHelper');
 const _ = require('lodash');
 
 let dbMongo = null;
 let storyDao = null;
 
 before(async () => {
-    await require('../apps/api-server/boot/initSS')();
-    dbMongo = require('../node_storyself/dbMongo');
+    await require('@app/api-server/boot/initSS')();
+    dbMongo = require('@ss/dbMongo');
 
     storyDao = new StoryDao(dbMongo.storyConnect);
 });

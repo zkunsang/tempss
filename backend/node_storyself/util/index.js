@@ -2,8 +2,8 @@ const moment = require('moment');
 const SSError = require('@ss/error');
 
 const NullAllow = {
-    YES: 1,
-    NO: 0
+    YES: true,
+    NO: false
 }
 
 const Type = {
@@ -11,66 +11,118 @@ const Type = {
     NUMBER: 'number'
 };
 
+const ValidType = {
+    STRING: 'string',
+    NUMBER: 'number',
+    UNIX_TIMESTAMP: 'unixTimeStamp',
+    EMAIL: 'email',
+}
+
 class ValidateUtil {
-    constructor() { }
-
-    static validEmail(obj, field, item, nullable) {
-        ValidateUtil._checkIsNull(obj, field, item, nullable);
-        ValidateUtil._checkType(obj, field, item, Type.STRING);
-        ValidateUtil._checkValidEmail(obj, field, item);
+    constructor() {
+        this.validFunc = {};
+        this.validFunc[ValidType.STRING] = this.validString;
+        this.validFunc[ValidType.NUMBER] = this.validNumber;
+        this.validFunc[ValidType.EMAIL] = this.validEmail;
+        this.validFunc[ValidType.UNIX_TIMESTAMP] = this.validUnixTimeStamp;
     }
 
-    static validString(obj, field, item, nullable) {
-        ValidateUtil._checkIsNull(obj, field, item, nullable);
-        ValidateUtil._checkType(obj, field, item, Type.STRING);
+    valid(model, schema, obj, nullable) {
+        const schemaKeys = Object.keys(schema);
+
+        for (const schemaKey of schemaKeys) {
+            const field = schema[schemaKey].key;
+            const required = schema[schemaKey].required;
+            const type = schema[schemaKey].type;
+            const validRange = schema[schemaKey].validRange;
+            const item = obj[field];
+
+            this.validFunc[type].call(this, model, field, item, nullable ? true : !required, validRange);
+        }
     }
 
-    static validNumber(obj, field, item, nullable) {
-        ValidateUtil._checkIsNull(obj, field, item, nullable);
-        ValidateUtil._checkType(obj, field, item, Type.NUMBER);
+    validEmail(model, field, item, nullable) {
+        if ( this._checkIsNull(model, field, item, nullable) ) {
+            return;
+        }
+        
+        this._checkType(model, field, item, Type.STRING);
+        this._checkValidEmail(model, field, item);
     }
 
-    static validUnixTimeStamp(obj, field, item, nullable) {
-        ValidateUtil._checkIsNull(obj, field, item, nullable);
-        ValidateUtil._checkType(obj, field, item, Type.NUMBER);
-        ValidateUtil._checkValidUnixTimestamp(obj, field, item);
+    validString(model, field, item, nullable, validRange) {
+        if ( this._checkIsNull(model, field, item, nullable) ) {
+            return;
+        }
+
+        this._checkType(model, field, item, Type.STRING);
+        this._checkRange(model, field, item, validRange);
     }
 
-    static _checkIsNull(obj, field, item, nullable) {
-        if (nullable) return;
+    validNumber(model, field, item, nullable, validRange) {
+        if ( this._checkIsNull(model, field, item, nullable) ) {
+            return;
+        }
+        
+        this._checkType(model, field, item, Type.NUMBER);
+        this._checkRange(model, field, item, validRange);
+    }
+
+    validUnixTimeStamp(model, field, item, nullable) {
+        if ( this._checkIsNull(model, field, item, nullable) ) {
+            return;
+        }
+
+        this._checkType(model, field, item, Type.NUMBER);
+        this._checkValidUnixTimestamp(model, field, item);
+    }
+
+    _checkIsNull(model, field, item, nullable) {
+        if (nullable) return item === undefined || item === null;
 
         if (item === undefined || item === null) {
-            throw new SSError.Model(SSError.Model.Code.checkNull, `${obj.name} - [${field}] can't be null`);
+            throw new SSError.Model(SSError.Model.Code.requiredField, `${model.name} - [${field}] can't be null`);
+        }
+
+        return false;
+    }
+
+    _checkType(model, field, item, type) {
+        if (typeof item !== type) {
+            throw new SSError.Model(SSError.Model.Code.checkType, `${model.name} - [${field}] is ${type}`);
         }
     }
 
-    static _checkType(obj, field, item, type) {
-        if (item && typeof item !== type) {
-            throw new SSError.Model(SSError.Model.Code.checkType, `${obj.name} - [${field}] is ${type}`);
-        }
-    }
-    static _checkValidEmail(obj, field, item) {
-        if (item) {
-            const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    _checkValidEmail(model, field, item) {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             const result = re.test(String(item).toLowerCase())
 
             if (!result) {
-                throw new SSError.Model(SSError.Model.Code.notValidEmail, `${obj.name} - [${field}] invalid email address`)
+                throw new SSError.Model(SSError.Model.Code.notValidEmail, `${model.name} - [${field}] invalid email address`)
             }
+    }
+
+    _checkValidUnixTimestamp(model, field, item) {
+        try {
+            moment().unix(item);
+        }
+        catch (err) {
+            throw new SSError.Model(SSError.Model.Code.notValidUnixTimeStamp, `${model.name} - [${field}] invalid timestamp`);
         }
     }
 
-    static _checkValidUnixTimestamp(obj, field, item) {
-        if (item) {
-            try {
-                moment().unix(item);
-            }
-            catch (err) {
-                throw new SSError.Model(SSError.Model.Code.notValidUnixTimeStamp, `${obj.name} - [${field}] invalid timestamp`);
-            }
+    _checkRange(model, field, item, validRange) {
+        if (!validRange) return;
+        if (!(validRange instanceof Array)) {
+            throw new SSError.Model(SSError.Model.Code.validRangeType, `${model.name} - [${field}] check validRange type`);
+        }
+
+        if(!validRange.includes(item)) {
+            throw new SSError.Model(SSError.Model.Code.validRangeValue, `${model.name} - [${field}] check validRange value`);
         }
     }
 }
 
-module.exports = ValidateUtil;
+module.exports = new ValidateUtil();
 module.exports.NullAllow = NullAllow;
+module.exports.ValidType = ValidType;

@@ -64,34 +64,34 @@ class UserDao {
 
     static requireInsertFieldList() {
         return [
-            User.Schema.UID,
-            User.Schema.PROVIDER,
-            User.Schema.EMAIL,
-            User.Schema.LAST_LOGIN_DATE,
-            User.Schema.CREATE_DATE,
+            User.Schema.UID.key,
+            User.Schema.PROVIDER.key,
+            User.Schema.EMAIL.key,
+            User.Schema.LAST_LOGIN_DATE.key,
+            User.Schema.CREATE_DATE.key,
         ];
     }
 
     static allowWhereFieldList() {
         return [
-            User.Schema.UID,
-            User.Schema.EMAIL
+            User.Schema.UID.key,
+            User.Schema.EMAIL.key
         ];
     }
 
     static allowSetFieldList() {
         return [
-            User.Schema.LAST_LOGIN_DATE,
-            User.Schema.POLICY_VERSION,
+            User.Schema.LAST_LOGIN_DATE.key,
+            User.Schema.POLICY_VERSION.key,
         ]
     };
 
     static notAllowSetFieldList() {
         return [
-            User.Schema.UID,
-            User.Schema.EMAIL,
-            User.Schema.CREATE_DATE,
-            User.Schema.PROVIDER
+            User.Schema.UID.key,
+            User.Schema.EMAIL.key,
+            User.Schema.CREATE_DATE.key,
+            User.Schema.PROVIDER.key
         ]
     };
 }

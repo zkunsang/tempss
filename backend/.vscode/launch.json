@@ -9,7 +9,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test/dao/userDao.spec.js",
+                "${workspaceFolder}/test/model/reqAuthLogin.spec.js",
                 "--exit"
             ],
             "internalConsoleOptions": "openOnSessionStart",

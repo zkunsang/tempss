@@ -1,48 +1,54 @@
 const ValidateUtil = require('../../util');
+const ValidType = ValidateUtil.ValidType;
+
+const UserStatus = {
+    NONE: 1, 
+    ADMIN: 2, 
+    BLOCK: 3, 
+}
+
+const Provider = {
+    GOOGLE: 'google',
+    FACEBOOK: 'facebook',
+    EMAIL: 'email'
+}
 
 const Schema = {
-    UID: 'uid',
-    STATUS: 'status',
-    EMAIL: 'email',
-    PROVIDER: 'provider',
-    CREATE_DATE: 'createDate',
-    LAST_LOGIN_DATE: 'lastLoginDate',
-    POLICY_VERSION: 'policyVersion',
+    UID: { key: 'uid', required: true, type: ValidType.STRING },
+    STATUS: { key: 'status', required: true, type: ValidType.NUMBER, validRange: Object.values(UserStatus) },
+    EMAIL: { key: 'email', required: true, type: ValidType.EMAIL },
+    PROVIDER: { key: 'provider', required: true, type: ValidType.STRING, validRange: Object.values(Provider) },
+    CREATE_DATE: { key: 'createDate', required: true, type: ValidType.UNIX_TIMESTAMP },
+    LAST_LOGIN_DATE: { key: 'lastLoginDate', required: true, type: ValidType.UNIX_TIMESTAMP },
+    POLICY_VERSION: { key: 'policyVersion', required: false, type: ValidType.NUMBER }
 }
 
 class User {
     constructor({ uid, email, provider, status, createDate, lastLoginDate, policyVersion }) {
-        this[Schema.UID] = uid;
-        this[Schema.EMAIL] = email;
-        this[Schema.PROVIDER] = provider;
-        this[Schema.STATUS] = status;
-        this[Schema.CREATE_DATE] = createDate;
-        this[Schema.LAST_LOGIN_DATE] = lastLoginDate;
-        this[Schema.POLICY_VERSION] = policyVersion;
+        this[Schema.UID.key] = uid;
+        this[Schema.EMAIL.key] = email;
+        this[Schema.PROVIDER.key] = provider;
+        this[Schema.STATUS.key] = status;
+        this[Schema.CREATE_DATE.key] = createDate;
+        this[Schema.LAST_LOGIN_DATE.key] = lastLoginDate;
+        this[Schema.POLICY_VERSION.key] = policyVersion;
 
         User.validModel(this);
     }
 
-    static validModel(user) {
-        User._validCommon(user, ValidateUtil.NullAllow.NO);
+    static validModel(obj) {
+        User._validCommon(obj, ValidateUtil.NullAllow.NO);
     }
 
-    static validValue(user) {
-        User._validCommon(user, ValidateUtil.NullAllow.YES);
+    static validValue(obj) {
+        User._validCommon(obj, ValidateUtil.NullAllow.YES);
     }
 
-    static _validCommon(user, nullable) {
-        /** TODO: validValue */
-        // ValidateUtil.validValue(User, status);
-        ValidateUtil.validString(User, Schema.UID, user[Schema.UID], nullable);
-        ValidateUtil.validEmail(User, Schema.EMAIL, user[Schema.EMAIL], nullable);
-        ValidateUtil.validString(User, Schema.PROVIDER, user[Schema.PROVIDER], nullable);
-        ValidateUtil.validUnixTimeStamp(User, Schema.CREATE_DATE, user[Schema.CREATE_DATE], nullable);
-        ValidateUtil.validUnixTimeStamp(User, Schema.LAST_LOGIN_DATE, user[Schema.LAST_LOGIN_DATE], nullable);
-        ValidateUtil.validNumber(User, Schema.POLICY_VERSION, user[Schema.POLICY_VERSION], nullable);
+    static _validCommon(obj, nullable) {
+        ValidateUtil.valid(User, Schema, obj, nullable);
     }
 };
 
 module.exports = User;
 module.exports.Schema = Schema;
-
+module.exports.Provider = Provider;
