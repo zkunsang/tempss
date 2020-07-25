@@ -203,7 +203,7 @@ describe('daoStory', () => {
         })
 
         describe('delete', () => {
-            it('delete', async () => {
+            it('deleteOne', async () => {
                 const beforeStoryList = await storyDao.getList();
                 const beforeLength = beforeStoryList.length;
 
@@ -215,7 +215,7 @@ describe('daoStory', () => {
 
                 assert.equal(afterLenght, beforeLength + 1);
 
-                await storyDao.delete(insertStory);
+                await storyDao.deleteOne(insertStory);
 
                 afterStoryList = await storyDao.getList();
                 afterLenght = afterStoryList.length;
@@ -263,12 +263,12 @@ describe('daoStory', () => {
         })
 
         describe('getOne', () => {
-            it('throw whereNoExistData', async () => {
+            it('throw noExistAllowWhereField', async () => {
                 try {
                     await storyDao.getOne({})
                     throw new Error('need exception!');
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.whereNoExistData);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.noExistAllowWhereField);
                     TestHelper.isSameError(err, expectError);
                 }
             });
@@ -326,7 +326,7 @@ describe('daoStory', () => {
                 }
             });
 
-            it('throw whereNoExistData', async () => {
+            it('throw noExistAllowWhereField', async () => {
                 try {
                     const beforeStoryList = await storyDao.getList();
                     const beforeLength = beforeStoryList.length;
@@ -334,7 +334,7 @@ describe('daoStory', () => {
                     await storyDao.updateMany({ status1: 1 }, { status1: 0 });
                     throw new Error('need exception');
                 } catch(err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.whereNoExistData);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.noExistAllowWhereField);
                     TestHelper.isSameError(err, expectError);
                 }
             });
@@ -348,24 +348,24 @@ describe('daoStory', () => {
                 }
             });
 
-            it('throw setPrimaryKey', async () => {
+            it('throw notAllowSetField', async () => {
                 try {
                     await storyDao.updateMany(
                         { storyId: 'setNoExistDataId1' },
                         { storyId: 'setNoExistDataId2' });
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.setPrimaryKey);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.notAllowSetField);
                     TestHelper.isSameError(expectError, err);
                 }
             });
 
-            it('throw setNoExistData', async () => {
+            it('throw noAffectedField', async () => {
                 try {
                     await storyDao.updateMany(
                         { storyId: 'setNoExistDataId1' },
                         { sadfasdfasdf: 'test' });
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.setNoExistData);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.noAffectedField);
                     TestHelper.isSameError(expectError, err);
                 }
             });
@@ -383,22 +383,22 @@ describe('daoStory', () => {
         });
 
         describe('insert', () => {
-            it('throw insertNeedData Story - storyId', async () => {
+            it('throw requireInsertField Story - storyId', async () => {
                 try {
                     await storyDao.insert({ status: 1 });
                     throw new Error('need exception!');
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.insertNeedData);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.requireInsertField);
                     TestHelper.isSameError(expectError, err);
                 }
             });
 
-            it('throw insertNeedData Story - status', async () => {
+            it('throw requireInsertField Story - status', async () => {
                 try {
                     await storyDao.insert({ storyId: 'insertNeedDataId1' });
                     throw new Error('need exception!');
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.insertNeedData);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.requireInsertField);
                     TestHelper.isSameError(expectError, err);
                 }
             });
@@ -432,11 +432,11 @@ describe('daoStory', () => {
                 }
             });
             
-            it('throw whereNoExistData', async () => {
+            it('throw noExistAllowWhereField', async () => {
                 try {
                     await storyDao.updateOne({});
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.whereNoExistData);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.noExistAllowWhereField);
                     TestHelper.isSameError(expectError, err);
                 }
             });
@@ -451,24 +451,24 @@ describe('daoStory', () => {
                 }
             });
 
-            it('throw setPrimaryKey', async () => {
+            it('throw notAllowSetField', async () => {
                 try {
                     await storyDao.updateOne(
                         { storyId: 'setNoExistDataId1' },
                         { storyId: 'setNoExistDataId2' });
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.setPrimaryKey);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.notAllowSetField);
                     TestHelper.isSameError(expectError, err);
                 }
             });
 
-            it('throw setNoExistData', async () => {
+            it('throw noAffectedField', async () => {
                 try {
                     await storyDao.updateOne(
                         { storyId: 'setNoExistDataId1' },
                         { sadfasdfasdf: 'test' });
                 } catch (err) {
-                    const expectError = new SSError.Dao(SSError.Dao.Code.setNoExistData);
+                    const expectError = new SSError.Dao(SSError.Dao.Code.noAffectedField);
                     TestHelper.isSameError(expectError, err);
                 }
             });

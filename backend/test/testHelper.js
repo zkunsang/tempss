@@ -5,6 +5,12 @@ function isSameError(err, expectError) {
     assert.equal(err.name, expectError.name);
 }
 
+function throwNeedError() {
+    throw {errorType: 'NEED ERROR'};
+}
+
 module.exports = {
-    isSameError
+    isSameError,
+    throwNeedError,
+    
 }

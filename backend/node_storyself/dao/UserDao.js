@@ -1,4 +1,5 @@
-const User = require("../models/mongo/user");
+const User = require('../models/mongo/user');
+const Dao = require('./Dao');
 
 class UserDao {
     constructor(connection) {
@@ -6,32 +7,93 @@ class UserDao {
         this.collection = this.db.collection('user');
     }
 
-    async insert(user) {
-        user.insertValid();
+    async insertOne(user) {
+        UserDao.insertValid(user);
         await this.collection.insertOne(user);
     }
 
-    async update(where, $set) {
-        await this.collection.updateOne(where, {$set});
+    async updateOne(where, $set) {
+        UserDao.checkWhere(where);
+        UserDao.checkSet($set);
+
+        const result = await this.collection.updateMany(where, { $set });
+        Dao.checkUpdateCount(result.modifiedCount, 1, UserDao, where, $set);
     }
 
-    async getList(where) {
+    async findOne(where) {
+        UserDao.checkWhere(where);
+
         const result = await this.collection.find(where).toArray();
-        return result;
+
+        if (result.length === 0) return null;
+        Dao.checkFindOneCount(result.length, UserDao, where);
+
+        return new User(result[0]);
     }
 
-    async getOne(where) {
-        const result = await this.collection.find(where).toArray();
-        return result;
+    // NOT ALLOWED TO DELETE USER DATA. change user status
+    async deleteOne(where) {
+        Dao.checkTestEnv();
+        UserDao.checkWhere(where);
+        const result = await this.collection.deleteMany(where);
+        Dao.checkDeleteOneCount(result.deletedCount, UserDao, where);
     }
 
-    async delete(where) {
-        const result = await this.collection.deleteOne(where);
-    }
-
+    // NOT ALLOWED TO DELETE USER DATA. change user status
     async deleteAll() {
-        const result = await this.collection.deleteMany();
+        Dao.checkTestEnv();
+        await this.collection.deleteMany();
     }
+
+    static insertValid(user) {
+        Dao.checkValidObj(User, user);
+        Dao.checkInsertField(UserDao, user);
+    }
+
+    static checkWhere(where) {
+        Dao.checkAllowWhereField(UserDao, where);
+        User.validValue(where);
+    }
+
+    static checkSet($set) {
+        Dao.checkNotAllowSetNull(UserDao, $set);
+        Dao.checkAllowSetField(UserDao, $set);
+        Dao.checkNotAllowSetField(UserDao, $set);
+        User.validValue($set);
+    }
+
+    static requireInsertFieldList() {
+        return [
+            User.Schema.UID,
+            User.Schema.PROVIDER,
+            User.Schema.EMAIL,
+            User.Schema.LAST_LOGIN_DATE,
+            User.Schema.CREATE_DATE,
+        ];
+    }
+
+    static allowWhereFieldList() {
+        return [
+            User.Schema.UID,
+            User.Schema.EMAIL
+        ];
+    }
+
+    static allowSetFieldList() {
+        return [
+            User.Schema.LAST_LOGIN_DATE,
+            User.Schema.POLICY_VERSION,
+        ]
+    };
+
+    static notAllowSetFieldList() {
+        return [
+            User.Schema.UID,
+            User.Schema.EMAIL,
+            User.Schema.CREATE_DATE,
+            User.Schema.PROVIDER
+        ]
+    };
 }
 
 module.exports = UserDao;

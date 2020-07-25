@@ -1,5 +1,6 @@
 const Story = require("../models/mongo/story");
 const SSError = require('@ss/error');
+const Dao = require('./Dao');
 
 
 class StoryDao {
@@ -78,23 +79,26 @@ class StoryDao {
         return new Story(result[0]);
     }
 
-    async delete(where) {
+    async deleteOne(where) {
+        Dao.checkTestEnv();
         StoryDao.checkWhere(where);
         const result = await this.collection.deleteOne(where);
     }
 
     async deleteAll() {
+        Dao.checkTestEnv();
         const result = await this.collection.deleteMany();
     }
 
     static insertValid(story) {
         Story.typeValid(story);
+        
         if (!story.storyId) {
-            throw new SSError.Dao(SSError.Dao.Code.insertNeedData, 'Story - storyId required');
+            throw new SSError.Dao(SSError.Dao.Code.requireInsertField, 'Story - storyId required');
         }
 
         if (story.status === undefined) {
-            throw new SSError.Dao(SSError.Dao.Code.insertNeedData, 'Story - status required');
+            throw new SSError.Dao(SSError.Dao.Code.requireInsertField, 'Story - status required');
         }
 
         if (story.status !== Story.Status.activate
@@ -117,7 +121,7 @@ class StoryDao {
         }
 
         if (whereCount == 0) {
-            throw new SSError.Dao(SSError.Dao.Code.whereNoExistData);
+            throw new SSError.Dao(SSError.Dao.Code.noExistAllowWhereField);
         }
     }
 
@@ -126,7 +130,7 @@ class StoryDao {
             throw new SSError.Dao(SSError.Dao.Code.setCantBeNull);
         }
         if ($set.storyId) {
-            throw new SSError.Dao(SSError.Dao.Code.setPrimaryKey);
+            throw new SSError.Dao(SSError.Dao.Code.notAllowSetField);
         }
 
         let setCount = 0;
@@ -135,7 +139,7 @@ class StoryDao {
         }
 
         if (setCount == 0) {
-            throw new SSError.Dao(SSError.Dao.Code.setNoExistData);
+            throw new SSError.Dao(SSError.Dao.Code.noAffectedField);
         }
 
         if ($set.status) {

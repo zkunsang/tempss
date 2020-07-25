@@ -9,7 +9,7 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test/daoStoryTest.spec.js",
+                "${workspaceFolder}/test/dao/userDao.spec.js",
                 "--exit"
             ],
             "internalConsoleOptions": "openOnSessionStart",

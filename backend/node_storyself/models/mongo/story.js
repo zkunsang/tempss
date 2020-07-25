@@ -15,11 +15,11 @@ class Story {
 
     static typeValid(story) {
         if (story.storyId !== undefined && typeof story.storyId !== 'string') {
-            throw new SSError.Model(SSError.Model.Code.validType, 'storyId is string');
+            throw new SSError.Model(SSError.Model.Code.checkType, 'storyId is string');
         }
 
         if (story.status !== undefined && typeof story.status !== 'number') {
-            throw new SSError.Model(SSError.Model.Code.validType, 'status is number');
+            throw new SSError.Model(SSError.Model.Code.checkType, 'status is number');
         }
     }
 
