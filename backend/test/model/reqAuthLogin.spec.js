@@ -2,6 +2,8 @@ require('../../apps/startup');
 
 const assert = require('assert');
 const ReqAuthLogin = require('@ss/models/controller/reqAuthLogin');
+const ValidateUtil = require('@ss/util');
+const Provider = ValidateUtil.Provider;
 const User = require('@ss/models/mongo/user');
 const AuthLoginSchema = ReqAuthLogin.Schema;
 
@@ -22,7 +24,7 @@ function createReqAuthLoginBody(uid, email, provider) {
 
 describe('reqAuthLogin', () => {
     describe('constructor', () => {
-        const requestBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', User.Provider.GOOGLE);
+        const requestBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', Provider.GOOGLE);
         const reqAuthLogin = new ReqAuthLogin(requestBody);
 
         assert.equal(reqAuthLogin[AuthLoginSchema.UID.key], requestBody[AuthLoginSchema.UID.key]);
@@ -32,7 +34,7 @@ describe('reqAuthLogin', () => {
 
     describe('validModel', () => {
         it('success', () => {
-            const requestBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', User.Provider.GOOGLE);
+            const requestBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', Provider.GOOGLE);
             const reqAuthLogin = new ReqAuthLogin(requestBody);
 
             ReqAuthLogin.validModel(reqAuthLogin);
@@ -40,7 +42,7 @@ describe('reqAuthLogin', () => {
 
         describe('exception', () => {
             describe('required field', () => {
-                const basicBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', User.Provider.GOOGLE);
+                const basicBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', Provider.GOOGLE);
                 const testList = Object.keys(basicBody);
 
                 for (const deleteField of testList) {
@@ -62,8 +64,8 @@ describe('reqAuthLogin', () => {
 
             describe('check type', () => {
                 const testList = [];
-                testList.push({ testField: 'uid', reqBody: createReqAuthLoginBody(123, 'zkunsang@gmail.com', User.Provider.GOOGLE) })
-                testList.push({ testField: 'email', reqBody: createReqAuthLoginBody('zkunsang', 123, User.Provider.GOOGLE) });
+                testList.push({ testField: 'uid', reqBody: createReqAuthLoginBody(123, 'zkunsang@gmail.com', Provider.GOOGLE) })
+                testList.push({ testField: 'email', reqBody: createReqAuthLoginBody('zkunsang', 123, Provider.GOOGLE) });
                 testList.push({ testField: 'provider', reqBody: createReqAuthLoginBody('zkunsang', 'zkunsang@gmail.com', 123) });
 
                 for (const test of testList) {
@@ -83,10 +85,10 @@ describe('reqAuthLogin', () => {
 
             describe('email validation', () => {
                 const testList = [];
-                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang', User.Provider.GOOGLE))
-                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@gmail', User.Provider.GOOGLE));
-                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@.com', User.Provider.GOOGLE));
-                testList.push(createReqAuthLoginBody('zkunsang', '@gmail.com', User.Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang', Provider.GOOGLE))
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@gmail', Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@.com', Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', '@gmail.com', Provider.GOOGLE));
 
                 for (const test of testList) {
                     it(`${test.email}`, () => {
@@ -120,7 +122,7 @@ describe('reqAuthLogin', () => {
 
     describe('validValue', () => {
         it('success', () => {
-            const requestBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', User.Provider.GOOGLE);
+            const requestBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', Provider.GOOGLE);
             const reqAuthLogin = new ReqAuthLogin(requestBody);
 
             ReqAuthLogin.validModel(reqAuthLogin);
@@ -128,7 +130,7 @@ describe('reqAuthLogin', () => {
 
         describe('exception', () => {
             describe('required field', () => {
-                const basicBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', User.Provider.GOOGLE);
+                const basicBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', Provider.GOOGLE);
                 const testList = Object.keys(basicBody);
 
                 for (const deleteField of testList) {
@@ -150,8 +152,8 @@ describe('reqAuthLogin', () => {
 
             describe('check type', () => {
                 const testList = [];
-                testList.push({ testField: 'uid', reqBody: createReqAuthLoginBody(123, 'zkunsang@gmail.com', User.Provider.GOOGLE) })
-                testList.push({ testField: 'email', reqBody: createReqAuthLoginBody('zkunsang', 123, User.Provider.GOOGLE) });
+                testList.push({ testField: 'uid', reqBody: createReqAuthLoginBody(123, 'zkunsang@gmail.com', Provider.GOOGLE) })
+                testList.push({ testField: 'email', reqBody: createReqAuthLoginBody('zkunsang', 123, Provider.GOOGLE) });
                 testList.push({ testField: 'provider', reqBody: createReqAuthLoginBody('zkunsang', 'zkunsang@gmail.com', 123) });
 
                 for (const test of testList) {
@@ -171,10 +173,10 @@ describe('reqAuthLogin', () => {
 
             describe('email validation', () => {
                 const testList = [];
-                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang', User.Provider.GOOGLE))
-                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@gmail', User.Provider.GOOGLE));
-                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@.com', User.Provider.GOOGLE));
-                testList.push(createReqAuthLoginBody('zkunsang', '@gmail.com', User.Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang', Provider.GOOGLE))
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@gmail', Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@.com', Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', '@gmail.com', Provider.GOOGLE));
 
                 for (const test of testList) {
                     it(`${test.email}`, () => {

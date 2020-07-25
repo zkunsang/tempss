@@ -1,17 +1,7 @@
 const ValidateUtil = require('../../util');
 const ValidType = ValidateUtil.ValidType;
-
-const UserStatus = {
-    NONE: 1, 
-    ADMIN: 2, 
-    BLOCK: 3, 
-}
-
-const Provider = {
-    GOOGLE: 'google',
-    FACEBOOK: 'facebook',
-    EMAIL: 'email'
-}
+const UserStatus = ValidateUtil.UserStatus;
+const Provider = ValidateUtil.Provider;
 
 const Schema = {
     UID: { key: 'uid', required: true, type: ValidType.STRING },

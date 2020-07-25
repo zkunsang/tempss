@@ -18,6 +18,19 @@ const ValidType = {
     EMAIL: 'email',
 }
 
+const UserStatus = {
+    NONE: 1, 
+    ADMIN: 2, 
+    BLOCK: 3, 
+}
+
+const Provider = {
+    GOOGLE: 'google',
+    FACEBOOK: 'facebook',
+    EMAIL: 'email'
+}
+
+
 class ValidateUtil {
     constructor() {
         this.validFunc = {};
@@ -126,3 +139,5 @@ class ValidateUtil {
 module.exports = new ValidateUtil();
 module.exports.NullAllow = NullAllow;
 module.exports.ValidType = ValidType;
+module.exports.UserStatus = UserStatus;
+module.exports.Provider = Provider;
