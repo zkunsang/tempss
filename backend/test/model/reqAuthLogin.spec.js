@@ -120,8 +120,90 @@ describe('reqAuthLogin', () => {
 
     describe('validValue', () => {
         it('success', () => {
+            const requestBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', User.Provider.GOOGLE);
+            const reqAuthLogin = new ReqAuthLogin(requestBody);
 
+            ReqAuthLogin.validModel(reqAuthLogin);
         });
+
+        describe('exception', () => {
+            describe('required field', () => {
+                const basicBody = createReqAuthLoginBody('testUid', 'zkunsang@gmail.com', User.Provider.GOOGLE);
+                const testList = Object.keys(basicBody);
+
+                for (const deleteField of testList) {
+                    it(`${deleteField}`, () => {
+                        try {
+                            const reqBody = Object.assign({}, basicBody);
+                            delete reqBody[deleteField];
+                            const req = new ReqAuthLogin(reqBody);
+                            ReqAuthLogin.validModel(req);
+                            TestHelper.throwNeedError();
+                        }
+                        catch (err) {
+                            TestHelper.isSameError(err, new SSError.Model(SSError.Model.Code.requiredField));
+                        }
+
+                    })
+                }
+            })
+
+            describe('check type', () => {
+                const testList = [];
+                testList.push({ testField: 'uid', reqBody: createReqAuthLoginBody(123, 'zkunsang@gmail.com', User.Provider.GOOGLE) })
+                testList.push({ testField: 'email', reqBody: createReqAuthLoginBody('zkunsang', 123, User.Provider.GOOGLE) });
+                testList.push({ testField: 'provider', reqBody: createReqAuthLoginBody('zkunsang', 'zkunsang@gmail.com', 123) });
+
+                for (const test of testList) {
+                    it(`${test.testField}`, () => {
+                        try {
+                            const reqBody = test.reqBody;
+                            const req = new ReqAuthLogin(reqBody);
+                            ReqAuthLogin.validModel(req);
+                            TestHelper.throwNeedError();
+                        } catch (err) {
+                            TestHelper.isSameError(err, new SSError.Model(SSError.Model.Code.checkType))
+                        }
+
+                    })
+                }
+            });
+
+            describe('email validation', () => {
+                const testList = [];
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang', User.Provider.GOOGLE))
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@gmail', User.Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', 'zkunsang@.com', User.Provider.GOOGLE));
+                testList.push(createReqAuthLoginBody('zkunsang', '@gmail.com', User.Provider.GOOGLE));
+
+                for (const test of testList) {
+                    it(`${test.email}`, () => {
+                        try {
+                            const reqBody = test;
+                            const req = new ReqAuthLogin(reqBody);
+                            ReqAuthLogin.validModel(req);
+                            TestHelper.throwNeedError();
+                        } catch (err) {
+                            TestHelper.isSameError(err, new SSError.Model(SSError.Model.Code.notValidEmail));
+                        }
+                    })
+                }
+            });
+
+            describe('provider range', () => {
+                it('provider range', () => {
+                    const reqBody = createReqAuthLoginBody('zkunsang', 'zkunsang@gmail.com', 'testProvider');
+                    const req = new ReqAuthLogin(reqBody);
+
+                    try {
+                        ReqAuthLogin.validModel(req);
+                        TestHelper.throwNeedError();
+                    } catch (err) {
+                        TestHelper.isSameError(err, new SSError.Model(SSError.Model.Code.validRangeValue));
+                    }
+                })
+            })
+        })
     })
 
 }) 
