@@ -4,5 +4,6 @@
     "isSsl": false,
     "cdnUrl": "http://cdn.url.com",
     "appVersion": "1.0.0",
-    "apiUrl": "http://api.url.com"
+    "apiUrl": "http://api.url.com",
+    "policyVersion": 1
 }

@@ -30,6 +30,16 @@ const Provider = {
     EMAIL: 'email'
 }
 
+const Platform = {
+    IOS: 'ios',
+    AOS: 'aos'
+}
+
+const AppStore = {
+    GOOGLE: 'google',
+    ONESTORE: 'onestore',
+}
+
 
 class ValidateUtil {
     constructor() {
@@ -141,3 +151,5 @@ module.exports.NullAllow = NullAllow;
 module.exports.ValidType = ValidType;
 module.exports.UserStatus = UserStatus;
 module.exports.Provider = Provider;
+module.exports.Platform = Platform;
+module.exports.AppStore = AppStore;

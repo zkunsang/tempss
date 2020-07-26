@@ -1,7 +1,7 @@
-const AdminDao = require('../dao/AdminDao');
-const ResourceDao = require('../dao/ResourceDao');
-const StoryDao = require('../dao/StoryDao');
-const UserDao = require('../dao/UserDao');
+const AdminDao = require('../daoMongo/AdminDao');
+const ResourceDao = require('../daoMongo/ResourceDao');
+const StoryDao = require('../daoMongo/StoryDao');
+const UserDao = require('../daoMongo/UserDao');
 
 const Wrapper = require('./wrapper')
 const SSError = require('../error');

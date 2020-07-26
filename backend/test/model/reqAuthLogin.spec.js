@@ -7,7 +7,7 @@ const Provider = ValidateUtil.Provider;
 const User = require('@ss/models/mongo/user');
 const AuthLoginSchema = ReqAuthLogin.Schema;
 
-const SSError = require('@ss/error')
+const SSError = require('../../node_storyself/daoMongo/node_modules/@ss/error')
 const TestHelper = require('../testHelper');
 
 before(() => {

@@ -9,6 +9,7 @@ class SlackHelper {
 
     async ready() {
         this.slackConfig = ss.configs.slack;
+        if (!this.slackConfig.useSlack) return;
         this.webhook = new IncomingWebhook(this.slackConfig.webhookUrl);
     }
 

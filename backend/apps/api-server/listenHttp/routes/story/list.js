@@ -1,8 +1,8 @@
 const mongo = require('@ss/dbMongo');
 const _ = require('lodash');
 
-const StoryDao = require('@ss/dao/StoryDao');
-const ResourceDao = require('@ss/dao/ResourceDao');
+const StoryDao = require('@ss/daoMongo/StoryDao');
+const ResourceDao = require('@ss/daoMongo/ResourceDao');
 
 module.exports = async (ctx, next) => {
     try {

@@ -18,7 +18,7 @@ class RequsetObj {
 }
 
 module.exports = async (ctx, next) => {
-    ctx.$reqObj = new RequsetObj(ctx);
+    // ctx.$reqObj = new RequsetObj(ctx);
     
 
     // 세션 헤더 ctx.headers
@@ -31,5 +31,5 @@ module.exports = async (ctx, next) => {
     // nginx 확인 route 53확인
 
     const result = await next();
-    ctx.$reqObj
+    // ctx.$reqObj
 };

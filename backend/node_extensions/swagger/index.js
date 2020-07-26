@@ -1,5 +1,6 @@
 const fs = require('@ex/fs');
 const ss = require('@ss');
+const apiConfig = ss.configs.apiServer;
 const swagger = require('swagger-koa');
 
 module.exports = {
@@ -15,7 +16,7 @@ module.exports = {
             swaggerURL: '/swagger',
             swaggerJSON: '/api-docs.json',
             swaggerUI: './public/swagger/',
-            basePath: `${ss.configs.apiServer.apiUrl}`,
+            basePath: `${apiConfig.apiUrl}:${apiConfig.port}`,
             info: {
                 title: 'swagger-koa sample app',
                 description: 'Swagger + Koa = {swagger-koa}'

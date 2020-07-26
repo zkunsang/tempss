@@ -1,23 +1,24 @@
-
-
-const ss = require('@ss');
-const apiConfig = ss.configs.apiServer;
+const dbRedis = require('@ss/dbredis');
+const SessionDao = require('@ss/daoRedis/SessionDao');
 
 module.exports = async (ctx, next) => {
     try {
+        const sessionId = ctx.headers.sessionId;
+        
+        const sessionDao = new SessionDao(dbRedis);
+        await sessionDao.del(sessionId);
+
         ctx.status = 200;
-        ctx.body = {
-            url: apiConfig.cdnUrl,
-            version: apiConfig.appVersion,
-            policyVersion: apiConfig.policyVersion
-        };    
-    }
-    catch(err) {
-        console.error(err);
+        ctx.body = {};
+
+        await next();
+    } catch(err) {
+        ctx.status = 500;
+        ctx.body = { error: 'error' };
+        return await next();
     }
     
-    await next();
-}
+};
 
 /**
  * @swagger

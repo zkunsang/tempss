@@ -10,6 +10,7 @@ class ApiServerConfig {
         this.cdnUrl = config.cdnUrl;
         this.appVersion = config.appVersion;
         this.apiUrl = config.apiUrl;
+        this.policyVersion = config.policyVersion;
     }
 }
 
@@ -27,6 +28,13 @@ class SlackConfig {
     }
 }
 
+class RedisConfig {
+    constructor(config) {
+        this.host = config.host;
+        this.port = config.port;
+    }
+}
+
 module.exports = class Config {
     constructor(configPath) {
         this.configPath = configPath;
@@ -40,6 +48,7 @@ module.exports = class Config {
         try {
             this.apiServer = new ApiServerConfig(require(`@cf/${this.configPath}/apiServer.json`));
             this.dbMongo = new MongoConfig(require(`@cf/${this.configPath}/dbMongo.json`));
+            this.dbRedis = new RedisConfig(require(`@cf/${this.configPath}/redis.json`));
             this.slack = new SlackConfig(require(`@cf/${this.configPath}/slack.json`));
         } catch (e) {
             console.error(e);
