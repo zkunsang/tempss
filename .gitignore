@@ -3,3 +3,4 @@ node_modules
 coverage
 backend/configs/*
 !backend/configs/sample
+!backend/configs/index.js
