@@ -48,7 +48,14 @@ const StoryStatus = {
 const AdminRole = {
     ADMINISTRATOR: 'admin',
     GRAPHER: 'grapher',
-    DEVELOPER: 'developer'
+    DEVELOPER: 'developer',
+    NONE: 'none'
+}
+
+const AdminStatus = {
+    PENDING: 1,
+    ACTIVATE: 2,
+    DEACTIVATE: 3,
 }
 
 
@@ -166,3 +173,4 @@ module.exports.Platform = Platform;
 module.exports.AppStore = AppStore;
 module.exports.StoryStatus = StoryStatus;
 module.exports.AdminRole = AdminRole;
+module.exports.AdminStatus = AdminStatus;

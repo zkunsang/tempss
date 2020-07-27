@@ -1,22 +1,35 @@
-const mongo = require('@ss/dbMongo');
-const uuid = require('uuid');
+const dbMongo = require('@ss/dbMongo');
+const AdminDao = require('@ss/daoMongo/AdminDao');
+const ReqAuthRegist = require('@ss/models/cmsController/ReqAuthRegist');
+const Admin = require('@ss/models/mongo/Admin');
+const AdminStatus = Admin.AdminStatus;
+const AdminRole = Admin.AdminRole;
+const moment = require('moment');
+
 
 module.exports = async (ctx, next) => {
-    const {id, passwd} = ctx.request.body;
 
-    const userInfo = await mongo.findUser({id});
+    try {
+        const createDate = moment().unix();
+        const reqAuthRegist = new ReqAuthRegist(ctx.request.body);
+        ReqAuthRegist.validModel(reqAuthRegist);
 
-    if(userInfo) {
+        const adminDao = new AdminDao(dbMongo.storyConnect);
+        const admin = new Admin(reqAuthRegist);
+        admin.setAdminRole(AdminRole.NONE);
+        admin.setStatus(AdminStatus.PENDING);
+        admin.setCreateDate(createDate);
+
+        await adminDao.insertOne(admin);
+        ctx.status = 200;
+        ctx.body = {};
+        return await next();
+
+    } catch(err) {
+        console.error(err);
         ctx.status = 400;
-        ctx.body = {error: '이미 존재 하는 유저 입니다.'};
+        ctx.body = { error: 'error' };
         return await next();
     }
-
-    await mongo.createUser({id, passwd});
-    let sessionId = uuid.v4().replace(/-/g, '');
-    
-    ctx.status = 200;
-    ctx.body = { sessionId, id };
-    return await next();
-    
 };
+

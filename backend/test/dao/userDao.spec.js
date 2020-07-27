@@ -3,7 +3,7 @@ const assert = require('assert');
 const TestHelper = require('../testHelper');
 const SSError = require('@ss/error');
 const UserDao = require('@ss/dao/UserDao');
-const User = require('@ss/models/mongo/user');
+const User = require('@ss/models/mongo/User');
 
 const moment = require('moment');
 

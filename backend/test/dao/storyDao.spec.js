@@ -1,7 +1,7 @@
 require('../../apps/startup');
 const { assert, expect } = require('chai');
 const StoryDao = require('@ss/dao/StoryDao');
-const Story = require('@ss/models/mongo/story');
+const Story = require('@ss/models/mongo/Story');
 const SSError = require('@ss/error');
 const TestHelper = require('../testHelper');
 const _ = require('lodash');

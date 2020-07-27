@@ -1,8 +1,16 @@
+const dbMongo = require('@ss/dbMongo');
+const StoryDao = require('@ss/daoMongo/storyDao');
+const ReqStoryList = require('@ss/models/cmsController/ReqStoryList');
 const mongo = require('@ss/dbMongo');
 
 module.exports = async (ctx, next) => {
-    let storyList = null;
     try {
+        const reqStoryList = new ReqStoryList(ctx.request.body);
+        ReqStoryList.validValue(reqStoryList);
+
+        const sessionId = reqStoryList.getSessionId(); 
+
+        
         storyList = await mongo.daoStory.getList();
     }
     catch(err) {

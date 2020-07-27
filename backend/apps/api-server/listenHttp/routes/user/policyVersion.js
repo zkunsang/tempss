@@ -4,7 +4,7 @@ const dbRedis = require('@ss/dbRedis');
 const UserDao = require('@ss/daoMongo/UserDao');
 const SessionDao = require('@ss/daoRedis/SessionDao');
 const SSError = require('@ss/error');
-const ReqUserPolicy = require('@ss/models/controller/reqUserPolicy');
+const ReqUserPolicy = require('@ss/models/controller/ReqUserPolicy');
 
 module.exports = async (ctx, next) => {
     try {

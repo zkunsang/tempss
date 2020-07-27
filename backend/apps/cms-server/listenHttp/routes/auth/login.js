@@ -1,20 +1,35 @@
-const mongo = require('@ss/dbMongo');
-const uuid = require('uuid');
+const shortid = require('shortid');
+const dbMongo = require('@ss/dbMongo');
+const dbRedis = require('@ss/dbRedis');
+const CmsSessionDao = require('@ss/daoRedis/CmsSessionDao');
+const AdminDao = require('@ss/daoMongo/AdminDao');
+const ReqAuthLogin = require('@ss/models/cmsController/ReqAuthLogin');
 
 module.exports = async (ctx, next) => {
-    const findQuery = ctx.request.body;
-    const userInfo = await mongo.findUser(findQuery);
+    try {
+        const cmsSessionDao = new CmsSessionDao(dbRedis);
+        const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
+        ReqAuthLogin.validModel(reqAuthLogin);
 
-    if(!userInfo) {
-        ctx.status = 400;
-        ctx.body = { error: 'error' };
-        return await next();
+        const adminDao = new AdminDao(dbMongo.storyConnect);
+        const adminInfo = await adminDao.findOne({ adminId: reqAuthLogin.getAdminId() });
+
+        if (!adminInfo) {
+            ctx.status = 400;
+            ctx.body = { error: 'error' };
+            return await next();
+        }
+
+        const sessionId = shortid.generate();
+        cmsSessionDao.set(sessionId, adminInfo);
+
+        ctx.status = 200;
+        ctx.body = { sessionId, adminId: adminInfo.getAdminId() };
+
     }
-
-    let sessionId = uuid.v4().replace(/-/g, '');
-    
-    ctx.status = 200;
-    ctx.body = { sessionId, id: userInfo.id };
+    catch (err) {
+        console.error(err);
+    }
 
     await next();
 };

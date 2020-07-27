@@ -1,4 +1,6 @@
-const ValidateUtil = require('../../util');
+const ValidateUtil = require('@ss/util');
+const Model = require('@ss/models');
+const { extend } = require('lodash');
 const ValidType = ValidateUtil.ValidType;
 const NullAllow = ValidateUtil.NullAllow;
 
@@ -7,17 +9,10 @@ const Schema = {
     POLICY_VERSION: { key: 'policyVersion', required: true, type: ValidType.NUMBER }
 }
 
-class ReqUserPolicy {
+class ReqUserPolicy extends Model {
     constructor({ sessionId }) {
+        super();
         this[Schema.SESSION_ID.key] = sessionId;
-    }
-
-    static validModel(obj) {
-        ReqUserPolicy._validCommon(obj, NullAllow.NO);
-    }
-
-    static _validCommon(obj, nullable) {
-        ValidateUtil.valid(ReqUserPolicy, Schema, obj, nullable);
     }
 
     getSessionId() {
