@@ -26,7 +26,7 @@ class UserDao {
         const result = await this.collection.find(where).toArray();
 
         if (result.length === 0) return null;
-        Dao.checkFindOneCount(result.length, UserDao, where);
+        Dao.checkFindCount(result.length, 1, UserDao, where);
 
         return new User(result[0]);
     }

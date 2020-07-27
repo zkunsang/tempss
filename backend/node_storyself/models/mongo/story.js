@@ -1,35 +1,33 @@
 const SSError = require('@ss/error');
+const ValidateUtil = require('../../util');
+const ValidType = ValidateUtil.ValidType;
+const StoryStatus = ValidateUtil.StoryStatus;
+const NullAllow = ValidateUtil.NullAllow;
 
-const Status = {
-    activate: 1,
-    deactivate: 0
-};
-
+const Schema = {
+    STORY_ID: { key: 'storyId', required: true, type: ValidType.STRING },
+    STATUS: { key: 'status', required: true, type: ValidType.NUMBER, validRange: Object.values(StoryStatus) },
+    VERSION: { key: 'version', required: true, type: ValidType.NUMBER }
+}
 class Story {
-    constructor({ storyId, status }) {
-        this.storyId = storyId;
-        this.status = status;
-        Story.typeValid(this);
-        Story.valueValid(this);
+    constructor({ storyId, status, version }) {
+        this[Schema.STORY_ID.key] = storyId;
+        this[Schema.STATUS.key] = status;
+        this[Schema.VERSION.key] = version;
     }
 
-    static typeValid(story) {
-        if (story.storyId !== undefined && typeof story.storyId !== 'string') {
-            throw new SSError.Model(SSError.Model.Code.checkType, 'storyId is string');
-        }
-
-        if (story.status !== undefined && typeof story.status !== 'number') {
-            throw new SSError.Model(SSError.Model.Code.checkType, 'status is number');
-        }
+    static validModel(obj) {
+        Story._validCommon(obj, NullAllow.NO);
     }
 
-    static valueValid(story) {
-        if (story.status !== Status.activate
-            && story.status !== Status.deactivate) {
-            throw new SSError.Model(SSError.Model.Code.validValue, 'story status 1:activate, 0: deactivate');
-        }
+    static validValue(obj) {
+        Story._validCommon(obj, NullAllow.YES);
+    }
+
+    static _validCommon(obj, nullable) {
+        ValidateUtil.valid(Story, Schema, obj, nullable);
     }
 }
 
 module.exports = Story;
-module.exports.Status = Status;
+module.exports.Schema = Schema;

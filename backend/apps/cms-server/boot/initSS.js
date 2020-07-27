@@ -6,6 +6,4 @@ module.exports = async () => {
     await ss.configs.ready();
     await helper.ready();
     await mongo.ready();
-    
-    
 };

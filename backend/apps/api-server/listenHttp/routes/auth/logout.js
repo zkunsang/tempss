@@ -1,20 +1,31 @@
-const dbRedis = require('@ss/dbredis');
+const dbRedis = require('@ss/dbRedis');
 const SessionDao = require('@ss/daoRedis/SessionDao');
+const SSError = require('@ss/error');
+const ReqAuthLogout = require('@ss/models/controller/reqAuthLogout');
 
 module.exports = async (ctx, next) => {
     try {
-        const sessionId = ctx.headers.sessionId;
-        
         const sessionDao = new SessionDao(dbRedis);
-        await sessionDao.del(sessionId);
-
+        const reqAuthLogout = new ReqAuthLogout(ctx.request.body);
+        ReqAuthLogout.validModel(reqAuthLogout);
+        
+        await sessionDao.del(reqAuthLogout.getSessionId());
+        
         ctx.status = 200;
         ctx.body = {};
 
         await next();
     } catch(err) {
-        ctx.status = 500;
-        ctx.body = { error: 'error' };
+        if( err instanceof SSError.RunTime ) {
+            ctx.status = 400;
+            ctx.body = err;
+        }
+        else {
+            ctx.status = 500;
+            ctx.body = {error: 'internalError'};
+        }
+        console.error(err);
+        
         return await next();
     }
     
@@ -22,31 +33,43 @@ module.exports = async (ctx, next) => {
 
 /**
  * @swagger
- * resourcePath: /api
+ * resourcePath: /auth
  * description: All about API
  */
 
 /**
  * @swagger
- * path: /config
+ * path: /auth/logout
  * operations:
- *   -  httpMethod: GET
- *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *   -  httpMethod: POST
+ *      summary: 로그아웃
  *      notes: |
- *        <br>version: version
- *        <br>url: cdn주소입니다.
- *        <br>policyVersion: 개인 정책 버젼
- *      responseClass: appInfo
+ *        <br><b>requestParam</b>
+ *        <br>sessionId: 세션 아이디
+ *      responseClass: response
  *      nickname: config
  *      consumes: 
  *        - text/html
- */
+ *      parameters:
+ *        - name: body
+ *          paramType: body
+ *          dataType: reqLogout
+ *          required: true
+ *          
+ */       
  
 /**
  * @swagger
  * models:
- *   appInfo:
- *     id: AppInfo
+ *   reqLogout:
+ *     id: reqLogout
+ *     properties:
+ *       sessionId:
+ *         type: String
+ *         required: true
+ *         description: 세션 아이디
+ *   response:
+ *     id: response
  *     properties:
  *       version:
  *         type: String
@@ -57,4 +80,5 @@ module.exports = async (ctx, next) => {
  *       policyVersion:
  *         type: String  
  *         required: true  
- */
+ *   
+ * */

@@ -1,15 +1,24 @@
-const mongo = require('@ss/dbMongo');
-const _ = require('lodash');
-
+const dbMongo = require('@ss/dbMongo');
 const StoryDao = require('@ss/daoMongo/StoryDao');
 const ResourceDao = require('@ss/daoMongo/ResourceDao');
 
+const mongo = require('@ss/dbMongo');
+const _ = require('lodash');
+
+
 module.exports = async (ctx, next) => {
     try {
-        const storyDao = new StoryDao(mongo.storyConnect);
-        const resourceDao = new ResourceDao(mongo.storyConnect);
+        const storyDao = new StoryDao(dbMongo.storyConnect);
+        const resourceDao = new ResourceDao(dbMongo.storyConnect);
 
-        const storyList = await storyDao.getList();
+        const storyList = await storyDao.findAll();
+
+        if (storyList === null ) {
+            ctx.status = 200;
+            ctx.body = {};
+            await next();
+            return;
+        }
 
         storyList.map((item) => {
             item.id = item.storyId;
@@ -17,9 +26,10 @@ module.exports = async (ctx, next) => {
             delete item.code;
             delete item.summary;
             delete item._id;
-        })
+        });
 
-        const resourceList = await resourceDao.getList();
+        const resourceList = await resourceDao.findAll();
+
 
         let resourceMap = {};
         resourceList.map((item) => {
@@ -34,7 +44,6 @@ module.exports = async (ctx, next) => {
             delete item.storyId;
         })
 
-
         storyList.map((item) => {
             if (resourceMap[item.id]) {
                 item.resourceList = resourceMap[item.id];
@@ -42,13 +51,15 @@ module.exports = async (ctx, next) => {
         })
 
         ctx.status = 200;
-        ctx.body = storyList;
+        ctx.body = { storyList };
+        await next();
     }
     catch (err) {
         console.error(err);
+        await next();
     }
 
-    await next();
+    
 }
 
 

@@ -4,7 +4,7 @@ const sessionExpire = 60 * 60 * 2;
 
 class SessionDao {
     constructor(connection) {
-        this.connection = connection;
+        this.connection = connection.redis;
     }
 
     async set(sessionId, user) {

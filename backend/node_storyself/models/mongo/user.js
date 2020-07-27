@@ -2,6 +2,7 @@ const ValidateUtil = require('../../util');
 const ValidType = ValidateUtil.ValidType;
 const UserStatus = ValidateUtil.UserStatus;
 const Provider = ValidateUtil.Provider;
+const NullAllow = ValidateUtil.NullAllow;
 
 const Schema = {
     UID: { key: 'uid', required: true, type: ValidType.STRING },
@@ -24,16 +25,22 @@ class User {
         this[Schema.LAST_LOGIN_DATE.key] = lastLoginDate;
         this[Schema.POLICY_VERSION.key] = policyVersion;
         this[Schema.SESSION_ID.key] = sessionId;
-        
-        User.validModel(this);
     }
 
     getSessionId() {
         return this[Schema.SESSION_ID.key];
     }
 
+    getUID() {
+        return this[Schema.UID.key];
+    }
+
     setSessionId(sessionId) {
         this[Schema.SESSION_ID.key] = sessionId;
+    }
+
+    setStatus(status) {
+        this[Schema.STATUS.key] = status;
     }
 
     setLastLoginDate(lastLoginDate) {
@@ -44,12 +51,16 @@ class User {
         this[Schema.POLICY_VERSION.key] = policyVersion;
     }
 
+    setCreateDate(createDate) {
+        this[Schema.CREATE_DATE.key] = createDate;
+    }
+
     static validModel(obj) {
-        User._validCommon(obj, ValidateUtil.NullAllow.NO);
+        User._validCommon(obj, NullAllow.NO);
     }
 
     static validValue(obj) {
-        User._validCommon(obj, ValidateUtil.NullAllow.YES);
+        User._validCommon(obj, NullAllow.YES);
     }
 
     static _validCommon(obj, nullable) {

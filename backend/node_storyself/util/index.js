@@ -40,6 +40,17 @@ const AppStore = {
     ONESTORE: 'onestore',
 }
 
+const StoryStatus = {
+    ACTIVATE: 1,
+    DEACTIVATE: 0
+}
+
+const AdminRole = {
+    ADMINISTRATOR: 'admin',
+    GRAPHER: 'grapher',
+    DEVELOPER: 'developer'
+}
+
 
 class ValidateUtil {
     constructor() {
@@ -153,3 +164,5 @@ module.exports.UserStatus = UserStatus;
 module.exports.Provider = Provider;
 module.exports.Platform = Platform;
 module.exports.AppStore = AppStore;
+module.exports.StoryStatus = StoryStatus;
+module.exports.AdminRole = AdminRole;

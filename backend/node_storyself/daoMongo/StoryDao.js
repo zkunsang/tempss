@@ -1,7 +1,5 @@
-const Story = require("../models/mongo/story");
-const SSError = require('@ss/error');
+const Story = require('../models/mongo/story');
 const Dao = require('./Dao');
-
 
 class StoryDao {
     constructor(connection) {
@@ -10,36 +8,14 @@ class StoryDao {
         this.collection.createIndex({ storyId: 1 }, { unique: true });
     }
 
-    async insert(story) {
+    async insertOne(story) {
         StoryDao.insertValid(story);
-        const result = await this.collection.insertOne(story);
+        await this.collection.insertOne(story);
     }
 
     async insertMany(storyList) {
-        for (const story of storyList) {
-            StoryDao.insertValid(story);
-        }
-
-        const result = await this.collection.insertMany(storyList);
-    }
-
-    async updateMany(where, $set, updateCount) {
-        StoryDao.checkWhere(where);
-        StoryDao.checkSet($set);
-
-        const result = await this.collection.updateMany(where, { $set });
-
-        if (result.modifiedCount != updateCount) {
-            throw new SSError.Dao(SSError.Dao.Code.updateManyCount,
-                `${result.modifiedCount} expect ${updateCount},
-                where: ${where}, $set: ${$set}`);
-        }
-    }
-
-    async updateAll($set) {
-        StoryDao.checkSet($set);
-
-        const result = await this.collection.updateMany({}, { $set });
+        StoryDao.insertValidList(storyList);
+        await this.collection.insertMany(storyList);
     }
 
     async updateOne(where, $set) {
@@ -47,108 +23,106 @@ class StoryDao {
         StoryDao.checkSet($set);
 
         const result = await this.collection.updateMany(where, { $set });
-        if (result.modifiedCount != 1) {
-            throw new SSError.Dao(SSError.Dao.Code.updateOneCount,
-                `${result.modifiedCount} expect 1
-                where: ${where}, set: ${$set}
-                `);
-        }
+        Dao.checkUpdateCount(result.modifiedCount, 1, StoryDao, where, $set);
     }
 
-    async getList(where = null) {
+    async updateMany(where, $set, updateCount) {
+        Dao.checkTestEnv();
         StoryDao.checkWhere(where);
-        const storyList = await this.collection.find(where).toArray();
+        StoryDao.checkSet($set);
 
-        const result = [];
-        for (const item of storyList) {
-            result.push(new Story(item));
-        }
-
-        return result;
+        const result = await this.collection.updateMany(where, { $set });
+        Dao.checkUpdateCount(result.modifiedCount, updateCount, StoryDao, where, $set);
     }
 
-    async getOne(where = null) {
+    async updateAll($set) {
+        Dao.checkTestEnv();
+        StoryDao.checkSet($set);
+        await this.collection.updateMany({}, { $set });
+    }
+
+    async findOne(where) {
+        Dao.checkNotAllowWhereNull(StoryDao, where);
         StoryDao.checkWhere(where);
+
         const result = await this.collection.find(where).toArray();
-
-        if (result.length == 0) return null;
-        if (result.length > 1) {
-            throw new SSError.Dao(SSError.Dao.Code.getOneLength)
-        }
-
+        Dao.checkFindCount(result.getLength, 1, StoryDao, where);
+        
         return new Story(result[0]);
     }
 
+    async findMany(where) {
+        Dao.checkNotAllowWhereNull(StoryDao, where);
+        StoryDao.checkWhere(where);
+        const findList = await this.collection.find(where).toArray();
+
+        if (findList.length === 0) return null;
+        return Dao.mappingList(Story, findList);
+    }
+
+    async findAll() {
+        const findList = await this.collection.find().toArray();
+        if (findList.length === 0) return null;
+        return Dao.mappingList(Story, findList);
+    }
+
     async deleteOne(where) {
-        Dao.checkTestEnv();
         StoryDao.checkWhere(where);
         const result = await this.collection.deleteOne(where);
+        Dao.checkDeleteOneCount(result.deletedCount, StoryDao, where);
     }
 
     async deleteAll() {
         Dao.checkTestEnv();
-        const result = await this.collection.deleteMany();
+        await this.collection.deleteMany();
     }
 
+    static insertValidList(storyList) {
+        for (const story of storyList) {
+            StoryDao.insertValid(story);
+        }
+    }
     static insertValid(story) {
-        Story.typeValid(story);
-        
-        if (!story.storyId) {
-            throw new SSError.Dao(SSError.Dao.Code.requireInsertField, 'Story - storyId required');
-        }
-
-        if (story.status === undefined) {
-            throw new SSError.Dao(SSError.Dao.Code.requireInsertField, 'Story - status required');
-        }
-
-        if (story.status !== Story.Status.activate
-            && story.status !== Story.Status.deactivate) {
-            throw new SSError.Dao(SSError.Dao.Code.setValidValue, 'Story - status 0:deactivate 1:activate');
-        }
+        Dao.checkValidObj(Story, story);
+        Dao.checkInsertField(StoryDao, story);
     }
 
     static checkWhere(where) {
-        if (!where) return;
-
-        Story.typeValid(where);
-
-        let whereCount = 0;
-        if (where.storyId != null) {
-            whereCount++;
-        }
-        if (where.status != null) {
-            whereCount++;
-        }
-
-        if (whereCount == 0) {
-            throw new SSError.Dao(SSError.Dao.Code.noExistAllowWhereField);
-        }
+        Dao.checkAllowWhereField(StoryDao, where);
+        Story.validValue(where);
     }
 
     static checkSet($set) {
-        if (!$set) {
-            throw new SSError.Dao(SSError.Dao.Code.setCantBeNull);
-        }
-        if ($set.storyId) {
-            throw new SSError.Dao(SSError.Dao.Code.notAllowSetField);
-        }
-
-        let setCount = 0;
-        if ($set.status != null) {
-            setCount++;
-        }
-
-        if (setCount == 0) {
-            throw new SSError.Dao(SSError.Dao.Code.noAffectedField);
-        }
-
-        if ($set.status) {
-            if ($set.status !== Story.Status.activate
-                && $set.status !== Story.Status.deactivate) {
-                throw new SSError.Dao(SSError.Dao.Code.setValidValue, 'Story - status 0:deactivate 1:activate');
-            }
-        }
+        Dao.checkNotAllowSetNull(StoryDao, $set);
+        Dao.checkAllowSetField(StoryDao, $set);
+        Dao.checkNotAllowSetField(StoryDao, $set);
+        Story.validValue($set);
     }
+    
+    static requireInsertFieldList() {
+        return [
+            Story.Schema.STORY_ID.key,
+            Story.Schema.STATUS.key,
+            Story.Schema.VERSION.key
+        ];
+    }
+
+    static allowWhereFieldList() {
+        return [];
+    }
+
+    static allowSetFieldList() {
+        return [
+            Story.Schema.STATUS.key,
+            Story.Schema.VERSION.key
+        ]
+    };
+
+    static notAllowSetFieldList() {
+        return [
+            Story.Schema.STORY_ID.key
+        ]
+    };
 }
 
 module.exports = StoryDao;

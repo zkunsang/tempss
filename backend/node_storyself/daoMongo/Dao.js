@@ -7,6 +7,9 @@ class Dao {
         if (!obj instanceof model) {
             throw new SSError.Dao(SSError.Dao.Code.notAllowModel, `${obj.name} is not ${model.name}`)
         }
+
+        model.validModel(obj);
+        model.validValue(obj);
     }
 
     static checkInsertField(dao, insertObj) {
@@ -19,7 +22,9 @@ class Dao {
     }
 
     static checkAllowWhereField(dao, where) {
-        if (dao.allowWhereFieldList().reduce((acc, item) =>
+        const allowFieldList = dao.allowWhereFieldList();
+        if (allowFieldList.length === 0) return;
+        if (allowFieldList.reduce((acc, item) =>
             where[item] !== undefined && where[item] !== null ? ++acc : acc, 0) === 0) {
             throw new SSError.Dao(SSError.Dao.Code.noExistAllowWhereField);
         }
@@ -39,6 +44,12 @@ class Dao {
         }
     }
 
+    static checkNotAllowWhereNull(dao, where) {
+        if (!where) {
+            throw new SSError.Dao(SSError.Dao.Code.whereCantBeNull, `${dao.name} where can't null`);
+        }
+    }
+
     static checkNotAllowSetNull(dao, $set) {
         if (!$set) {
             throw new SSError.Dao(SSError.Dao.Code.setCantBeNull, `${dao.name} set can't null`);
@@ -53,10 +64,10 @@ class Dao {
         }
     }
 
-    static checkFindOneCount(getLength, dao, where) {
-        if (getLength != 1) {
+    static checkFindCount(findLength, expectCount, dao, where) {
+        if (findLength != expectCount) {
             throw new SSError.Dao(SSError.Dao.Code.getOneLength,
-                `${dao.name} expect result length 0, 1 - ${getLength} where: ${where}`);
+                `${dao.name} ${findLength} expect - ${expectCount} where: ${where}`);
         }
     }
 
@@ -68,11 +79,22 @@ class Dao {
     }
 
     static checkTestEnv() {
-        if(!process.env.NODE_ENV.startsWith('test')) {
+        if (!process.env.NODE_ENV.startsWith('test')) {
             throw new SSError.Dao(SSError.Dao.Code.onlyTestFunction);
         }
-        
+
     }
+
+    
+    static mappingList(model, list) {
+        let result = [];
+        for (const item of list) {
+            result.push(new model(item));
+        }
+
+        return result;
+    }
+    
 }
 
 module.exports = Dao;

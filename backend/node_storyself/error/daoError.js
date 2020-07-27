@@ -16,8 +16,9 @@ module.exports.Code = {
     noExistAllowWhereField: { code: 20006, name: 'noExistAllowWhereField', message: 'no match where phrase'},
     requireInsertField: { code: 20007, name: 'requireInsertField', message: 'insert need required field'},
     setCantBeNull: { code: 20008, name: 'setCantBeNull', message: 'update set can\'t be null'},
-    setValidValue: { code: 20009, name: 'setValidValue', message: 'check valid value'},
-    notAllowTempObj: { code: 20010, name: 'notAllowTempObj', message: 'make obj using MODEL!'},
-    onlyTestFunction: { code: 20011, name: 'onlyTestFunction', message: 'only test function'},
+    whereCantBeNull: { code: 20009, name: 'whereCantBeNull', message: 'update set can\'t be null'},
+    setValidValue: { code: 20010, name: 'setValidValue', message: 'check valid value'},
+    notAllowTempObj: { code: 20011, name: 'notAllowTempObj', message: 'make obj using MODEL!'},
+    onlyTestFunction: { code: 20012, name: 'onlyTestFunction', message: 'only test function'},
 }
 

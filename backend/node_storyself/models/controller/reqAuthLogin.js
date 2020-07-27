@@ -1,5 +1,4 @@
 const ValidateUtil = require('../../util');
-const User = require('../mongo/user.js');
 
 const Platform = ValidateUtil.Platform;
 const Provider = ValidateUtil.Provider;
@@ -15,7 +14,7 @@ const Schema = {
     PLATFORM: { key: 'platform', required: true, type: ValidType.STRING, validRange: Object.values(Platform) },
     CLIENT_VERSION: { key: 'clientVersion', required: true, type: ValidType.STRING },
     APPSTORE: { key: 'appStore', required: true, type: ValidType.STRING, validRange: Object.values(AppStore) },
-    IS_EMULATE: { key: 'appStore', required: true, type: ValidType.BOOLEAN},
+    // IS_EMULATE: { key: 'isEmulate', required: true, type: ValidType.BOOLEAN},
 }
 
 class ReqAuthLogin {
