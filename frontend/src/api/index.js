@@ -38,11 +38,11 @@ export const setAuthInHeader = session_id => {
 }
 
 export const auth = {
-  login(id, passwd) {
-    return request('post', '/auth/login', { id, passwd })
+  login(adminId, password) {
+    return request('post', '/auth/login', { adminId, password })
   },
-  regist(id, passwd) {
-    return request('post', '/auth/regist', { id, passwd })
+  regist(adminId, password, confirmPassword) {
+    return request('post', '/auth/regist', { adminId, password, confirmPassword })
   }
 }
 

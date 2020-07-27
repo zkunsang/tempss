@@ -1,6 +1,6 @@
 const getters = {
     isAuth(state) {
-        return !!state.id;
+        return !!state.adminId;
     }
 }
 

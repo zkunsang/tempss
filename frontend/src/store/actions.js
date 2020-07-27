@@ -2,16 +2,15 @@ import * as api from '../api'
 import state from './state';
 
 const actions = {
-    LOGIN({ commit }, { userId, password }) {
-        return api.auth.login(userId, password)
-            .then(({ sessionId, id }) => {
-                commit('LOGIN', { sessionId, id })
+    LOGIN({ commit }, { adminId, password }) {
+        return api.auth.login(adminId, password)
+            .then(({ sessionId, adminId }) => {
+                commit('LOGIN', { sessionId, adminId })
             })
     },
-    REGIST(_, { userId, password }) {
-        return api.auth.signIn(userId, password);
+    REGIST(_, { adminId, password, confirmPassword }) {
+        return api.auth.regist(adminId, password, confirmPassword);
     },
-
     CREATE_STORY(_, story) {
         return api.story.create(story);
     },

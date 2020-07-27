@@ -17,7 +17,7 @@
                 name="login"
                 prepend-icon="person"
                 type="text"
-                v-model="userId"
+                v-model="adminId"
               />
 
               <v-text-field
@@ -62,7 +62,7 @@ export default {
       'LOGIN'
     ]),
     onLogin() {
-      this.LOGIN({userId: this.userId, password: this.password})
+      this.LOGIN({adminId: this.adminId, password: this.password})
         .then((body_data) => {
           this.$router.push('story')
         })
@@ -78,7 +78,7 @@ export default {
   },
   computed: {
     invalidForm() {
-      return !this.userId || !this.password;
+      return !this.adminId || !this.password;
     },
     sumbitFail() {
       return !!this.error;
@@ -89,7 +89,7 @@ export default {
   },
   data() {
     return {
-      userId: '',
+      adminId: '',
       password: '',
       rPath: '',
       error: ''

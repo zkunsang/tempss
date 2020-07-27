@@ -1,21 +1,21 @@
 import { setAuthInHeader } from '../api'
 
 const mutations = {
-    LOGIN(state, { sessionId, id }) {
+    LOGIN(state, { sessionId, adminId }) {
         if (!sessionId) return;
 
         state.sessionId = sessionId;
-        state.id = id;
+        state.adminId = adminId;
 
         localStorage.setItem('sessionId', sessionId);
-        localStorage.setItem('id', id);
+        localStorage.setItem('adminId', adminId);
         setAuthInHeader(sessionId);
     },
     LOGOUT(state) {
         state.sessionId = null;
-        state.id = null;
+        state.adminId = null;
         delete localStorage.sessionId;
-        delete localStorage.id;
+        delete localStorage.adminId;
         setAuthInHeader(null);
     },
     SET_THEME(state, color) {
