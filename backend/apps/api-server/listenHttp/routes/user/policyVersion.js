@@ -8,7 +8,7 @@ const ReqUserPolicy = require('@ss/models/controller/ReqUserPolicy');
 
 module.exports = async (ctx, next) => {
     try {
-        const userDao = new UserDao(dbMongo.userConnect);
+        const userDao = new UserDao(dbMongo);
         const sessionDao = new SessionDao(dbRedis);
         const reqUserPolicy = new ReqUserPolicy(ctx.request.body);
         ReqUserPolicy.validModel(reqUserPolicy);

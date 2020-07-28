@@ -18,7 +18,7 @@ module.exports = async (ctx, next) => {
         
         const uid = reqAuthLogin.getUID();
 
-        const userDao = new UserDao(dbMongo.userConnect);
+        const userDao = new UserDao(dbMongo);
         const sessionDao = new SessionDao(dbRedis);
 
         let userInfo = await userDao.findOne({ uid });

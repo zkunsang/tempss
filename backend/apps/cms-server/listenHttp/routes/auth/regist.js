@@ -14,7 +14,7 @@ module.exports = async (ctx, next) => {
         const reqAuthRegist = new ReqAuthRegist(ctx.request.body);
         ReqAuthRegist.validModel(reqAuthRegist);
 
-        const adminDao = new AdminDao(dbMongo.storyConnect);
+        const adminDao = new AdminDao(dbMongo);
         const admin = new Admin(reqAuthRegist);
         admin.setAdminRole(AdminRole.NONE);
         admin.setStatus(AdminStatus.PENDING);

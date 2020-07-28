@@ -18,14 +18,14 @@ module.exports = async (ctx, next) => {
         ReqStoryList.validModel(reqStoryList);
 
         const cmsSessionDao = new CmsSessionDao(dbRedis);
-        const result = await cmsSessionDao.get({sessionId: reqSession.getSessionId()});
-        const sessionAdminInfo = new Admin(result);
-        Admin.ValidModel(sessionAdminInfo);
+
+        const sessionAdminInfo = new Admin(await cmsSessionDao.get(reqSession.getSessionId()));
+        Admin.validModel(sessionAdminInfo);
         
         const adminDao = new AdminDao(dbMongo);
         
         const adminInfo = await adminDao.findOne({adminId: sessionAdminInfo.getAdminId()});
-        Admin.ValidModel(adminInfo);
+        Admin.validModel(adminInfo);
 
         const storyDao = new StoryDao(dbMongo);
         const storyList = storyDao.findAll();

@@ -1,4 +1,4 @@
-const cmsSession = {key: 'test'};
+const cmsSession = require('@ss/models/redis/CmsSession');
 const sessionExpire = 60 * 60 * 24;
 
 class CmsSessionDao {

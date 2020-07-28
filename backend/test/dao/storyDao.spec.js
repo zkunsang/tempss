@@ -13,7 +13,7 @@ before(async () => {
     await require('@app/api-server/boot/initSS')();
     dbMongo = require('@ss/dbMongo');
 
-    storyDao = new StoryDao(dbMongo.storyConnect);
+    storyDao = new StoryDao(dbMongo);
 });
 
 after(() => {

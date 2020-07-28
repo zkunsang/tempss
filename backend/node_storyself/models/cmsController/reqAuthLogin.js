@@ -17,6 +17,10 @@ class ReqAuthLogin extends Model {
     getAdminId() {
         return this[Schema.ADMIN_ID.key];
     }
+
+    getPassword() {
+        return this[Schema.PASSWORD.key];
+    }
 }
 
 module.exports = ReqAuthLogin;

@@ -4,7 +4,7 @@ const Dao = require('./Dao');
 class StoryDao extends Dao {
     constructor(connection) {
         super();
-        this.db = connection.db('story');
+        this.db = connection.storyConnect.db('story');
         this.collection = this.db.collection('story');
         this.collection.createIndex({ storyId: 1 }, { unique: true });
 

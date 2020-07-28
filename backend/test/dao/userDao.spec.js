@@ -14,7 +14,7 @@ before(async () => {
     await require('@app/api-server/boot/initSS')();
     dbMongo = require('@ss/dbMongo');
 
-    userDao = new UserDao(dbMongo.userConnect);
+    userDao = new UserDao(dbMongo);
 });
 
 after(() => {

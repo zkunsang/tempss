@@ -8,8 +8,8 @@ const _ = require('lodash');
 
 module.exports = async (ctx, next) => {
     try {
-        const storyDao = new StoryDao(dbMongo.storyConnect);
-        const resourceDao = new ResourceDao(dbMongo.storyConnect);
+        const storyDao = new StoryDao(dbMongo);
+        const resourceDao = new ResourceDao(dbMongo);
 
         const storyList = await storyDao.findAll();
 

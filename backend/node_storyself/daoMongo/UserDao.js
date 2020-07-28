@@ -4,7 +4,7 @@ const Dao = require('./Dao');
 class UserDao extends Dao {
     constructor(connection) {
         super();
-        this.db = connection.db('user');
+        this.db = connection.userConnect.db('user');
         this.collection = this.db.collection('user');
 
         this.dao = UserDao;

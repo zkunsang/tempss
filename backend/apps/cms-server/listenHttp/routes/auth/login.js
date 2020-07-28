@@ -11,10 +11,16 @@ module.exports = async (ctx, next) => {
         const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
         ReqAuthLogin.validModel(reqAuthLogin);
 
-        const adminDao = new AdminDao(dbMongo.storyConnect);
+        const adminDao = new AdminDao(dbMongo);
         const adminInfo = await adminDao.findOne({ adminId: reqAuthLogin.getAdminId() });
 
         if (!adminInfo) {
+            ctx.status = 400;
+            ctx.body = { error: 'error' };
+            return await next();
+        }
+
+        if( adminInfo.password !== reqAuthLogin.getPassword() ) {
             ctx.status = 400;
             ctx.body = { error: 'error' };
             return await next();

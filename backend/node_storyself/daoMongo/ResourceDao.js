@@ -4,7 +4,7 @@ const Dao = require('./Dao');
 class ResourceDao extends Dao{
     constructor(connection) {
         super();
-        this.db = connection.db('story');
+        this.db = connection.storyConnect.db('story');
         this.collection = this.db.collection('resource');
 
         this.dao = ResourceDao;
