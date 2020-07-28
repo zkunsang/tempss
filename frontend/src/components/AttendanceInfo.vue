@@ -238,8 +238,6 @@ export default {
           this.attendance_list = body_data.attendance_list;
           this.item_list = body_data.attendance_item_list;
 
-          console.log(this.attendance_list);
-          console.log(this.item_list);
           this.attendance_item_arranged_map = {};
 
           this.item_list.forEach((item) => {

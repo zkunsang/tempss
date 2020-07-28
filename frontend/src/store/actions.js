@@ -5,7 +5,7 @@ const actions = {
     LOGIN({ commit }, { adminId, password }) {
         return api.auth.login(adminId, password)
             .then(({ sessionId, adminId }) => {
-                commit('LOGIN', { sessionId, adminId })
+                commit('LOGIN', { sessionId, adminId });
             })
     },
     REGIST(_, { adminId, password, confirmPassword }) {

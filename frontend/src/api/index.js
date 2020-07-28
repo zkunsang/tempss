@@ -5,16 +5,14 @@ import config from '../config/config'
 
 const UNAUTHORIZED = 401;
 const onUnauthorized = () => {
-  console.log("onUnauthorized");
   store.commit('LOGOUT')
   router.push(`/login?rPath=${encodeURIComponent(location.pathname)}`);
 }
 const DOMAIN = config.getBackendUrl;
 
-console.log(DOMAIN);
-
 const request = (method, url, data) => {
-
+  const { sessionId } = localStorage;
+  data = Object.assign(data || {}, {sessionId});
   return axios({
     method,
     url: DOMAIN + url,
@@ -33,8 +31,8 @@ const request = (method, url, data) => {
     })
 }
 
-export const setAuthInHeader = session_id => {
-  axios.defaults.headers.common['Authorization'] = session_id ? `Bearer ${session_id}` : null;
+export const setAuthInHeader = sessionId => {
+  axios.defaults.headers.common['sessionId'] = sessionId ? `${sessionId}` : null;
 }
 
 export const auth = {
@@ -54,7 +52,7 @@ export const story = {
     return request('post', '/story/update', story);
   },
   storyList() {
-    return request('get', '/story/list');
+    return request('post', '/story/list');
   },
   storyInfo(storyId) {
     return request('post', '/story/info', { storyId });

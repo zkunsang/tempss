@@ -41,8 +41,8 @@
     </v-app-bar>
     <v-navigation-drawer app permanent light clipped>
       <v-list-item>
-        <v-list-item-content v-if='id'>
-          <v-list-item-title class='title'>{{id}} 님!</v-list-item-title>
+        <v-list-item-content v-if='adminId'>
+          <v-list-item-title class='title'>{{adminId}} 님!</v-list-item-title>
           <v-list-item-subtitle>안녕하세요</v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-content v-else>
@@ -83,7 +83,7 @@ export default {
     //HelloWorld,
   },
   computed: {
-    ...mapState({ id: 'id' }),
+    ...mapState({ adminId: 'adminId' }),
     isQa() {
       return config.isQa;
     },

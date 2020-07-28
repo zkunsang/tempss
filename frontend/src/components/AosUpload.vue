@@ -139,7 +139,6 @@ export default {
   },
   created() {
     if(this.storyData.storyCode) {
-      console.log('aosUpload: ', this.storyData);
       this.getList();
     }
   },
@@ -205,7 +204,6 @@ export default {
       })
     },
     async onFileUpload(fileList) {
-      console.log("onFileUpload");
       this.updateList = [];
       this.insertList = [];
       this.invalidList = [];

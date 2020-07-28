@@ -21,11 +21,12 @@ Vue.use(DatetimePicker);
 
 Vue.component('downloadExcel', JsonExcel);
 
-const requireAuth = (to, from, next) => {
+const requireAuth = async (to, from, next) => {
     const loginPath = `/login?rPath=${encodeURIComponent(to.path)}`;
-    const { sessionId, id } = localStorage;
+    const { sessionId, adminId } = localStorage;
     
-    store.commit('LOGIN', { sessionId, id } || {});
+    await store.commit('LOGIN', { sessionId, adminId } || {});
+    
     store.getters.isAuth ? next() : next(loginPath);
 }
 

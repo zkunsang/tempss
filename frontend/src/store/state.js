@@ -9,7 +9,7 @@ const state = {
     navbarColor: '#026aa7',
     isShowBoardSettings: false,
     sessionId: null,
-    id: null,
+    adminId: null,
     CDN_URL: config.getCndUrl
 };
 

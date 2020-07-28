@@ -9,6 +9,7 @@ const mutations = {
 
         localStorage.setItem('sessionId', sessionId);
         localStorage.setItem('adminId', adminId);
+        
         setAuthInHeader(sessionId);
     },
     LOGOUT(state) {

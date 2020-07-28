@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import {auth, setAuthInHeader} from '../api'
 import {mapActions} from 'vuex'
 
 export default {
@@ -61,15 +60,9 @@ export default {
     ...mapActions([
       'LOGIN'
     ]),
-    onLogin() {
-      this.LOGIN({adminId: this.adminId, password: this.password})
-        .then((body_data) => {
-          this.$router.push('story')
-        })
-        .catch((err) => {
-          this.error = err;
-          console.log(err);
-        })
+    async onLogin() {
+      await this.LOGIN({adminId: this.adminId, password: this.password});
+      await this.$router.push('story');
       
     },
     onSignin() {

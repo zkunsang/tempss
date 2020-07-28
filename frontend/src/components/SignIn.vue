@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import {auth, setAuthInHeader} from '../api'
 import {mapActions} from 'vuex'
 
 export default {
