@@ -1,7 +1,7 @@
-const cmsSession = require("@ss/models/redis/cmsSession");
+const cmsSession = {key: 'test'};
 const sessionExpire = 60 * 60 * 24;
 
-class SessionDao {
+class CmsSessionDao {
     constructor(connection) {
         this.connection = connection.redis;
     }
@@ -19,4 +19,4 @@ class SessionDao {
     }
 }
 
-module.exports = SessionDao;
+module.exports = CmsSessionDao;

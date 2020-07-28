@@ -3,18 +3,11 @@ const Model = require('@ss/models')
 
 const ValidType = ValidateUtil.ValidType;
 
-const Schema = {
-    SESSION_ID: { key: 'sessionId', required: true, type: ValidType.STRING },
-}
+const Schema = {}
 
-class ReqStoryList extends Model{
-    constructor({ sessionId }) {
+class ReqStoryList extends Model {
+    constructor() {
         super();
-        this[Schema.SESSION_ID.key] = sessionId;
-    }
-
-    getSessionId() {
-        return this[Schema.SESSION_ID.key];
     }
 }
 

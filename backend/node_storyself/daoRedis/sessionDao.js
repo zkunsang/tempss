@@ -1,4 +1,4 @@
-const Session = require("../models/redis/session");
+const Session = require("../models/redis/Session");
 //const sessionExpireMs = 1000 * 60 * 60 * 2;
 const sessionExpire = 60 * 60 * 2;
 
