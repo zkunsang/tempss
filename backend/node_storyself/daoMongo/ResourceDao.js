@@ -1,16 +1,15 @@
 const Resource = require("../models/mongo/Resource");
 const Dao = require('./Dao');
 
-class ResourceDao extends Dao{
+class ResourceDao extends Dao {
     constructor(connection) {
         super();
         this.db = connection.storyConnect.db('story');
         this.collection = this.db.collection('resource');
-
-        this.dao = ResourceDao;
-        this.model = Resource;
     }
-    
+
+    static model = Resource;
+
     static requireInsertFieldList() {
         return [
             Resource.Schema.STORY_ID.key,

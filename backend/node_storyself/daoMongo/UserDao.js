@@ -6,10 +6,9 @@ class UserDao extends Dao {
         super();
         this.db = connection.userConnect.db('user');
         this.collection = this.db.collection('user');
-
-        this.dao = UserDao;
-        this.model = User;
     }
+
+    static model = User;
 
     static requireInsertFieldList() {
         return [

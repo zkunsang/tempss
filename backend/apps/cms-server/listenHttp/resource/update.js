@@ -1,4 +1,4 @@
-const mongo = require('@ss/dbMongo');
+const mongo = require('./node_modules/@ss/dbMongo');
 
 module.exports = async (ctx, next) => {
     let { insertList, updateList } = ctx.request.body;

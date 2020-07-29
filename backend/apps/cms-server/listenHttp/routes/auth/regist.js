@@ -8,7 +8,6 @@ const moment = require('moment');
 
 
 module.exports = async (ctx, next) => {
-
     try {
         const createDate = moment().unix();
         const reqAuthRegist = new ReqAuthRegist(ctx.request.body);

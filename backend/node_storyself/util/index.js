@@ -16,6 +16,8 @@ const ValidType = {
     NUMBER: 'number',
     UNIX_TIMESTAMP: 'unixTimeStamp',
     EMAIL: 'email',
+    ARRAY: 'Array',
+    OBJECT: 'Object',
 }
 
 const UserStatus = {
@@ -66,6 +68,7 @@ class ValidateUtil {
         this.validFunc[ValidType.NUMBER] = this.validNumber;
         this.validFunc[ValidType.EMAIL] = this.validEmail;
         this.validFunc[ValidType.UNIX_TIMESTAMP] = this.validUnixTimeStamp;
+        this.validFunc[ValidType.ARRAY] = this.validArray;
     }
 
     valid(model, schema, obj, nullable) {
@@ -118,6 +121,14 @@ class ValidateUtil {
         this._checkValidUnixTimestamp(model, field, item);
     }
 
+    validArray(model, field, item, nullable) {
+        if ( this._checkIsNull(model, field, item, nullable) ) {
+            return;
+        }
+        this._checkArrayType(model, field, item, ValidType.ARRAY);
+        
+    }
+
     _checkIsNull(model, field, item, nullable) {
         if (nullable) return item === undefined || item === null;
 
@@ -130,6 +141,12 @@ class ValidateUtil {
 
     _checkType(model, field, item, type) {
         if (typeof item !== type) {
+            throw new SSError.Model(SSError.Model.Code.checkType, `${model.name} - [${field}] is ${type}`);
+        }
+    }
+
+    _checkArrayType(model, field, item, type) {
+        if (!(item instanceof Array)) {
             throw new SSError.Model(SSError.Model.Code.checkType, `${model.name} - [${field}] is ${type}`);
         }
     }

@@ -1,5 +1,5 @@
 const ss = require('@ss');
-const dbMongo = require('@ss/dbMongo');
+const dbMongo = require('../../../../cms-server/listenHttp/routes/resource/node_modules/@ss/dbMongo');
 const dbRedis = require('@ss/dbRedis');
 const UserDao = require('@ss/daoMongo/UserDao');
 const SessionDao = require('@ss/daoRedis/SessionDao');

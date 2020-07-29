@@ -1,4 +1,5 @@
 const SSError = require('@ss/error');
+const { upperFirst } = require('lodash');
 
 class Dao {
     constructor() {}
@@ -10,6 +11,7 @@ class Dao {
 
     async insertMany(resourceList) {
         this.constructor.insertValidList.call(this, resourceList);
+        if(resourceList.length === 0) return;
         await this.collection.insertMany(resourceList);
     }
 
@@ -44,7 +46,7 @@ class Dao {
         if (result.length === 0) return null;
         this.constructor.checkFindCount.call(this, result.length, 1, where);
 
-        return new this.model(result[0]);
+        return new this.constructor.model(result[0]);
     }
 
     async findMany(where) {
@@ -53,13 +55,13 @@ class Dao {
         const findList = await this.collection.find(where).toArray();
 
         if (findList.length === 0) return null;
-        return this.mappingList.call(this, findList);
+        return this.constructor.mappingList.call(this.constructor, findList);
     }
 
     async findAll() {
         const findList = await this.collection.find().toArray();
         if (findList.length === 0) return null;
-        return this.mappingList.call(this, findList);
+        return this.constructor.mappingList.call(this.constructor, findList);
     }
 
     // NOT ALLOWED TO DELETE USER DATA. change user status
@@ -77,17 +79,19 @@ class Dao {
     }
 
     static checkValidObj(obj) {
-        if (!obj instanceof this.model) {
-            throw new SSError.Dao(SSError.Dao.Code.notAllowModel, `${obj.name} is not ${this.model.name}`)
+        if (!(obj instanceof this.constructor.model)) {
+            throw new SSError.Dao(SSError.Dao.Code.notAllowModel, `${obj.name} is not ${this.constructor.model.name}`)
         }
 
-        this.model.validModel.call(this.model, obj);
-        this.model.validValue.call(this.model, obj);
+        this.constructor.model.validModel.call(this.constructor.model, obj);
+        this.constructor.model.validValue.call(this.constructor.model, obj);
     }
 
     static checkInsertField(insertObj) {
         const needList = this.constructor.requireInsertFieldList();
-        const requireList = needList.filter((item) => !insertObj[item]);
+        const requireList = needList.filter((item) => {
+            return insertObj[item] === undefined || insertObj[item] === null
+        });
 
         if (requireList.length > 0) {
             throw new SSError.Dao(SSError.Dao.Code.requireInsertField, `${insertObj.name} - ${requireList.join(',')} need required field `)
@@ -180,20 +184,15 @@ class Dao {
 
     static checkWhere(where) {
         this.constructor.checkAllowWhereField.call(this, where);
-        this.model.validValue.call(this.model, where);
+        this.constructor.model.validValue.call(this.constructor.model, where);
     }
 
     static checkSet($set) {
         this.constructor.checkNotAllowSetNull.call(this, $set);
         this.constructor.checkAllowSetField.call(this, $set);
         this.constructor.checkNotAllowSetField.call(this, $set);
-        this.model.validValue.call(this.model, $set);
+        this.constructor.model.validValue.call(this.constructor.model, $set);
     }
-
-    
-    
-
-
 }
 
 module.exports = Dao;

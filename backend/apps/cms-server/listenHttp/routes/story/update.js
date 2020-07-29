@@ -1,22 +1,61 @@
-const mongo = require('@ss/dbMongo');
+const ReqStoryUpdate = require('@ss/models/cmsController/ReqStoryUpdate');
+const StoryDao = require('@ss/daoMongo/StoryDao');
+const Story = require('@ss/models/mongo/Story');
+const moment = require('moment');
+
 
 module.exports = async (ctx, next) => {
-    const story = ctx.request.body;
-
     try {
-        const findQuery = { storyId: story.storyId };
-        delete story.storyId;
-        delete story._id;
+        const updateDate = moment().unix();
         
-        const createResult = await mongo.updateStory(findQuery, story);
-        console.log(createResult);
+        const reqStoryUpdate = new ReqStoryUpdate(ctx.request.body);
+        ReqStoryUpdate.validModel(reqStoryUpdate);
+
+        const storyId = reqStoryUpdate.getStoryId();
+        const storyDao = new StoryDao(ctx.$dbMongo);
+
+        const oldStoryData = await storyDao.findOne({ storyId });
+        if (!oldStoryData) {
+            console.error(err);
+            ctx.status = 400;
+            ctx.body = { message: 'no story' };
+
+            await next();
+            return;
+        }
+
+        const newStoryData = new Story(reqStoryUpdate);
+
+        checkChange(newStoryData , oldStoryData);
+
+        newStoryData.setVersion(oldStoryData.getVersion() + 1);
+        newStoryData.setUpdateDate(updateDate);
+
+        delete newStoryData[Story.Schema.STORY_ID.key];
+
+        await storyDao.updateOne({storyId}, newStoryData);
+
+        ctx.status = 200;
+        ctx.body = {};
     }
     catch (err) {
         console.error(err);
+        ctx.status = 400;
+        ctx.body = { message: err.message };
+
+        await next();
     }
+}
 
-    ctx.status = 200;
-    ctx.body = {};
+function checkChange(newStoryData, oldStoryData) {
+    let checkCount = 0;
+    if( newStoryData.getStatus() !== oldStoryData.getStatus() ) checkCount++;
+    if( newStoryData.getThumbnail() !== oldStoryData.getThumbnail() ) checkCount++;
+    if( newStoryData.getThumbnailVersion() !== oldStoryData.getThumbnailVersion() ) checkCount++;
+    if( newStoryData.getThumbnailCrc32() !== oldStoryData.getThumbnailCrc32() ) checkCount++;
 
-    await next();
+    if(checkCount === 0) {
+        throw new Error('no change');
+    }
+    
 }

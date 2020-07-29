@@ -27,6 +27,14 @@ class Resource extends Model {
     setUpdateDate(updateDate) {
         this[Schema.UPDATE_DATE.key] = updateDate;
     }
+
+    getStoryId() {
+        return this[Schema.STORY_ID.key];
+    }
+
+    getResourceId() {
+        return this[Schema.RESOURCE_ID.key];
+    }
 }
 
 module.exports = Resource;

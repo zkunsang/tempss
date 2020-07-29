@@ -6,8 +6,9 @@ class AdminDao extends Dao {
         super();
         this.db = connection.storyConnect.db('story');
         this.collection = this.db.collection('admin');
-        this.model = Admin;
     }
+
+    static model = Admin;
 
     static requireInsertFieldList() {
         return [

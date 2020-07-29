@@ -28,7 +28,7 @@ module.exports = async (ctx, next) => {
         Admin.validModel(adminInfo);
 
         const storyDao = new StoryDao(dbMongo);
-        const storyList = storyDao.findAll();
+        const storyList = await storyDao.findAll();
         
         ctx.status = 200;
         ctx.body = storyList;

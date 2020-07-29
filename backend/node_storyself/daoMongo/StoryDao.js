@@ -7,10 +7,9 @@ class StoryDao extends Dao {
         this.db = connection.storyConnect.db('story');
         this.collection = this.db.collection('story');
         this.collection.createIndex({ storyId: 1 }, { unique: true });
-
-        this.dao = StoryDao;
-        this.model = Story;
     }
+    
+    static model = Story;
 
     static requireInsertFieldList() {
         return [
