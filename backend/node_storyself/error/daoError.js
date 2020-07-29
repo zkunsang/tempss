@@ -1,8 +1,9 @@
 const RunTimeError = require('./runTimeError');
 
 class DaoError extends RunTimeError {
-    constructor(errObj) {
+    constructor(errObj, additionalMessage) {
         super('DaoError', errObj);
+        this.additionalMessage = additionalMessage;
     }
 }
 

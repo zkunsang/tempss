@@ -20,7 +20,7 @@ class Dao {
         this.constructor.checkSet.call(this, $set);
 
         const result = await this.collection.updateMany(where, { $set });
-        this.constructor.checkUpdateCount.call(this, result.modifiedCount, 1, where, $set);
+        this.constructor.checkUpdateCount.call(this, result.matchedCount, 1, where, $set);
     }
 
     async updateMany(where, $set, updateCount) {
@@ -29,7 +29,7 @@ class Dao {
         this.constructor.checkSet.call(this, $set);
 
         const result = await this.collection.updateMany(where, { $set });
-        this.constructor.checkUpdateCount(this, result.modifiedCount, updateCount, where, $set);
+        this.constructor.checkUpdateCount(this, result.matchedCount, updateCount, where, $set);
     }
 
     async updateAll($set) {
@@ -76,9 +76,7 @@ class Dao {
         this.constructor.checkDeleteCount.call(this, result.deletedCount, expectCount, where);
     }
 
-    // NOT ALLOWED TO DELETE ALL DATA. change user status
     async deleteAll() {
-        this.constructor.checkTestEnv();
         await this.collection.deleteMany();
     }
 
