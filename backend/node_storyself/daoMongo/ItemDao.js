@@ -14,7 +14,7 @@ class ItemDao extends Dao {
         return [
             Item.Schema.ITEM_ID.key,
             Item.Schema.ITEM_CATEGORY.key,
-            Item.Schema.GROUP_CODE.key,
+            Item.Schema.GROUP_ID.key,
             Item.Schema.USEABLE.key,
             Item.Schema.OVERLAP.key,
             Item.Schema.MAX_QNY.key,
@@ -34,7 +34,7 @@ class ItemDao extends Dao {
     static allowSetFieldList() {
         return [
             Item.Schema.ITEM_CATEGORY.key,
-            Item.Schema.GROUP_CODE.key,
+            Item.Schema.GROUP_ID.key,
             Item.Schema.USEABLE.key,
             Item.Schema.OVERLAP.key,
             Item.Schema.MAX_QNY.key,

@@ -1,36 +1,24 @@
 const ReqCategoryDelete = require('@ss/models/cmsController/ReqCategoryDelete');
-const CategoryDao = require('@ss/daoMongo/CategoryDao');
-const Category = require('@ss/models/mongo/Category');
+const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
 
 module.exports = async (ctx, next) => {
-    try {
-        const reqCategoryDelete = new ReqCategoryDelete(ctx.request.body);
-        ReqCategoryDelete.validModel(reqCategoryDelete);
+    const reqCategoryDelete = new ReqCategoryDelete(ctx.request.body);
+    ReqCategoryDelete.validModel(reqCategoryDelete);
 
-        const itemCategory = reqCategoryDelete.getItemCategory();
-        const categoryDao = new CategoryDao(ctx.$dbMongo);
-        const categoryInfo = await categoryDao.findOne({ itemCategory });
+    const itemCategory = reqCategoryDelete.getItemCategory();
+    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
+    const itemCategoryInfo = await itemCategoryDao.findOne({ itemCategory });
 
-        if (!categoryInfo) {
-            ctx.status = 400;
-            ctx.body = { message: 'no exist category' };
-            await next();
-            return;
-        }
-
-        const deleteCategoryInfo = new Category(reqCategoryDelete);
-        
-        await categoryDao.deleteOne(deleteCategoryInfo);
-
-        ctx.status = 200;
-        ctx.body = {};
-        await next();
-    }
-    catch (err) {
-        console.error(err);
+    if (!itemCategoryInfo) {
         ctx.status = 400;
-        ctx.body = { message: err.message };
-
+        ctx.body = { message: 'no exist category' };
         await next();
+        return;
     }
+
+    await itemCategoryDao.deleteOne(itemCategoryInfo);
+
+    ctx.status = 200;
+    ctx.body = {};
+    await next();
 }

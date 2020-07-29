@@ -1,5 +1,6 @@
 const Model = require('@ss/models');
-const ValidateUtil = require('@ss/util');
+
+const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 
 const Schema = {
@@ -9,7 +10,7 @@ const Schema = {
     UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
 }
 
-class ItemCategory extends Model {
+class ItemMaterial extends Model {
     constructor({ itemId, materialId, materialQny }) {
         super();
         this[Schema.ITEM_ID.key] = itemId;
@@ -22,5 +23,5 @@ class ItemCategory extends Model {
     }
 }
 
-module.exports = ItemCategory;
+module.exports = ItemMaterial;
 module.exports.Schema = Schema;

@@ -1,10 +1,10 @@
-const dbMongo = require('../../../../cms-server/listenHttp/routes/resource/node_modules/@ss/dbMongo');
+const dbMongo = require('@ss/dbMongo');
 const dbRedis = require('@ss/dbRedis');
 const UserDao = require('@ss/daoMongo/UserDao');
 const SessionDao = require('@ss/daoRedis/SessionDao');
 const User = require('@ss/models/mongo/User');
 const SSError = require('@ss/error');
-const UserStatus = require('@ss/util').UserStatus;
+const UserStatus = require('@ss/util').ValdateUtil.UserStatus;
 const ReqAuthLogin = require('@ss/models/controller/ReqAuthLogin');
 const shortid = require('shortid');
 

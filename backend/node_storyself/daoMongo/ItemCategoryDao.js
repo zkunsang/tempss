@@ -1,10 +1,10 @@
-const ItemCategory = require("../models/mongo/ItemCategory");
+const ItemCategory = require('../models/mongo/ItemCategory');
 const Dao = require('./Dao');
 
 class ItemCategoryDao extends Dao {
     constructor(connection) {
         super();
-        this.db = connection.storyConnect.db('story');
+        this.db = connection.userConnect.db('story');
         this.collection = this.db.collection('itemCategory');
     }
 
@@ -19,19 +19,22 @@ class ItemCategoryDao extends Dao {
     }
 
     static allowWhereFieldList() {
-        return [];
+        return [
+            ItemCategory.Schema.ITEM_CATEGORY.key
+        ];
     }
 
     static allowSetFieldList() {
         return [
-            ItemCategory.Schema.UPDATE_DATE.key,
             ItemCategory.Schema.CATEGORY_NAME.key,
+            ItemCategory.Schema.UPDATE_DATE.key
+
         ]
     };
 
     static notAllowSetFieldList() {
         return [
-            ItemCategory.Schema.ITEM_CATEGORY.key,
+            ItemCategory.Schema.ITEM_CATEGORY.key
         ]
     };
 }

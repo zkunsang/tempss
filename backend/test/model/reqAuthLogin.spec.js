@@ -2,7 +2,8 @@ require('../../apps/startup');
 
 const assert = require('assert');
 const ReqAuthLogin = require('@ss/models/controller/ReqAuthLogin');
-const ValidateUtil = require('@ss/util');
+const ValidateUtil = require('@ss/util/ValidateUtil')
+
 const Provider = ValidateUtil.Provider;
 const AuthLoginSchema = ReqAuthLogin.Schema;
 

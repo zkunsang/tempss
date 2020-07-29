@@ -1,19 +1,20 @@
 const Model = require('@ss/models')
 
+const ValidateUtil = require('@ss/util/ValidateUtil');
+const ValidType = ValidateUtil.ValidType;
+
 const Schema = {
-    ITEM_CATEGORY: { key: 'itemCategory', required: true, type: ValidType.STRING, },
-    CATEGORY_NAME: { key: 'categoryName', required: true, type: ValidType.STRING },
+    CATEGORY_LIST: { key: 'itemCategory', required: true, type: ValidType.ARRAY, },
 }
 
 class ReqCategoryUpdate extends Model {
-    constructor({ itemCategory, categoryName }) {
+    constructor({ categoryList }) {
         super();
-        this[Schema.ITEM_CATEGORY.key] = itemCategory;
-        this[Schema.CATEGORY_NAME.key] = categoryName;
+        this[Schema.CATEGORY_LIST.key] = categoryList;
     }
 
-    getItemCategory() {
-        return this[Schema.ITEM_CATEGORY.key];
+    getCategoryList() {
+        return this[Schema.CATEGORY_LIST.key];
     }
 }
 

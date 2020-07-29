@@ -1,23 +1,15 @@
-const ReqCategoryList = require('@ss/models/cmsController/ReqItemList');
-const CategoryDao = require('@ss/daoMongo/CategoryDao');
+const ReqCategoryList = require('@ss/models/cmsController/ReqCategoryList');
+const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
 
 module.exports = async (ctx, next) => {
-    try {
-        const reqCategoryList = new ReqCategoryList(ctx.request.body);
-        ReqCategoryList.validModel(reqCategoryList);
+    const reqCategoryList = new ReqCategoryList(ctx.request.body);
+    ReqCategoryList.validModel(reqCategoryList);
 
-        const categoryDao = new CategoryDao(ctx.$dbMongo);
-        const categoryList = await categoryDao.findAll();
+    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
+    const categoryList = await itemCategoryDao.findAll();
 
-        ctx.status = 200;
-        ctx.body = { categoryList };
-        await next();
-    }
-    catch (err) {
-        console.error(err);
-        ctx.status = 400;
-        ctx.body = { message: err.message };
-
-        await next();
-    }
+    ctx.status = 200;
+    ctx.body = { categoryList };
+    await next();
+    
 }

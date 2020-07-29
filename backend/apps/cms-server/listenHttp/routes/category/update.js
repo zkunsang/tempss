@@ -1,39 +1,30 @@
 const ReqCategoryUpdate = require('@ss/models/cmsController/ReqCategoryUpdate');
-const CategoryDao = require('@ss/daoMongo/CategoryDao');
-const Category = require('@ss/models/mongo/Category');
+const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
+const ItemCategory = require('@ss/models/mongo/ItemCategory');
 
 module.exports = async (ctx, next) => {
-    try {
-        const updateDate = ctx.$date;
-        const reqCategoryUpdate = new ReqCategoryUpdate(ctx.request.body);
-        ReqCategoryUpdate.validModel(reqCategoryUpdate);
+    const updateDate = ctx.$date;
+    const reqCategoryUpdate = new ReqCategoryUpdate(ctx.request.body);
+    ReqCategoryUpdate.validModel(reqCategoryUpdate);
 
-        const itemCategory = reqCategoryUpdate.getItemCategory();
-        const categoryDao = new CategoryDao(ctx.$dbMongo);
-        const categoryInfo = await categoryDao.findOne({ itemCategory });
+    const itemCategory = reqCategoryUpdate.getItemCategory();
+    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
+    const itemCategoryInfo = await itemCategoryDao.findOne({ itemCategory });
 
-        if(!categoryInfo) {
-            ctx.status = 400;
-            ctx.body = { message: 'no exsit category' };
-            await next();       
-            return;
-        }
-
-        const updateCategoryInfo =  new Category(reqCategoryUpdate);
-        delete updateCategoryInfo[Category.Schema.ITEM_CATEGORY.key];
-
-        updateCategoryInfo.setUpdateDate(updateDate);
-        await categoryDao.updateOne(itemCategory, updateCategoryInfo)
-
-        ctx.status = 200;
-        ctx.body = {};
-        await next();
-    }
-    catch (err) {
-        console.error(err);
+    if (!itemCategoryInfo) {
         ctx.status = 400;
-        ctx.body = { message: err.message };
-
+        ctx.body = { message: 'no exsit category' };
         await next();
+        return;
     }
+
+    const updateCategoryInfo = new ItemCategory(reqCategoryUpdate);
+    delete updateCategoryInfo[ItemCategory.Schema.ITEM_CATEGORY.key];
+
+    updateCategoryInfo.setUpdateDate(updateDate);
+    await itemCategoryDao.updateOne({ itemCategory}, updateCategoryInfo)
+
+    ctx.status = 200;
+    ctx.body = {};
+    await next();
 }

@@ -1,8 +1,7 @@
-const ValidateUtil = require('@ss/util');
 const Model = require('@ss/models');
 
+const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
-const NullAllow = ValidateUtil.NullAllow;
 
 const Schema = {
     SESSION_ID: { key: 'sessionID', required: true, type: ValidType.STRING },

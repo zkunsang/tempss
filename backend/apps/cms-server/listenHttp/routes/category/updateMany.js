@@ -1,39 +1,53 @@
-const ReqCategoryUpdate = require('@ss/models/cmsController/ReqCategoryUpdate');
-const CategoryDao = require('@ss/daoMongo/CategoryDao');
-const Category = require('@ss/models/mongo/Category');
+const ReqCategoryUpdateMany = require('@ss/models/cmsController/ReqCategoryUpdateMany');
+const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
+const ItemCategory = require('@ss/models/mongo/ItemCategory');
+
+const ArrayUtil = require('@ss/util/ArrayUtil');
 
 module.exports = async (ctx, next) => {
-    try {
-        const updateDate = moment().unix();
-        const reqCategoryUpdate = new ReqCategoryUpdate(ctx.request.body);
-        ReqCategoryUpdate.validModel(reqCategoryUpdate);
+    const updateDate = ctx.$date;
+    const reqCategoryUpdateMany = new ReqCategoryUpdateMany(ctx.request.body);
+    ReqCategoryUpdateMany.validModel(reqCategoryUpdateMany);
 
-        const itemCategory = reqCategoryUpdate.getItemCategory();
-        const categoryDao = new CategoryDao(ctx.$dbMongo);
-        const categoryInfo = await categoryDao.findOne({ itemCategory });
+    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
+    const beforeList = await itemCategoryDao.findAll();
+    const afterList = ItemCategoryDao.mappingList(reqCategoryUpdateMany.getCategoryList());
 
-        if(!categoryInfo) {
-            ctx.status = 400;
-            ctx.body = { message: 'no exsit category' };
-            await next();       
-            return;
-        }
+    const { insertList, updateList, deleteList } = ArrayUtil.compareArrayByKey(beforeList,
+        afterList,
+        ItemCategory.Schema.ITEM_CATEGORY.key);
 
-        const updateCategoryInfo =  new Category(reqCategoryUpdate);
-        delete updateCategoryInfo[Category.Schema.ITEM_CATEGORY.key];
-
-        updateCategoryInfo.setUpdateDate(updateDate);
-        await categoryDao.updateOne(itemCategory, updateCategoryInfo)
-
+    if (deleteList.length > 0) {
         ctx.status = 200;
-        ctx.body = {};
+        const deleteCategory =
+            ArrayUtil.getArrayValueByKey(deleteList, ItemCategory.Schema.ITEM_CATEGORY.key);
+        ctx.body = { message: `delete method not allowed - ${deleteCategory.join(',')}` };
         await next();
+        return;
     }
-    catch (err) {
-        console.error(err);
-        ctx.status = 400;
-        ctx.body = { message: err.message };
 
-        await next();
+    await updateCategoryList(itemCategoryDao, updateList, updateDate);
+    await insertCategoryList(itemCategoryDao, insertList, updateDate)
+
+    ctx.status = 200;
+    ctx.body = {};
+    await next();
+}
+
+async function insertCategoryList(itemCategoryDao, insertList, updateDate) {
+    for (const insertItem of insertList) {
+        insertItem.setUpdateDate(updateDate);
+    }
+
+    await itemCategoryDao.insertMany(insertList);
+}
+
+async function updateCategoryList(itemCategoryDao, updateList, updateDate) {
+    for (const updateItem of updateList) {
+        updateItem.setUpdateDate(updateDate);
+
+        delete updateItem[ItemCategory.Schema.ITEM_CATEGORY.key];
+
+        await itemCategoryDao.updateOne({ itemCategory: updateItem.getItemCategory() }, updateItem);
     }
 }

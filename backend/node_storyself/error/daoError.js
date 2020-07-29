@@ -20,5 +20,8 @@ module.exports.Code = {
     setValidValue: { code: 20010, name: 'setValidValue', message: 'check valid value'},
     notAllowTempObj: { code: 20011, name: 'notAllowTempObj', message: 'make obj using MODEL!'},
     onlyTestFunction: { code: 20012, name: 'onlyTestFunction', message: 'only test function'},
+    deleteOneLength: { code: 20013, name: 'deleteOneLength', message: 'delete length error'},
+    deleteManyLength: { code: 20014, name: 'deleteManyLength', message: 'delete many length error'},
+    
 }
 

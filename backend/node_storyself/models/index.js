@@ -1,4 +1,5 @@
-const ValidateUtil = require('@ss/util');
+const ValidateUtil = require('@ss/util/ValidateUtil')
+
 const NullAllow = ValidateUtil.NullAllow;
 
 class Model {

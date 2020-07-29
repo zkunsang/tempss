@@ -4,40 +4,31 @@ const Story = require('@ss/models/mongo/Story');
 const moment = require('moment');
 
 module.exports = async (ctx, next) => {
-    try {
-        const createDate = moment().unix();
-        const reqStoryCreate = new ReqStoryCreate(ctx.request.body);
-        ReqStoryCreate.validModel(reqStoryCreate);
+    const createDate = moment().unix();
+    const reqStoryCreate = new ReqStoryCreate(ctx.request.body);
+    ReqStoryCreate.validModel(reqStoryCreate);
 
-        const storyId = reqStoryCreate.getStoryId();
-        const storyDao = new StoryDao(ctx.$dbMongo);
+    const storyId = reqStoryCreate.getStoryId();
+    const storyDao = new StoryDao(ctx.$dbMongo);
 
-        const storyData = await storyDao.findOne({ storyId });
-        if (storyData) {
-            console.error(err);
-            ctx.status = 400;
-            ctx.body = { message: 'already exist story' };
-
-            await next();
-            return;
-        }
-
-        const insertStoryData = new Story(reqStoryCreate);
-        insertStoryData.setVersion(1);
-        insertStoryData.setUpdateDate(createDate);
-        await storyDao.insertOne(insertStoryData);
-
-        ctx.status = 200;
-        ctx.body = {};
-    }
-    catch (err) {
+    const storyData = await storyDao.findOne({ storyId });
+    if (storyData) {
         console.error(err);
         ctx.status = 400;
-        ctx.body = { message: err.message };
+        ctx.body = { message: 'already exist story' };
 
         await next();
+        return;
     }
 
+    const insertStoryData = new Story(reqStoryCreate);
+    insertStoryData.setVersion(1);
+    insertStoryData.setUpdateDate(createDate);
+    await storyDao.insertOne(insertStoryData);
 
+    ctx.status = 200;
+    ctx.body = {};
+
+    await next();
 
 }

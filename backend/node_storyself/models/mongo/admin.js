@@ -1,5 +1,6 @@
 const Model = require('@ss/models');
-const ValidateUtil = require('@ss/util');
+
+const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 const AdminRole = ValidateUtil.AdminRole;
 const AdminStatus = ValidateUtil.AdminStatus;

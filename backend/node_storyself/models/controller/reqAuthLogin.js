@@ -1,10 +1,9 @@
-const ValidateUtil = require('@ss/util');
-const Model = require('@ss/models')
+const Model = require('@ss/models');
 
+const ValidateUtil = require('@ss/util/ValidateUtil');
 const Platform = ValidateUtil.Platform;
 const Provider = ValidateUtil.Provider;
 const ValidType = ValidateUtil.ValidType;
-const NullAllow = ValidateUtil.NullAllow;
 const AppStore = ValidateUtil.AppStore;
 
 const Schema = {

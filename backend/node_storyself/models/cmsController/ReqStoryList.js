@@ -1,7 +1,4 @@
-const ValidateUtil = require('@ss/util');
 const Model = require('@ss/models')
-
-const ValidType = ValidateUtil.ValidType;
 
 const Schema = {}
 

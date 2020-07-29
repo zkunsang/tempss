@@ -54,27 +54,31 @@ class Dao {
         this.constructor.checkWhere.call(this, where);
         const findList = await this.collection.find(where).toArray();
 
-        if (findList.length === 0) return null;
+        if (findList.length === 0) return findList;
         return this.constructor.mappingList.call(this.constructor, findList);
     }
 
     async findAll() {
         const findList = await this.collection.find().toArray();
-        if (findList.length === 0) return null;
+        if (findList.length === 0) return findList;
         return this.constructor.mappingList.call(this.constructor, findList);
     }
 
-    // NOT ALLOWED TO DELETE USER DATA. change user status
     async deleteOne(where) {
-        this.checkTestEnv();
         this.constructor.checkWhere.call(this, where);
         const result = await this.collection.deleteMany(where);
         this.constructor.checkDeleteOneCount.call(this, result.deletedCount, where);
     }
 
-    // NOT ALLOWED TO DELETE USER DATA. change user status
+    async deleteMany(where, expectCount) {
+        this.constructor.checkWhere.call(this, where);
+        const result = await this.collection.deleteMany(where);
+        this.constructor.checkDeleteCount.call(this, result.deletedCount, expectCount, where);
+    }
+
+    // NOT ALLOWED TO DELETE ALL DATA. change user status
     async deleteAll() {
-        Dao.checkTestEnv();
+        this.constructor.checkTestEnv();
         await this.collection.deleteMany();
     }
 
@@ -150,8 +154,15 @@ class Dao {
 
     static checkDeleteOneCount(deleteLength, where) {
         if (deleteLength != 1) {
-            throw new SSError.Dao(SSError.Dao.Code.deleteOneLenght,
+            throw new SSError.Dao(SSError.Dao.Code.deleteOneLength,
                 `${this.constructor.name} expect result length 1 - ${deleteLength} where: ${where}`);
+        }
+    }
+
+    static checkDeleteCount(deleteLength, expectedLength, where) {
+        if (deleteLength != expectedLength) {
+            throw new SSError.Dao(SSError.Dao.Code.deleteManyLength,
+                `${this.constructor.name} expect result length ${expectedLength} - ${deleteLength} where: ${where}`);
         }
     }
 

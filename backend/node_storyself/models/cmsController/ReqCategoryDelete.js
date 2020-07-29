@@ -1,15 +1,16 @@
-const Model = require('@ss/models')
+const Model = require('@ss/models');
+
+const ValidateUtil = require('@ss/util/ValidateUtil');
+const ValidType = ValidateUtil.ValidType;
 
 const Schema = {
     ITEM_CATEGORY: { key: 'itemCategory', required: true, type: ValidType.STRING, },
-    CATEGORY_NAME: { key: 'categoryName', required: true, type: ValidType.STRING },
 }
 
-class ReqCategoryUpdate extends Model {
-    constructor({ itemCategory, categoryName }) {
+class ReqCategoryDelete extends Model {
+    constructor({ itemCategory }) {
         super();
         this[Schema.ITEM_CATEGORY.key] = itemCategory;
-        this[Schema.CATEGORY_NAME.key] = categoryName;
     }
 
     getItemCategory() {
@@ -17,5 +18,5 @@ class ReqCategoryUpdate extends Model {
     }
 }
 
-module.exports = ReqCategoryUpdate;
+module.exports = ReqCategoryDelete;
 module.exports.Schema = Schema;

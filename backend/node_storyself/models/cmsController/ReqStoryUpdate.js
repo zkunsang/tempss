@@ -1,5 +1,6 @@
-const ValidateUtil = require('@ss/util');
 const Model = require('@ss/models');
+
+const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 const StoryStatus = ValidateUtil.StoryStatus;
 
@@ -9,7 +10,6 @@ const Schema = {
     THUMBNAIL: { key: 'thumbnail', required: true, type: ValidType.STRING },
     THUMBNAIL_CRC32: { key: 'thumbnailCrc32', required: true, type: ValidType.STRING },
     THUMBNAIL_VERSION: { key: 'thumbnailVersion', required: true, type: ValidType.NUMBER },
-    
 }
 
 class ReqStoryUpdate extends Model {

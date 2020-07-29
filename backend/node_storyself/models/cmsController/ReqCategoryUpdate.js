@@ -1,5 +1,8 @@
 const Model = require('@ss/models')
 
+const ValidateUtil = require('@ss/util/ValidateUtil');
+const ValidType = ValidateUtil.ValidType;
+
 const Schema = {
     ITEM_CATEGORY: { key: 'itemCategory', required: true, type: ValidType.STRING, },
     CATEGORY_NAME: { key: 'categoryName', required: true, type: ValidType.STRING },

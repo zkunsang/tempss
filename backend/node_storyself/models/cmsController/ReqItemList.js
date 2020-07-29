@@ -1,11 +1,6 @@
-const ValidateUtil = require('@ss/util');
 const Model = require('@ss/models')
 
-const ValidType = ValidateUtil.ValidType;
-
-const Schema = {
-    STORY_ID: { key: 'storyId', required: true, type: ValidType.STRING },
-}
+const Schema = {}
 
 class ReqItemList extends Model{
     constructor({}) {

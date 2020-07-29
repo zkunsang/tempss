@@ -1,38 +1,30 @@
 const ReqCategoryCreate = require('@ss/models/cmsController/ReqCategoryCreate');
-const CategoryDao = require('@ss/daoMongo/CategoryDao');
-const Category = require('@ss/models/mongo/Category');
+const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
+const ItemCategory = require('@ss/models/mongo/ItemCategory');
 
 module.exports = async (ctx, next) => {
-    try {
-        const updateDate = ctx.$date;
-        const reqCategoryCreate = new ReqCategoryCreate(ctx.request.body);
-        ReqCategoryCreate.validModel(reqCategoryCreate);
+    const updateDate = ctx.$date;
+    const reqCategoryCreate = new ReqCategoryCreate(ctx.request.body);
+    ReqCategoryCreate.validModel(reqCategoryCreate);
 
-        const itemCategory = reqCategoryCreate.getItemCategory();
-        const categoryDao = new CategoryDao(ctx.$dbMongo);
-        const categoryInfo = await categoryDao.findOne({ itemCategory });
+    const itemCategory = reqCategoryCreate.getItemCategory();
+    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
+    const itemCategoryInfo = await itemCategoryDao.findOne({ itemCategory });
 
-        if (categoryInfo) {
-            ctx.status = 400;
-            ctx.body = { message: 'already exist' };
-            await next();
-            return;
-        }
-
-        const createCategoryInfo = new Category(reqCategoryCreate);
-        createCategoryInfo.setUpdateDate(updateDate);
-
-        await categoryDao.insertOne(createCategoryInfo)
-
-        ctx.status = 200;
-        ctx.body = {};
-        await next();
-    }
-    catch (err) {
-        console.error(err);
+    if (itemCategoryInfo) {
         ctx.status = 400;
-        ctx.body = { message: err.message };
-
+        ctx.body = { message: 'already exist' };
         await next();
+        return;
     }
+
+    const createCategoryInfo = new ItemCategory(reqCategoryCreate);
+    createCategoryInfo.setUpdateDate(updateDate);
+
+    await itemCategoryDao.insertOne(createCategoryInfo)
+
+    ctx.status = 200;
+    ctx.body = {};
+    await next();
+
 }
