@@ -95,6 +95,7 @@ export default {
   data: () => ({
     items: [
       { path: '/story', title: '스토리 관리', icon: 'mdi-view-dashboard' },
+      { path: '/item', title: '아이템 관리', icon: 'mdi-view-dashboard' },
       { path: '/patchtemp', title: '패치 관리', icon: 'mdi-view-dashboard' },
       { path: '/category', title: '카테고리 관리', icon: 'mdi-view-dashboard' },
       { path: '/product', title: '상품 관리', icon: 'mdi-view-dashboard' },

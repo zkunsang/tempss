@@ -6,6 +6,8 @@ import SignIn from '../components/SignIn.vue'
 import StoryList from '../components/StoryList.vue'
 import StoryInfo from '../components/StoryInfo.vue'
 import AosUpload from '../components/AosUpload.vue'
+import ItemList from '../components/ItemList.vue'
+
 import Home from '../components/Home.vue'
 
 import NotFound from '../components/NotFound.vue'
@@ -54,6 +56,11 @@ const router = new VueRouter({
         {
             path: '/story',
             component: StoryList,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/item',
+            component: ItemList,
             beforeEnter: requireAuth
         },
         {

@@ -1,6 +1,7 @@
 const crc = require('crc');
 const AWS = require('aws-sdk');
 const saveAs = require('file-saver');
+const XLSX = require('xlsx');
 
 const { s3_info } = require(location.host.match(/^manage-storykr.qpyou.cn/g) ? '../config/s3_qa.json' : '../config/s3_dev.json');
 const s3_source = new AWS.S3(s3_info);
@@ -41,14 +42,46 @@ function readFileAsync(file) {
     });
 }
 function exportTxt(fileContents, fileName) {
-    var blob = new Blob([fileContents], {type: "text/plain;charset=utf-8"});
+    var blob = new Blob([fileContents], { type: "text/plain;charset=utf-8" });
     saveAs(blob, `${fileName}.txt`);
 }
 
-function exportPurgeTxt(purge_list, fileName ) {
+function exportPurgeTxt(purge_list, fileName) {
     purge_list = purge_list.map((item) => `story/${item}`);
     purge_list = [...new Set(purge_list)];
     exportTxt(purge_list.join("\r\n"), fileName);
 }
 
-module.exports = { s3Upload, readFileAsync, exportTxt, exportPurgeTxt};
+function exportExcel(list, sheetName, fileName) {
+    var ws = XLSX.utils.json_to_sheet(list);
+    let wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.writeFile(wb, fileName);
+}
+
+function importExcel(file, fn) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = (e) => {
+        var data = e.target.result;
+        var workbook = XLSX.read(data, { type: 'binary' });
+
+        workbook.SheetNames.forEach(async (sheetName) => {
+            var jsonObject = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            await fn(jsonObject);
+        })
+    };
+
+    reader.onerror = function (ex) { console.log(ex); };
+
+    reader.readAsBinaryString(file);
+}
+
+module.exports = {
+    s3Upload,
+    readFileAsync,
+    exportTxt,
+    exportPurgeTxt,
+    exportExcel,
+    importExcel
+};

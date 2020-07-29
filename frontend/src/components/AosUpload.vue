@@ -68,7 +68,7 @@
         :headers="headers"
         :items="resourceList"
         :search="search"
-        sort-by="update_date"
+        sort-by="updateDate"
         class="elevation-1"
       >
         <template v-slot:item.resourceId="{ item }">
@@ -78,7 +78,6 @@
         <template v-slot:top>
           <v-toolbar flat color="white">
             <v-toolbar-title>Aos</v-toolbar-title>
-            
             <v-divider
               class="mx-4"
               inset
@@ -88,16 +87,18 @@
               v-model="search"
               append-icon="search"
               label="Search"
-              
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
           </v-toolbar>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary">Reset</v-btn>
+          <v-btn color="primary" @click="getList">Reset</v-btn>
         </template>
+        
+
       </v-data-table>
+      <v-btn color="primary" @click="getList">Reset</v-btn>
     </v-layout>
   </v-container>
 </template>
@@ -119,13 +120,15 @@ export default {
       updateProgress: 0,
       insertProgress: 0,
       resourceList: [],
-      arrangedResourceObject: null,
-      arrangedResourceObjectCrc32: null,
+      arrangedResourceObject: {},
+      arrangedResourceObjectCrc32: {},
       updateList: [],
       insertList: [],
       invalidList: [],
       crcConflictList: [],
       dialog: false,
+      storyId: null,
+      isNew: false,
       headers: [
         { text: '아이디', value: 'resourceId' },
         { text: 'version', value: 'version' },
@@ -134,13 +137,16 @@ export default {
         { text: 'updateDate', value: 'updateDate' },
         { text: 'patchVersion', value: 'patchVersion' },
       ],
-      editedItem: {}
+      editedItem: {},
     }
   },
-  created() {
-    if(this.storyData.storyCode) {
-      this.getList();
+  async created() {
+    this.storyId = this.$route.params.storyId;
+    if(this.storyId) {
+      await this.getList();
     }
+
+    this.isNew = !this.storyId;
   },
   computed: {
     formTitle () {
@@ -151,11 +157,7 @@ export default {
     dialog (val) {
       val || this.close()
     },
-    storyData() {
-      this.getList();
-    }
   },
-  props: ['storyData'],
   methods: {
     ...mapActions([
       'GET_AOS_RESOURCE',
@@ -165,8 +167,8 @@ export default {
       for(let i in list) {
         let item = list[i];
         
-        item.storyId = this.storyData.storyId;
-        await s3Upload(item.file, `${this.storyData.storyId}/aos/${item.version}/${item.resourceId}`);
+        item.storyId = this.storyId;
+        await s3Upload(item.file, `${this.storyId}/aos/${item.version}/${item.resourceId}`);
         this.updateProgress = parseInt(( parseInt(i) + 1 ) / list.length * 100);
         delete item.file;
       }
@@ -180,27 +182,29 @@ export default {
       await this.s3Uploads(this.updateList);
       await this.s3Uploads(this.insertList);
 
-      this.UPDATE_AOS_RESOURCE({
+      await this.UPDATE_AOS_RESOURCE({
           insertList: this.insertList, 
           updateList: this.updateList, 
           storyId: this.storyId
-        }).then(() => {
-          this.uploading = false;
-          this.getList();
         })
+
+      this.uploading = false;
+      await this.getList();
     },
-    getList() {
+    async getList() {
       this.updateList = [];
       this.insertList = [];
       this.invalidList = [];
       this.crcConflictList = [];
-      this.$nextTick(() => {
-        this.GET_AOS_RESOURCE(this.storyData.storyId)
-        .then((result) => {
-          this.resourceList = result;
-          this.arrangedResourceObject =  _.keyBy(this.resourceList, "resourceId");
-          this.arrangedResourceObjectCrc32 = _.keyBy(this.resourceList, "crc32");
-        });
+      this.resourceList = [];
+      this.$nextTick(async () => {
+        console.log('getList called - ', this.isNew);
+        if(this.isNew) return;
+
+        const result = await this.GET_AOS_RESOURCE(this.storyId);
+        this.resourceList = result;
+        this.arrangedResourceObject =  _.keyBy(this.resourceList, "resourceId");
+        this.arrangedResourceObjectCrc32 = _.keyBy(this.resourceList, "crc32");
       })
     },
     async onFileUpload(fileList) {
@@ -222,25 +226,6 @@ export default {
         
         let resourceId = file.name;
         fileObject.resourceId = resourceId;
-
-        // let fileType = id.split("_")[0]
-        
-        // if( fileType == "image") {fileObject.type = "IMAGE"; fileObject.vicon="mdi-image";}
-        // else if( fileType == "sound") {fileObject.type = "SOUND"; fileObject.vicon="mdi-music-note";}
-        // else if( fileType == "xml") {fileObject.type = "XML"; fileObject.vicon="mdi-xml";}
-        // else if( fileType == "illust") {fileObject.type = "ILLUST"; fileObject.vicon="mdi-alpha-i-circle-outline";}
-        // else if( fileType == "title") {fileObject.type = "TITLE"; fileObject.vicon="mdi-format-title";}
-        // else if( fileType == "common") {fileObject.type = "COMMON"; fileObject.vicon="mdi-alpha-c-circle-outline";}
-        // else if( fileType == "intro") {fileObject.type = "INTRO"; fileObject.vicon="mdi-debug-step-into";}
-        // else if( fileType == "detail") {fileObject.type = "DETAIL"; fileObject.vicon="mdi-details";}
-        // else if( fileType == "illustthumb") {fileObject.type = "ILLUST_THUMB"; fileObject.vicon="mdi-alpha-i-circle";}
-        // else if( fileType == "branch") {fileObject.type = "BRANCH"; fileObject.vicon="mdi-source-branch";}
-        // else {
-        //   fileObject.type = "INVALID_TYPE"
-        //   fileObject.vicon="mdi-alert-circle"
-        //   tempInvalidList.push(fileObject);
-        //   continue;
-        // }
 
         let file_buffer = await readFileAsync(file);
         fileObject.crc32 = crc.crc32(file_buffer).toString(16);

@@ -18,17 +18,32 @@ const actions = {
         return api.story.update(story);
     },
     GET_STORY_LIST(_) {
-        return api.story.storyList();
+        return api.story.list();
     },
     GET_STORY_INFO(_, storyId) {
-        return api.story.storyInfo(storyId);
+        return api.story.info(storyId);
     },
     GET_AOS_RESOURCE(_, storyId) {
-        return api.story.resourceList(storyId);
+        return api.resource.list(storyId);
     },
     UPDATE_AOS_RESOURCE(_, resourceList) {
-        return api.story.resourceUpdate(resourceList);
-    }
+        return api.resource.update(resourceList);
+    },
+    LIST_ITEM(_) {
+        return api.item.list();
+    },
+    DELETE_ITEM(_, item) {
+        return api.item.delete(item);
+    },
+    CREATE_ITEM(_, item) {
+        return api.item.create(item);
+    },
+    UPDATE_ITEM(_, item) {
+        return api.item.update(item);
+    },
+    UPDATE_MANY_ITEM(_, item) {
+        return api.item.updateMany(item);
+    },
 }
 
 export default actions;

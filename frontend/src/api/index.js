@@ -51,18 +51,40 @@ export const story = {
   update(story) {
     return request('post', '/story/update', story);
   },
-  storyList() {
+  list() {
     return request('post', '/story/list');
   },
-  storyInfo(storyId) {
+  info(storyId) {
     return request('post', '/story/info', { storyId });
   },
-  resourceList(storyId) {
-    return request('post', '/story/resourcelist', { storyId });
+  
+}
+
+export const resource ={
+  list(storyId) {
+    return request('post', '/resource/list', { storyId });
   },
-  resourceUpdate(resoureList) {
-    return request('post', '/story/resourceupdate', resoureList);
+  update(resoureList) {
+    return request('post', '/resource/update', resoureList);
   },
+}
+
+export const item = {
+  list() {
+    return request('post', '/item/list', {});
+  },
+  delete(item) {
+    return request('post', '/item/delete', item);
+  },
+  create(item) {
+    return request('post', '/item/create', item);
+  },
+  update(item) {
+    return request('post', '/item/update', item);
+  },
+  updateMany(item) {
+    return request('post', '/item/updateMany', item);
+  }
 }
 
 export const banner = {

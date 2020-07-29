@@ -14,7 +14,7 @@
       <template v-slot:top>
         <v-alert v-if="isLive" type="info" dense>데이터 수정 -> 디자인 적용</v-alert>    
           <v-toolbar flat color="white">
-            <v-toolbar-title>출석 리스트</v-toolbar-title>
+            <v-toolbar-title>아이템 리스트</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-btn color="primary" dark class="mb-2" @click="onCreate">New Item</v-btn>
             <v-spacer></v-spacer>

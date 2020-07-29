@@ -66,7 +66,7 @@
                 리소스
             </v-col>
             <v-col>
-              <AosUploadVue :story-data="storyData"></AosUploadVue>
+              <AosUploadVue></AosUploadVue>
             </v-col>
             </v-row>
         </v-card>
@@ -89,10 +89,11 @@ import AosUploadVue from './AosUpload.vue';
 
 var crc = require('crc');
 const {s3Upload} = require("../util/fileutil");
+const {eventBus} = require('../util/eventBus');
 
 const no_image = require(`../assets/no_image.jpg`);
 export default {
-  props: ['storyData', 'isNew'],
+  
   data() {
     return {
       thumbFile: null,
@@ -100,6 +101,9 @@ export default {
       dialog: false,
       patchInfo: 'temp',
       saveError: '',
+      storyData: {},
+      originStoryData: {},
+      isNew: false
     }
   },
   components: {
@@ -110,26 +114,31 @@ export default {
         CDN_URL: 'CDN_URL'
     }),
   },
-  created() {
-    this.thumbImg = this.getSrcUrl(this.storyData);
-  },
-  watch: {
-    storyData() {
+  async created() {
+    this.storyId = this.$route.params.storyId;
+    if( this.storyId ) {
+      this.storyData =  await this.GET_STORY_INFO(this.storyId)
+      this.originStoryData = Object.assign(this.storyData);
       this.thumbImg = this.getSrcUrl(this.storyData);
     }
+
+    this.isNew = !!this.storyId;
+  },
+  watch: {
   },
   methods: {
     ...mapActions([
+      'GET_STORY_INFO',
       'CREATE_STORY',
-      'UPDATE_STORY',
-      'GET_STORY_LIST'
+      'UPDATE_STORY'
     ]),
     getStatusLabel() {
       return this.storyData.status ? "활성" : "비활성"
     },
     getSrcUrl(storyData) {
-      return storyData.thumb ? `${this.CDN_URL}${storyData.thumb}` :no_image;
-      //return no_image;
+      if(!storyData) return no_image;
+      const thumbUrl = `${this.CDN_URL}${storyData.storyId}/thumbnail/${storyData.thumbnailVersion}/${storyData.thumbnail}`;
+      return storyData.thumbnail ? thumbUrl : no_image;
     },
     
     onThumbChange(thumbFile) {
@@ -154,20 +163,24 @@ export default {
 
       // 기타 데이터 세팅
       if(this.thumbFile) {
-        this.storyData.thumb = `images/${this.patchInfo}/${this.thumbFile.name}`;
-        this.storyData.crc = this.thumbFile.crc;
+        this.storyData.thumbnail = `${this.thumbFile.name}`;
+        this.storyData.thumbnailCrc32 = this.thumbFile.crc;
+        this.storyData.thumbnailVersion = this.originStoryData.thumbnailVersion || 0 + 1;
       }
 
-      const saveFunc = this.isNew ? this.CREATE_STORY : this.UPDATE_STORY;
-      this.storyData ? this.storyData = 1 : this.storyData = 0;
+      let saveFunc = this.isNew ? this.CREATE_STORY : this.UPDATE_STORY;
+      this.storyData.status = this.storyData.status ? 1 : 0;
 
-      saveFunc(this.storyData).then( async () => {
-        if( this.thumbFile ) {
-          await s3Upload(this.thumbFile, `images/${this.patchInfo}/${this.thumbFile.name}`);
-        }
-        this.dialog = false
-        // 성공하면 파일 업로드
-      });
+      console.log('onSave', this.storyData);
+
+      const result = await saveFunc(this.storyData);
+
+      if( this.thumbFile ) {
+        await s3Upload(this.thumbFile, `${this.storyData.storyId}/thumbnail/${this.storyData.thumbnailVersion}/${this.storyData.thumbnail}`);
+      }
+      this.dialog = false
+
+      
     }
   }
 };

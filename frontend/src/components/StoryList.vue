@@ -9,8 +9,8 @@
     </v-overlay>
     <v-container>
     <v-btn color="primary" dark class="mb-2" @click.prevent="createStory">신규 스토리 등록</v-btn>
-    <v-dialog v-model="dialog" >
-      <TemplateStoryVue :story-data="storyData" :is-new="true"></TemplateStoryVue>
+    <v-dialog v-model="dialog">
+      <TemplateStoryVue></TemplateStoryVue>
     </v-dialog>
     </v-container>
     <v-card v-for="(story, index) in storyList" :key="index" >
@@ -28,6 +28,7 @@
 
 import TemplateStoryVue from './TemplateStory.vue';
 import {mapActions, mapState} from 'vuex'
+import {eventBus} from '../util/eventBus';
 
 var crc = require('crc');
 const {s3Upload} = require("../util/fileutil");
@@ -64,14 +65,17 @@ export default {
       'GET_STORY_LIST'
     ]),
     getSrcUrl(storyData) {
-      return storyData.thumb ? `${this.CDN_URL}${storyData.thumb}` :no_image;
-      // return no_image;
+      return storyData.thumbnail ? `${this.CDN_URL}${storyData.storyId}/thumbnail/${storyData.thumbnailVersion}/${storyData.thumbnail}` :no_image;
     },
     createStory() {
       this.dialog=true;
       this.saveError='';
 
-      this.storyData={
+      this.$nextTick(() => {
+        eventBus.$emit('createStory', this.storyData, true);
+      })
+      
+      this.storyData = {
         status: 0,
       }
     },
