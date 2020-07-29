@@ -7,6 +7,8 @@ import StoryList from '../components/StoryList.vue'
 import StoryInfo from '../components/StoryInfo.vue'
 import AosUpload from '../components/AosUpload.vue'
 import ItemList from '../components/ItemList.vue'
+import ItemCategory from '../components/ItemCategory.vue'
+
 
 import Home from '../components/Home.vue'
 
@@ -61,6 +63,11 @@ const router = new VueRouter({
         {
             path: '/item',
             component: ItemList,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/itemCategory',
+            component: ItemCategory,
             beforeEnter: requireAuth
         },
         {

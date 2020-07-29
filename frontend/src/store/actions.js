@@ -44,6 +44,24 @@ const actions = {
     UPDATE_MANY_ITEM(_, item) {
         return api.item.updateMany(item);
     },
+    UPDATE_MANY_ITEM_MATERIAL(_, item) {
+        return api.item.updateManyMaterial(item);
+    },
+    LIST_CATEGORY(_, item) {
+        return api.category.list(item);
+    },
+    CREATE_CATEGORY(_, item) {
+        return api.category.create(item);
+    },
+    UPDATE_CATEGORY(_, item) {
+        return api.category.update(item);
+    },
+    UPDATE_MANY_CATEGORY(_, item) {
+        return api.category.updateMany(item);
+    },
+    DELETE_CATEGORY(_, item) {
+        return api.category.delete(item);
+    },
 }
 
 export default actions;

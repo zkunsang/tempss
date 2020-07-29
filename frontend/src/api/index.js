@@ -84,8 +84,30 @@ export const item = {
   },
   updateMany(item) {
     return request('post', '/item/updateMany', item);
+  },
+  updateManyMaterial(item) {
+    return request('post', '/item/updateManyMaterial', item);
   }
 }
+
+export const category = {
+  list() {
+    return request('post', '/category/list', {});
+  },
+  delete(item) {
+    return request('post', '/category/delete', item);
+  },
+  create(item) {
+    return request('post', '/category/create', item);
+  },
+  update(item) {
+    return request('post', '/category/update', item);
+  },
+  updateMany(item) {
+    return request('post', '/category/updateMany', item);
+  }
+}
+
 
 export const banner = {
   fetch_banner_list(user_id) {
