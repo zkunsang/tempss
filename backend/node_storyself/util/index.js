@@ -60,6 +60,11 @@ const AdminStatus = {
     DEACTIVATE: 3,
 }
 
+const CommonBoolean = {
+    TRUE: 1,
+    FALSE: 0
+}
+
 
 class ValidateUtil {
     constructor() {
@@ -191,3 +196,4 @@ module.exports.AppStore = AppStore;
 module.exports.StoryStatus = StoryStatus;
 module.exports.AdminRole = AdminRole;
 module.exports.AdminStatus = AdminStatus;
+module.exports.CommonBoolean = CommonBoolean;
