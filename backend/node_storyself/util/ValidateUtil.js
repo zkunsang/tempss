@@ -40,6 +40,7 @@ const Platform = {
 const AppStore = {
     GOOGLE: 'google',
     ONESTORE: 'onestore',
+    APPLE: 'apple',
 }
 
 const StoryStatus = {

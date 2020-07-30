@@ -16,7 +16,7 @@ module.exports = async (ctx, next) => {
         return;
     }
 
-    await itemCategoryDao.deleteOne(itemCategoryInfo);
+    await itemCategoryDao.deleteOne({itemCategory});
 
     ctx.status = 200;
     ctx.body = {};
