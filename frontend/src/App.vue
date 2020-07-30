@@ -97,9 +97,10 @@ export default {
       { path: '/story', title: '스토리 관리', icon: 'mdi-view-dashboard' },
       { path: '/item', title: '아이템 관리', icon: 'mdi-view-dashboard' },
       { path: '/itemCategory', title: '아이템 카테고리', icon: 'mdi-view-dashboard' },
+      { path: '/shop', title: '상품 관리', icon: 'mdi-view-dashboard' },
+      { path: '/shopGroup', title: '상품 그룹 관리', icon: 'mdi-view-dashboard' },
       { path: '/patchtemp', title: '패치 관리', icon: 'mdi-view-dashboard' },
       { path: '/category', title: '카테고리 관리', icon: 'mdi-view-dashboard' },
-      { path: '/product', title: '상품 관리', icon: 'mdi-view-dashboard' },
       { path: '/coupon', title: '쿠폰 관리', icon: 'mdi-view-dashboard' },
     ]
   })

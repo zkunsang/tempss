@@ -299,10 +299,6 @@ export default {
     },
     close () {
       this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
     },
     async save () {
       this.insert ?

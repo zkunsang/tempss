@@ -90,6 +90,45 @@ export const item = {
   }
 }
 
+export const product = {
+  list() {
+    return request('post', '/product/list', {});
+  },
+  delete(product) {
+    return request('post', '/product/delete', product);
+  },
+  create(product) {
+    return request('post', '/product/create', product);
+  },
+  update(product) {
+    return request('post', '/product/update', product);
+  },
+  updateMany(product) {
+    return request('post', '/product/updateMany', product);
+  },
+  updateManyReward(product) {
+    return request('post', '/product/updateManyReward', product);
+  }
+}
+
+export const productGroup = {
+  list() {
+    return request('post', '/productGroup/list', {});
+  },
+  delete(product) {
+    return request('post', '/productGroup/delete', product);
+  },
+  create(product) {
+    return request('post', '/productGroup/create', product);
+  },
+  update(product) {
+    return request('post', '/productGroup/update', product);
+  },
+  updateMany(product) {
+    return request('post', '/productGroup/updateMany', product);
+  },
+}
+
 export const category = {
   list() {
     return request('post', '/category/list', {});

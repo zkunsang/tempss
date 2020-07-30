@@ -62,6 +62,39 @@ const actions = {
     DELETE_CATEGORY(_, item) {
         return api.category.delete(item);
     },
+    LIST_PRODUCT(_) {
+        return api.product.list();
+    },
+    CREATE_PRODUCT(_, item) {
+        return api.product.create(item);
+    },
+    DELETE_PRODUCT(_, item) {
+        return api.product.delete(item);
+    },
+    UPDATE_PRODUCT(_, item) {
+        return api.product.update(item);
+    },
+    UPDATE_MANY_PRODUCT(_, item) {
+        return api.product.updateMany(item);
+    },
+    UPDATE_MANY_PRODUCT_REWARD(_, item) {
+        return api.product.updateManyReward(item);
+    },
+    LIST_GROUP(_, item) {
+        return api.productGroup.list(item);
+    },
+    CREATE_GROUP(_, item) {
+        return api.productGroup.create(item);
+    },
+    UPDATE_GROUP(_, item) {
+        return api.productGroup.update(item);
+    },
+    DELETE_GROUP(_, item) {
+        return api.productGroup.delete(item);
+    },
+    UPDATE_GROUP_MANY(_, item) {
+        return api.productGroup.updateMany(item);
+    },
 }
 
 export default actions;

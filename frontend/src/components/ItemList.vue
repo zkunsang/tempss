@@ -343,6 +343,9 @@ export default {
       await this.getItemList();
       this.close();
     },
+    close () {
+      this.dialog = false
+    },
     checkNull(obj, checkList) {
       let isPossible = true;
       for(const checkItem of checkList) {

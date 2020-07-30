@@ -8,6 +8,9 @@ import StoryInfo from '../components/StoryInfo.vue'
 import AosUpload from '../components/AosUpload.vue'
 import ItemList from '../components/ItemList.vue'
 import ItemCategory from '../components/ItemCategory.vue'
+import Shop from '../components/Shop.vue'
+import ShopGroup from '../components/ShopGroup.vue'
+
 
 
 import Home from '../components/Home.vue'
@@ -68,6 +71,16 @@ const router = new VueRouter({
         {
             path: '/itemCategory',
             component: ItemCategory,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/shop',
+            component: Shop,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/shopGroup',
+            component: ShopGroup,
             beforeEnter: requireAuth
         },
         {
