@@ -1,4 +1,5 @@
 const Model = require('@ss/models');
+const Inventory = require("@ss/models/mongo/Inventory");
 
 const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
@@ -30,6 +31,14 @@ class ProductReward extends Model {
 
     getProductId() {
         return this[Schema.PRODUCT_ID.key];
+    }
+
+    makeInvetoryObject() {
+        let inventoryObj = {}
+        inventoryObj[Inventory.Schema.ITEM_ID.key] = this[Schema.REWARD_ID.key];
+        inventoryObj[Inventory.Schema.ITEM_QNY.key] = this[Schema.REWARD_QNY.key];
+
+        return inventoryObj;
     }
 }
 

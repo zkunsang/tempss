@@ -4,18 +4,13 @@ const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 
 const Schema = {
-    SESSION_ID: { key: 'sessionID', required: true, type: ValidType.STRING },
     POLICY_VERSION: { key: 'policyVersion', required: true, type: ValidType.NUMBER }
 }
 
 class ReqUserPolicy extends Model {
-    constructor({ sessionId }) {
+    constructor({ policyVersion }) {
         super();
-        this[Schema.SESSION_ID.key] = sessionId;
-    }
-
-    getSessionId() {
-        return this[Schema.SESSION_ID.key];
+        this[Schema.POLICY_VERSION.key] = policyVersion;
     }
 
     getPolicyVersion() {

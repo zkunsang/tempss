@@ -11,56 +11,44 @@ const shortid = require('shortid');
 const moment = require('moment');
 
 module.exports = async (ctx, next) => {
-    try {
-        const loginDate = moment().unix();
-        const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
-        ReqAuthLogin.validModel(reqAuthLogin);
-        
-        const uid = reqAuthLogin.getUID();
+    const loginDate = ctx.$date
+    const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
+    ReqAuthLogin.validModel(reqAuthLogin);
 
-        const userDao = new UserDao(dbMongo);
-        const sessionDao = new SessionDao(dbRedis);
+    const uid = reqAuthLogin.getUID();
 
-        let userInfo = await userDao.findOne({ uid });
+    const userDao = new UserDao(dbMongo);
+    const sessionDao = new SessionDao(dbRedis);
 
-        const sessionId = shortid.generate();
-        
-        if (userInfo) {
-            const oldSessionId = userInfo.getSessionId();
-            userInfo.setSessionId(sessionId);
-            userInfo.setLastLoginDate(loginDate);
-            await userDao.updateOne({ uid: userInfo.getUID() }, { sessionId, lastLoginDate: loginDate });
-            await sessionDao.del(oldSessionId);
-        }
-        else {
-            userInfo = new User(reqAuthLogin);
-            userInfo.setStatus(UserStatus.NONE);
-            userInfo.setSessionId(sessionId);
-            userInfo.setLastLoginDate(loginDate);
-            userInfo.setCreateDate(loginDate);
-            await userDao.insertOne(userInfo);
-        }
+    let userInfo = await userDao.findOne({ uid });
 
-        sessionDao.set(sessionId, userInfo);
-        
-        ctx.status = 200;
-        ctx.body = { sessionId };
+    const sessionId = shortid.generate();
 
-        await next();
-    } catch(err) {
-        if( err instanceof SSError.RunTime ) {
-            ctx.status = 400;
-            ctx.body = err;
-        }
-        else {
-            ctx.status = 500;
-            ctx.body = {error: 'internalError'};
-        }
-        console.error(err);
-        
-        return await next();
+    if (userInfo) {
+        const oldSessionId = userInfo.getSessionId();
+        userInfo.setSessionId(sessionId);
+        userInfo.setLastLoginDate(loginDate);
+        await userDao.updateOne({ uid: userInfo.getUID() }, { sessionId, lastLoginDate: loginDate });
+        await sessionDao.del(oldSessionId);
     }
-    
+    else {
+        userInfo = new User(reqAuthLogin);
+        userInfo.setStatus(UserStatus.NONE);
+        userInfo.setSessionId(sessionId);
+        userInfo.setLastLoginDate(loginDate);
+        userInfo.setCreateDate(loginDate);
+        await userDao.insertOne(userInfo);
+    }
+
+    // 인벤토리 정보
+    // 
+
+    sessionDao.set(sessionId, userInfo);
+
+    ctx.status = 200;
+    ctx.body = { sessionId };
+
+    await next();
 };
 
 
@@ -82,16 +70,16 @@ module.exports = async (ctx, next) => {
  *        <br>policyVersion: 개인 정책 버젼
  *      responseClass: response
  *      nickname: config
- *      consumes: 
+ *      consumes:
  *        - text/html
  *      parameters:
  *        - name: body
  *          paramType: body
  *          dataType: reqLogin
  *          required: true
- *          
- */       
- 
+ *
+ */
+
 /**
  * @swagger
  * models:
@@ -123,7 +111,7 @@ module.exports = async (ctx, next) => {
  *       clientVersion:
  *         type: String
  *         required: true
- *         description: 클라이언트 앱 버젼입니다. 
+ *         description: 클라이언트 앱 버젼입니다.
  *   response:
  *     id: response
  *     properties:
@@ -131,10 +119,10 @@ module.exports = async (ctx, next) => {
  *         type: String
  *         required: true
  *       url:
- *         type: String  
- *         required: true  
+ *         type: String
+ *         required: true
  *       policyVersion:
- *         type: String  
- *         required: true  
- *   
+ *         type: String
+ *         required: true
+ *
  * */

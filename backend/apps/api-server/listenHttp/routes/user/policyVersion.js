@@ -7,54 +7,24 @@ const SSError = require('@ss/error');
 const ReqUserPolicy = require('@ss/models/controller/ReqUserPolicy');
 
 module.exports = async (ctx, next) => {
-    try {
-        const userDao = new UserDao(dbMongo);
-        const sessionDao = new SessionDao(dbRedis);
-        const reqUserPolicy = new ReqUserPolicy(ctx.request.body);
-        ReqUserPolicy.validModel(reqUserPolicy);
+    const reqUserPolicy = new ReqUserPolicy(ctx.request.body);
+    ReqUserPolicy.validModel(reqUserPolicy);
 
-        const userSessionInfo = await sessionDao.get(reqUserPolicy.getSessionId());
+    const userInfo = ctx.$userInfo;
 
-        if (userSessionInfo) {
-            // TODO: controller error;
-            throw new Error({ errMessage: 'no user session info exist user' });
-        }
-
-        const userInfo = await userDao.findOne(userSessionInfo.getUID());
-
-        if (userInfo) {
-            // TODO: controller error;
-            throw new Error({ errMessage: 'no exist user' });
-        }
-
-
-        const ssPolicyVersion = ss.configs.apiServer.policyVersion;
-        const userPolicyVersion = reqUserPolicy.getPolicyVersion();
-        if (ssApiVersion !== reqUserPolicy.getPolicyVersion()) {
-            // TODO: different version
-            throw new Error({ errMessage: 'wrong policyVersion' });
-        }
-
-        await userDao.update({ uid: userInfo.getUID() }, { policyVersion: ssApiVersion });
-
-        ctx.status = 200;
-        ctx.body = {};
-
-        await next();
-    } catch (err) {
-        if (err instanceof SSError.RunTime) {
-            ctx.status = 400;
-            ctx.body = err;
-        }
-        else {
-            ctx.status = 500;
-            ctx.body = { error: 'internalError' };
-        }
-        console.error(err);
-
-        return await next();
+    const policyVersion = ss.configs.apiServer.policyVersion;
+    const updatePolicyVersion = reqUserPolicy.getPolicyVersion();
+    if (policyVersion !== updatePolicyVersion) {
+        // TODO: different version
+        throw new Error({ errMessage: 'wrong policyVersion' });
     }
 
+    await userDao.update({ uid: userInfo.getUID() }, { policyVersion: policyVersion });
+
+    ctx.status = 200;
+    ctx.body = {};
+
+    await next();
 };
 
 /**

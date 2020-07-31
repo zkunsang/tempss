@@ -66,6 +66,10 @@ const CommonBoolean = {
     FALSE: 0
 }
 
+const PurchaseStatus = {
+    SUCCESS: '0',
+    FAIL: '1'
+}
 
 class ValidateUtil {
     constructor() {
@@ -212,3 +216,4 @@ module.exports.StoryStatus = StoryStatus;
 module.exports.AdminRole = AdminRole;
 module.exports.AdminStatus = AdminStatus;
 module.exports.CommonBoolean = CommonBoolean;
+module.exports.PurchaseStatus = PurchaseStatus;

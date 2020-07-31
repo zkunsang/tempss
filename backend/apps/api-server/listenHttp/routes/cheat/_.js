@@ -22,14 +22,7 @@ module.exports = async (ctx, next) => {
         return;
     }
 
-    const userSessionInfo = new User();
-
-    if(!userInfo) {
-        ctx.status = 401;
-        ctx.body = {message: 'no user info'};
-        return;
-    }
-
+    const userSessionInfo = new User(sessionObj);
     User.validModel(userSessionInfo);
 
     const userDao = new UserDao(dbMongo);

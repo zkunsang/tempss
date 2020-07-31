@@ -38,6 +38,22 @@ class Item extends Model {
     getItemId() {
         return this[Schema.ITEM_ID.key];
     }
+
+    getGroupId() {
+        return this[Schema.GROUP_ID.key];
+    }
+
+    getVolatileSeconds() {
+        return this[Schema.VOLATILE_SECONDS.key];
+    }
+
+    getMaxQny() {
+        return this[Schema.MAX_QNY.key];
+    }
+
+    getOverLap() {
+        return this[Schema.OVERLAP.key];
+    }
 }
 
 module.exports = Item;

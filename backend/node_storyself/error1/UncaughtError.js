@@ -1,4 +1,4 @@
-const RunTimeError = require('./runTimeError');
+const RunTimeError = require('./RuntimeError');
 
 class UncaughtError extends RunTimeError {
     constructor(errObj) {

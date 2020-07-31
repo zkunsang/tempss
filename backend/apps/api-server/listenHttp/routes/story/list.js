@@ -6,59 +6,51 @@ const _ = require('lodash');
 
 
 module.exports = async (ctx, next) => {
-    try {
-        const storyDao = new StoryDao(dbMongo);
-        const resourceDao = new ResourceDao(dbMongo);
+    const storyDao = new StoryDao(dbMongo);
+    const resourceDao = new ResourceDao(dbMongo);
 
-        const storyList = await storyDao.findAll();
+    const storyList = await storyDao.findAll();
 
-        if (storyList === null ) {
-            ctx.status = 200;
-            ctx.body = {};
-            await next();
-            return;
-        }
-
-        storyList.map((item) => {
-            item.id = item.storyId;
-            delete item.storyId;
-            delete item.code;
-            delete item.summary;
-            delete item._id;
-        });
-
-        const resourceList = await resourceDao.findAll();
-
-
-        let resourceMap = {};
-        resourceList.map((item) => {
-            (resourceMap[item.storyId] ||
-                (resourceMap[item.storyId] = []))
-                .push(item);
-
-            item.id = item.resourceId;
-
-            delete item.resourceId;
-            delete item._id;
-            delete item.storyId;
-        })
-
-        storyList.map((item) => {
-            if (resourceMap[item.id]) {
-                item.resourceList = resourceMap[item.id];
-            }
-        })
-
+    if (storyList === null) {
         ctx.status = 200;
-        ctx.body = { storyList };
+        ctx.body = {};
         await next();
-    }
-    catch (err) {
-        console.error(err);
-        await next();
+        return;
     }
 
-    
+    storyList.map((item) => {
+        item.id = item.storyId;
+        delete item.storyId;
+        delete item.code;
+        delete item.summary;
+        delete item._id;
+    });
+
+    const resourceList = await resourceDao.findAll();
+
+
+    let resourceMap = {};
+    resourceList.map((item) => {
+        (resourceMap[item.storyId] ||
+            (resourceMap[item.storyId] = []))
+            .push(item);
+
+        item.id = item.resourceId;
+
+        delete item.resourceId;
+        delete item._id;
+        delete item.storyId;
+    })
+
+    storyList.map((item) => {
+        if (resourceMap[item.id]) {
+            item.resourceList = resourceMap[item.id];
+        }
+    })
+
+    ctx.status = 200;
+    ctx.body = { storyList };
+    await next();
 }
 
 

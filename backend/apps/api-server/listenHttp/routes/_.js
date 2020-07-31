@@ -1,35 +1,20 @@
 const moment = require('moment');
-
-class RequsetObj {
-    constructor(ctx) {
-        this.startTime = moment().unix();
-        this.sessionId = ctx.headers.sessionId;
-        this.body = ctx.body;
-        this.url = ctx.url;
-
-               
-        
-    }
-
-    end() {
-        moment().unix();
-        // 
-    }
-}
+const helper = require('@ss/helper');
+const SSError = require('@ss/error');
 
 module.exports = async (ctx, next) => {
-    // ctx.$reqObj = new RequsetObj(ctx);
-    
-
-    // 세션 헤더 ctx.headers
-    // req Index
-    // req unixtimestamp
-    // start time
-    // end time
-    // TODO: 
-    // ip ctx.headers.host 
-    // nginx 확인 route 53확인
-
-    const result = await next();
-    // ctx.$reqObj
+    ctx.$date = moment().unix();
+    try {
+        await next();
+    }
+    catch (err) {
+        if(err instanceof SSError.RunTime) {
+            helper.slack.sendMessage(err.makeErrorMessage());
+        } else {
+            helper.slack.sendMessage(err);
+        }
+        console.error(err);
+        // ctx.status = 400;
+        // ctx.body = { message: err.message };
+    }
 };
