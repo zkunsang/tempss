@@ -10,5 +10,4 @@ module.exports = async () => {
     await dbMongo.ready();
     await dbRedis.ready();
     await wrapper.ready();
-    
 };

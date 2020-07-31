@@ -11,7 +11,7 @@ let storyDao = null;
 
 before(async () => {
     await require('@app/api-server/boot/initSS')();
-    dbMongo = require('../../apps/cms-server/listenHttp/routes/resource/node_modules/@ss/dbMongo');
+    dbMongo = require('@@ss/dbMongo');
 
     storyDao = new StoryDao(dbMongo);
 });

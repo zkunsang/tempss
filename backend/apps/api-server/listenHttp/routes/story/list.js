@@ -1,8 +1,7 @@
-const dbMongo = require('../../../../cms-server/listenHttp/routes/resource/node_modules/@ss/dbMongo');
+const dbMongo = require('@ss/dbMongo');
 const StoryDao = require('@ss/daoMongo/StoryDao');
 const ResourceDao = require('@ss/daoMongo/ResourceDao');
 
-const mongo = require('../../../../cms-server/listenHttp/routes/resource/node_modules/@ss/dbMongo');
 const _ = require('lodash');
 
 
