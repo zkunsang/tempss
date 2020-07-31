@@ -9,7 +9,7 @@ const Schema = {
     ITEM_QNY: { key: 'itemQny', required: true, type: ValidType.NUMBER },
     UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
     CREATE_DATE: { key: 'createDate', required: true, type: ValidType.UNIX_TIMESTAMP },
-    END_DATE: { key: 'endDate', required: true, type: ValidType.UNIX_TIMESTAMP },
+    END_DATE: { key: 'endDate', required: false, type: ValidType.UNIX_TIMESTAMP },
 }
 
 class Inventory extends Model {
@@ -42,6 +42,10 @@ class Inventory extends Model {
 
     setItemQny(itemQny) {
         this[Schema.ITEM_QNY.key] = itemQny;
+    }
+
+    getUID() {
+        return this[Schema.UID.key];
     }
 
     getUpdateDate() {

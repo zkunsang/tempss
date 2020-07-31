@@ -1,6 +1,6 @@
-const RunTimeError = require('./RunTimeError');
+const RuntimeError = require('./RuntimeError');
 
-class ControllerError extends RunTimeError {
+class ControllerError extends RuntimeError {
     constructor(errCode, errObj) {
         super('ControllerError', errCode, errObj);
     }

@@ -19,6 +19,9 @@ class SessionDao {
     async del(sessionId) {
         await this.connection.del(`${Session.key}:${sessionId}`);
     }
+    async update(sessionId) {
+        await this.connection.expire(`${Session.key}:${sessionId}`, sessionExpire);
+    }
 }
 
 module.exports = SessionDao;

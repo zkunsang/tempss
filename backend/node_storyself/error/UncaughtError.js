@@ -1,6 +1,6 @@
-const RunTimeError = require('./RuntimeError');
+const RuntimeError = require('./RuntimeError');
 
-class UncaughtError extends RunTimeError {
+class UncaughtError extends RuntimeError {
     constructor(errObj) {
         super('UncaughtError', errObj);
     }

@@ -54,6 +54,10 @@ class Item extends Model {
     getOverLap() {
         return this[Schema.OVERLAP.key];
     }
+
+    getUseable() {
+        return this[Schema.USEABLE.key];
+    }
 }
 
 module.exports = Item;

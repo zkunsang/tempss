@@ -1,4 +1,4 @@
-class RunTimeError extends Error {
+class RuntimeError extends Error {
     constructor(errorType, {name, code, message}) {
         super(name);
         this.errorType = errorType;
@@ -32,4 +32,4 @@ class RunTimeError extends Error {
     getHandled() { return this.isHandled; }
 }
 
-module.exports = RunTimeError;
+module.exports = RuntimeError;

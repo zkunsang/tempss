@@ -90,9 +90,10 @@ class ValidateUtil {
             const required = schema[schemaKey].required;
             const type = schema[schemaKey].type;
             const validRange = schema[schemaKey].validRange;
+            const validObject = schema[schemaKey].validObject;
             const item = obj[field];
 
-            this.validFunc[type].call(this, model, field, item, nullable ? true : !required, validRange);
+            this.validFunc[type].call(this, model, field, item, nullable ? true : !required, validRange || validObject);
         }
     }
 
@@ -139,11 +140,11 @@ class ValidateUtil {
         this._checkArrayType(model, field, item);
     }
 
-    validObject(model, field, item, nullable) {
+    validObject(model, field, item, nullable, validObject) {
         if ( this._checkIsNull(model, field, item, nullable) ) {
             return;
         }
-        this._checkObjectType(model, field, item);
+        this._checkObjectType(model, field, item, validObject);
     }
     
 
@@ -169,9 +170,13 @@ class ValidateUtil {
         }
     }
 
-    _checkObjectType(model, field, item) {
-        if (!(item instanceof Object)) {
-            throw new SSError.Model(SSError.Model.Code.checkType, `${model.name} - [${field}] is Object`);
+    _checkObjectType(model, field, item, validObject) {
+        if(!validObject) {
+            validObject = Object;
+        }
+        
+        if (!(item instanceof validObject)) {
+            throw new SSError.Model(SSError.Model.Code.checkType, `${model.name} - [${field}] is ${item.constructor.name}`);
         }
     }
 

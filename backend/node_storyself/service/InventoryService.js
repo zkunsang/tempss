@@ -1,5 +1,12 @@
+const ValidateUtil = require('@ss/util/ValidateUtil');
+const ValidType = ValidateUtil.ValidType;
+const Service = require('@ss/service/Service');
 const Item = require('@ss/models/mongo/Item');
 const Inventory = require('@ss/models/mongo/Inventory');
+const User = require('@ss/models/mongo/User');
+const InventoryDao = require('@ss/daoMongo/InventoryDao');
+const ItemDao = require('@ss/daoMongo/ItemDao');
+const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
 const SSError = require('@ss/error');
 const _ = require('lodash');
 
@@ -14,22 +21,32 @@ const USE_ACTION = {
 
 const ErrorObj = {
     putItemNoExistItem: { code: 30001, name: 'putItemNoExistItem', message: 'put item no exist item' },
-    useItemNotEnoughItem: { code: 30002, name: 'putItemNotEnughItem', message: 'not enough Item' },
-    useItemNoUseableItem: { code: 30003, name: 'useItemNoUseableItem', message: 'no useable item' },
+    putItemOverMaxQny: { code: 30002, name: 'putItemOverMaxQny', message: 'over max qny' },
+    useItemNotEnoughItem: { code: 30003, name: 'putItemNotEnughItem', message: 'not enough Item' },
+    useItemNoUseableItem: { code: 30004, name: 'useItemNoUseableItem', message: 'no useable item' },
 }
 
-class InventoryService {
+const Schema = {
+    ITEM_CATEGORY_DAO: { key: 'itemCategoryDao', required: true, type: ValidType.OBJECT, validObject: ItemCategoryDao },
+    ITEM_DAO: { key: 'itemDao', required: true, type: ValidType.OBJECT, validObject: ItemDao },
+    INVENTORY_DAO: { key: 'inventoryDao', required: true, type: ValidType.OBJECT, validObject: InventoryDao },
+    USER_INFO: { key: 'userInfo', required: true, type: ValidType.OBJECT, validObject: User },
+    UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
+}
+
+class InventoryService extends Service {
     constructor(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate) {
+        super();
         // cache system
-        this.itemCategoryDao = itemCategoryDao;
-        this.itemDao = itemDao;
-        this.inventoryDao = inventoryDao;
-        this.userInfo = userInfo;
-        this.updateDate = updateDate;
+        this[Schema.ITEM_CATEGORY_DAO.key] = itemCategoryDao;
+        this[Schema.ITEM_DAO.key] = itemDao;
+        this[Schema.INVENTORY_DAO.key] = inventoryDao;
+        this[Schema.USER_INFO.key] = userInfo;
+        this[Schema.UPDATE_DATE.key] = updateDate;
     }
 
     async putItem(putItemList, actions) {
-        
+
         const itemList = await this.itemDao.findAll();
         const itemMap = _.keyBy(itemList, Item.Schema.ITEM_ID.key);
 
@@ -96,10 +113,12 @@ class InventoryService {
 
         const deleteList = [];
         const updateList = [];
-
+        
+        const updateDate = this.updateDate;
         for (const useItem of useItemList) {
             const useInventory = new Inventory(useItem);
-
+            
+            useInventory.setUpdateDate(updateDate);1
             const itemId = useInventory.getItemId();
             const itemData = itemMap[itemId];
 
@@ -146,7 +165,7 @@ class InventoryService {
     }
 
     static findUserInventoryItem(userInventoryList, invetory) {
-        if(!userInventoryList) {
+        if (!userInventoryList) {
             return null;
         }
 
@@ -160,9 +179,10 @@ class InventoryService {
     }
 
     static checkMaxQny(userInventoryList, putInventory, itemData) {
-        if(!userInventoryList) return;
+        if (!userInventoryList) return;
         const userQny = userInventoryList.reduce((acc, item) => acc += item.getItemQny(), 0)
         const addQny = putInventory.getItemQny();
+        if (itemData.getMaxQny() === 0) return;
         if (itemData.getMaxQny() < userQny + addQny) {
             throw new SSError.Service(
                 ErrorObj.putItemOverMaxQny,
@@ -223,7 +243,7 @@ class InventoryService {
         const userVolatileList = [];
         const userNonVolatileList = [];
 
-        const totalQny = 0;
+        let totalQny = 0;
         for (const userInventory of userInventoryList) {
             const itemId = userInventory.getItemId();
             const itemData = itemMap[itemId];
@@ -236,40 +256,38 @@ class InventoryService {
             totalQny += userInventory.getItemQny();
         }
 
-        InventoryService.checkUsePossible(useInvengory.getItemId(), totalQny, useInventory.getItemQny());
+        InventoryService.checkUsePossible(useInventory.getItemId(), totalQny, useInventory.getItemQny());
         InventoryService.calculateUseVolatile(userVolatileList, useInventory, deleteList, updateList);
         InventoryService.calculateUseBasic(userNonVolatileList, useInventory, deleteList, updateList);
     }
 
     static calculateUseVolatile(userInventoryList, useInventory, deleteList, updateList) {
         userInventoryList.sort((a, b) => a.getEndDate() - b.getEndDate())
-        calculateUseBasic(userInventoryList, useInventory, deleteList, updateList);
+        InventoryService.calculateUseBasic(userInventoryList, useInventory, deleteList, updateList);
     }
 
     static calculateUseBasic(userInventoryList, useInventory, deleteList, updateList) {
         const deleteCnt = useInventory.getItemQny();
 
-        for (const userVolatile of userInventoryList) {
-            let invenItemQny = userVolatile.getItemQny();
+        for (const userInventory of userInventoryList) {
+            let invenItemQny = userInventory.getItemQny();
 
             if (invenItemQny > deleteCnt) {
-                userVolatile.minusItem(useInventory);
+                userInventory.minusItem(useInventory);
                 useInventory.setItemQny(0);
-                updateList.push(userVolatile);
+                updateList.push(userInventory);
                 break;
             }
-
-            if (invenItemQny === deleteCnt) {
-                userVolatile.minusItem(useInventory);
+            else if (invenItemQny === deleteCnt) {
+                userInventory.minusItem(useInventory);
                 useInventory.setItemQny(0);
-                deleteList.push(userVolatile)
+                deleteList.push(userInventory)
                 break;
             }
-
-            if (invenItemQny < deleteCnt) {
-                userVolatile.minusItem(inventory);
+            else {
+                userInventory.minusItem(inventory);
                 useInventory.setItemQny(deleteCnt - invenItemQny);
-                deleteList.push(userVolatile);
+                deleteList.push(userInventory);
                 break;
             }
         }
@@ -277,5 +295,6 @@ class InventoryService {
 }
 
 module.exports = InventoryService;
+module.exports.Schema = Schema;
 module.exports.PUT_ACTION = PUT_ACTION;
 module.exports.USE_ACTION = USE_ACTION;

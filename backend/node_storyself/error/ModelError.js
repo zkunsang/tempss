@@ -1,6 +1,6 @@
-const RunTimeError = require('./RuntimeError');
+const RuntimeError = require('./RuntimeError');
 
-class ModelError extends RunTimeError {
+class ModelError extends RuntimeError {
     constructor(errObj, additionalMessage) {
         super('ModelError', errObj);
         this.additionalMessage = additionalMessage;

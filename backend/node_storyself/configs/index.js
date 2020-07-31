@@ -51,7 +51,6 @@ module.exports = class Config {
             this.dbRedis = new RedisConfig(require(`@cf/${this.configPath}/dbRedis.json`));
             this.slack = new SlackConfig(require(`@cf/${this.configPath}/slack.json`));
         } catch (e) {
-            console.error(e);
             throw msg + e.message;
         }
 

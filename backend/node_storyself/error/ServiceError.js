@@ -1,6 +1,6 @@
-const RunTimeError = require('./RuntimeError');
+const RuntimeError = require('./RuntimeError');
 
-class ServiceError extends RunTimeError {
+class ServiceError extends RuntimeError {
     constructor(errObj, additionalMessage) {
         super('ServiceError', errObj);
         this.additionalMessage = additionalMessage;
