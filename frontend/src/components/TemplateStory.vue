@@ -122,7 +122,8 @@ export default {
       this.thumbImg = this.getSrcUrl(this.storyData);
     }
 
-    this.isNew = !!this.storyId;
+    this.isNew = !this.storyId;
+    console.log(this.isNew);
   },
   watch: {
   },
