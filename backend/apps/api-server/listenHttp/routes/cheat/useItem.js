@@ -6,24 +6,28 @@ const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
 const InventoryService = require('@ss/service/InventoryService');
 
+function makeStoryInventoryList(useList) {
+    return useList.map((item) => InventoryService.makeInventoryObject(item.getItemId(), 1));
+}
+
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;
     const userInfo = ctx.$userInfo;
     
-    const reqCheatPurchase = new ReqCheatUseItem(ctx.request.body);
-    ReqCheatUseItem.validModel(reqCheatPurchase);
+    const reqCheatUseItem = new ReqCheatUseItem(ctx.request.body);
+    ReqCheatUseItem.validModel(reqCheatUseItem);
     
+    const itemDao = new ItemDao(ctx.$dbMongo);
     const inventoryDao = new InventoryDao(ctx.$dbMongo);
     const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
-    const itemDao = new ItemDao(ctx.$dbMongo);
 
     const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);
-    await inventoryService.useItem([reqCheatPurchase], InventoryService.USE_ACTION.PURCHASE);
+
+    await inventoryService.processUse(reqCheatUseItem.getInventoryList(), InventoryService.USE_ACTION.CHEAT);
 
     ctx.status = 200;
     ctx.body = {};
-
 
     await next();
 }

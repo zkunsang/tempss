@@ -15,10 +15,10 @@ const Schema = {
 class ProductReward extends Model {
     constructor({ productId, rewardType, rewardId, rewardQny }) {
         super();
-        this[Schema.PRODUCT_ID.key] = productId;
-        this[Schema.REWARD_TYPE.key] = rewardType;
-        this[Schema.REWARD_ID.key] = rewardId;
-        this[Schema.REWARD_QNY.key] = rewardQny;
+        this[Schema.PRODUCT_ID.key] = productId || undefined;
+        this[Schema.REWARD_TYPE.key] = rewardType || undefined;
+        this[Schema.REWARD_ID.key] = rewardId || undefined;
+        this[Schema.REWARD_QNY.key] = rewardQny || undefined;
     }
 
     setUpdateDate(updateDate) {
@@ -33,12 +33,12 @@ class ProductReward extends Model {
         return this[Schema.PRODUCT_ID.key];
     }
 
-    makeInvetoryObject() {
+    makeInventoryObject() {
         let inventoryObj = {}
         inventoryObj[Inventory.Schema.ITEM_ID.key] = this[Schema.REWARD_ID.key];
         inventoryObj[Inventory.Schema.ITEM_QNY.key] = this[Schema.REWARD_QNY.key];
 
-        return inventoryObj;
+        return new Inventory(inventoryObj);
     }
 }
 

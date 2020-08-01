@@ -15,11 +15,11 @@ const Schema = {
 class Receipt extends Model {
     constructor({ orderId, productId, packageName, purchaseStatus, purchaseToken }) {
         super();
-        this[Schema.ORDER_ID.key] = orderId;
-        this[Schema.PRODUCT_ID.key] = productId;
-        this[Schema.PACKAGE_NAME.key] = packageName;
-        this[Schema.PURCHASE_STATUS.key] = purchaseStatus;
-        this[Schema.PURCHASE_TOKEN.key] = purchaseToken;
+        this[Schema.ORDER_ID.key] = orderId || undefined;
+        this[Schema.PRODUCT_ID.key] = productId || undefined;
+        this[Schema.PACKAGE_NAME.key] = packageName || undefined;
+        this[Schema.PURCHASE_STATUS.key] = purchaseStatus || undefined;
+        this[Schema.PURCHASE_TOKEN.key] = purchaseToken || undefined;
     }
 
     getPurchaseStatus() {

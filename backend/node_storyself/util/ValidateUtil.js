@@ -21,9 +21,9 @@ const ValidType = {
 }
 
 const UserStatus = {
-    NONE: 1, 
-    ADMIN: 2, 
-    BLOCK: 3, 
+    NONE: 1,
+    ADMIN: 2,
+    BLOCK: 3,
 }
 
 const Provider = {
@@ -98,16 +98,16 @@ class ValidateUtil {
     }
 
     validEmail(model, field, item, nullable) {
-        if ( this._checkIsNull(model, field, item, nullable) ) {
+        if (this._checkIsNull(model, field, item, nullable)) {
             return;
         }
-        
+
         this._checkType(model, field, item, Type.STRING);
         this._checkValidEmail(model, field, item);
     }
 
     validString(model, field, item, nullable, validRange) {
-        if ( this._checkIsNull(model, field, item, nullable) ) {
+        if (this._checkIsNull(model, field, item, nullable)) {
             return;
         }
 
@@ -116,16 +116,16 @@ class ValidateUtil {
     }
 
     validNumber(model, field, item, nullable, validRange) {
-        if ( this._checkIsNull(model, field, item, nullable) ) {
+        if (this._checkIsNull(model, field, item, nullable)) {
             return;
         }
-        
+
         this._checkType(model, field, item, Type.NUMBER);
         this._checkRange(model, field, item, validRange);
     }
 
     validUnixTimeStamp(model, field, item, nullable) {
-        if ( this._checkIsNull(model, field, item, nullable) ) {
+        if (this._checkIsNull(model, field, item, nullable)) {
             return;
         }
 
@@ -134,19 +134,19 @@ class ValidateUtil {
     }
 
     validArray(model, field, item, nullable) {
-        if ( this._checkIsNull(model, field, item, nullable) ) {
+        if (this._checkIsNull(model, field, item, nullable)) {
             return;
         }
         this._checkArrayType(model, field, item);
     }
 
     validObject(model, field, item, nullable, validObject) {
-        if ( this._checkIsNull(model, field, item, nullable) ) {
+        if (this._checkIsNull(model, field, item, nullable)) {
             return;
         }
         this._checkObjectType(model, field, item, validObject);
     }
-    
+
 
     _checkIsNull(model, field, item, nullable) {
         if (nullable) return item === undefined || item === null;
@@ -171,10 +171,10 @@ class ValidateUtil {
     }
 
     _checkObjectType(model, field, item, validObject) {
-        if(!validObject) {
+        if (!validObject) {
             validObject = Object;
         }
-        
+
         if (!(item instanceof validObject)) {
             throw new SSError.Model(SSError.Model.Code.checkType, `${model.name} - [${field}] is ${item.constructor.name}`);
         }
@@ -182,11 +182,11 @@ class ValidateUtil {
 
     _checkValidEmail(model, field, item) {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            const result = re.test(String(item).toLowerCase())
+        const result = re.test(String(item).toLowerCase())
 
-            if (!result) {
-                throw new SSError.Model(SSError.Model.Code.notValidEmail, `${model.name} - [${field}] invalid email address`)
-            }
+        if (!result) {
+            throw new SSError.Model(SSError.Model.Code.notValidEmail, `${model.name} - [${field}] invalid email address`)
+        }
     }
 
     _checkValidUnixTimestamp(model, field, item) {
@@ -204,7 +204,7 @@ class ValidateUtil {
             throw new SSError.Model(SSError.Model.Code.validRangeType, `${model.name} - [${field}] check validRange type`);
         }
 
-        if(!validRange.includes(item)) {
+        if (!validRange.includes(item)) {
             throw new SSError.Model(SSError.Model.Code.validRangeValue, `${model.name} - [${field}] check validRange value`);
         }
     }

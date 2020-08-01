@@ -20,14 +20,14 @@ class User extends Model {
     constructor({ uid, email, provider, status, createDate, lastLoginDate, policyVersion, sessionId }) {
         super();
 
-        this[Schema.UID.key] = uid;
-        this[Schema.EMAIL.key] = email;
-        this[Schema.PROVIDER.key] = provider;
-        this[Schema.STATUS.key] = status;
-        this[Schema.CREATE_DATE.key] = createDate;
-        this[Schema.LAST_LOGIN_DATE.key] = lastLoginDate;
-        this[Schema.POLICY_VERSION.key] = policyVersion;
-        this[Schema.SESSION_ID.key] = sessionId;
+        this[Schema.UID.key] = uid || undefined;
+        this[Schema.EMAIL.key] = email || undefined;
+        this[Schema.PROVIDER.key] = provider || undefined;
+        this[Schema.STATUS.key] = status || undefined;
+        this[Schema.CREATE_DATE.key] = createDate || undefined;
+        this[Schema.LAST_LOGIN_DATE.key] = lastLoginDate || undefined;
+        this[Schema.POLICY_VERSION.key] = policyVersion || undefined;
+        this[Schema.SESSION_ID.key] = sessionId || undefined;
     }
 
     getSessionId() {

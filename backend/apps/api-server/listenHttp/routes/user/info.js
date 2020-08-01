@@ -1,23 +1,22 @@
-const ss = require('@ss');
-const ReqUserPolicy = require('@ss/models/controller/ReqUserPolicy');
+
+const ReqUserInfo = require('@ss/models/controller/ReqUserInfo');
+const InventoryDao = require('@ss/daoMongo/InventoryDao');
+
 
 module.exports = async (ctx, next) => {
-    const reqUserPolicy = new ReqUserPolicy(ctx.request.body);
-    ReqUserPolicy.validModel(reqUserPolicy);
+    const reqUserInfo = new ReqUserInfo(ctx.request.body);
+    ReqUserInfo.validModel(reqUserInfo);
 
+    const dbMongo = ctx.$dbMongo;
     const userInfo = ctx.$userInfo;
 
-    const policyVersion = ss.configs.apiServer.policyVersion;
-    const updatePolicyVersion = reqUserPolicy.getPolicyVersion();
-    if (policyVersion !== updatePolicyVersion) {
-        // TODO: different version
-        throw new Error({ errMessage: 'wrong policyVersion' });
-    }
+    const uid = userInfo.getUID();
 
-    await userDao.update({ uid: userInfo.getUID() }, { policyVersion: policyVersion });
+    const inventoryDao = new InventoryDao(dbMongo);
+    const inventoryList = await inventoryDao.findMany({uid});
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body = { inventoryList };
 
     await next();
 };

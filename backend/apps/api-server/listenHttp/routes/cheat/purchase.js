@@ -8,6 +8,10 @@ const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
 const InventoryService = require('@ss/service/InventoryService');
 
+function makeInventoryList(productRewardList) {
+    return productRewardList.map((item) => item.makeInventoryObject());
+}
+
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;
     const userInfo = ctx.$userInfo;
@@ -35,12 +39,11 @@ module.exports = async (ctx, next) => {
 
     const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
 
-    await inventoryService.putItem(productRewardList, InventoryService.PUT_ACTION.PURCHASE);
-
+    const inventoryList = makeInventoryList(productRewardList);
+    await inventoryService.processPut(inventoryList);
     
     ctx.status = 200;
     ctx.body = {};
-
 
     await next();
 }

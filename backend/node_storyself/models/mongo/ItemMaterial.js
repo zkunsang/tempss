@@ -2,6 +2,7 @@ const Model = require('@ss/models');
 
 const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
+const Inventory = require('@ss/models/mongo/Inventory');
 
 const Schema = {
     ITEM_ID: { key: 'itemId', required: true, type: ValidType.STRING },
@@ -13,13 +14,25 @@ const Schema = {
 class ItemMaterial extends Model {
     constructor({ itemId, materialId, materialQny }) {
         super();
-        this[Schema.ITEM_ID.key] = itemId;
-        this[Schema.MATERIAL_ID.key] = materialId;
-        this[Schema.MATERIAL_QNY.key] = materialQny;
+        this[Schema.ITEM_ID.key] = itemId || undefined;
+        this[Schema.MATERIAL_ID.key] = materialId || undefined;
+        this[Schema.MATERIAL_QNY.key] = materialQny || undefined;
     }
 
     setUpdateDate(updateDate) {
         this[Schema.UPDATE_DATE.key] = updateDate;
+    }
+
+    makeInventoryObject() {
+        let inventoryObj = {}
+        inventoryObj[Inventory.Schema.ITEM_ID.key] = this[Schema.MATERIAL_ID.key];
+        inventoryObj[Inventory.Schema.ITEM_QNY.key] = this[Schema.MATERIAL_QNY.key];
+
+        return new Inventory(inventoryObj);
+    }
+
+    static makeInvetoryObjectList(materialList) {
+        return materialList.map((item) => item.makeInventoryObject());
     }
 }
 

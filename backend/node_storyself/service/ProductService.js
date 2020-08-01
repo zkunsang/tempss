@@ -1,7 +1,7 @@
 const ValidateUtil = require('@ss/util/ValidateUtil');
 const AppStore = ValidateUtil.AppStore;
 
-class ShopService {
+class ProductService {
     constructor() {
 
     }
@@ -30,4 +30,4 @@ class ShopService {
     }
 }
 
-module.exports = new ShopService();
+module.exports = new ProductService();

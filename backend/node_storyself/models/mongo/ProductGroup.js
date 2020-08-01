@@ -15,11 +15,11 @@ const Schema = {
 class ProductGroup extends Model {
     constructor({ groupId, startDate, endDate, serverLimit, userLimit }) {
         super();
-        this[Schema.GROUP_ID.key] = groupId;
-        this[Schema.START_DATE.key] = startDate;
-        this[Schema.END_DATE.key] = endDate;
-        this[Schema.SERVER_LIMIT.key] = serverLimit;
-        this[Schema.USER_LIMIT.key] = userLimit;
+        this[Schema.GROUP_ID.key] = groupId || undefined;
+        this[Schema.START_DATE.key] = startDate || undefined;
+        this[Schema.END_DATE.key] = endDate || undefined;
+        this[Schema.SERVER_LIMIT.key] = serverLimit || undefined;
+        this[Schema.USER_LIMIT.key] = userLimit || undefined;
     }
 
     setUpdateDate(updateDate) {

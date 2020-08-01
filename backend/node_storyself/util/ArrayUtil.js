@@ -19,7 +19,7 @@ class ArrayUtil {
 
         for (const itemBefore of arrayBefore) {
             const item = mapAfter[itemBefore[key]];
-            if(!item) continue;
+            if (!item) continue;
             deleteList.push(itemBefore);
         }
 
@@ -31,6 +31,21 @@ class ArrayUtil {
             acc.push(item[key])
             return acc;
         }, []);
+    }
+
+    getMapArrayByKey(array, key) {
+        let mapObject = {};
+        for (const item of array) {
+            let list = mapObject[item[key]];
+            if (!list) {
+                list = [];
+                mapObject[item[key]] = list;
+            }
+
+            list.push(item);
+        }
+
+        return mapObject;
     }
 }
 

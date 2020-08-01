@@ -20,16 +20,16 @@ const Schema = {
 class Product extends Model {
     constructor({ productId, groupId, productType, cost, apple, google, startDate, endDate, serverLimit, userLimit }) {
         super();
-        this[Schema.PRODUCT_ID.key] = productId;
-        this[Schema.GROUP_ID.key] = groupId;
-        this[Schema.PRODUCT_TYPE.key] = productType;
-        this[Schema.COST.key] = cost;
-        this[Schema.GOOGLE.key] = google;
-        this[Schema.APPLE.key] = apple;
-        this[Schema.START_DATE.key] = startDate;
-        this[Schema.END_DATE.key] = endDate;
-        this[Schema.SERVER_LIMIT.key] = serverLimit;
-        this[Schema.USER_LIMIT.key] = userLimit;
+        this[Schema.PRODUCT_ID.key] = productId || undefined;
+        this[Schema.GROUP_ID.key] = groupId || undefined;
+        this[Schema.PRODUCT_TYPE.key] = productType || undefined;
+        this[Schema.COST.key] = cost || undefined;
+        this[Schema.GOOGLE.key] = google || undefined;
+        this[Schema.APPLE.key] = apple || undefined;
+        this[Schema.START_DATE.key] = startDate || undefined;
+        this[Schema.END_DATE.key] = endDate || undefined;
+        this[Schema.SERVER_LIMIT.key] = serverLimit || undefined;
+        this[Schema.USER_LIMIT.key] = userLimit || undefined;
     }
 
     setUpdateDate(updateDate) {

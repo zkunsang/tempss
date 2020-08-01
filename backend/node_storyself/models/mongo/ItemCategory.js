@@ -12,8 +12,8 @@ const Schema = {
 class ItemCategory extends Model {
     constructor({ itemCategory, categoryName }) {
         super();
-        this[Schema.ITEM_CATEGORY.key] = itemCategory;
-        this[Schema.CATEGORY_NAME.key] = categoryName;
+        this[Schema.ITEM_CATEGORY.key] = itemCategory || undefined;
+        this[Schema.CATEGORY_NAME.key] = categoryName || undefined;
     }
     
     setUpdateDate(updateDate) {

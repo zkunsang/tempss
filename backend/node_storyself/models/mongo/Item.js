@@ -21,14 +21,14 @@ const Schema = {
 class Item extends Model {
     constructor({ itemId, itemCategory, groupId, useable, overlap, maxQny, volatileSeconds, priority }) {
         super();
-        this[Schema.ITEM_ID.key] = itemId;
-        this[Schema.ITEM_CATEGORY.key] = itemCategory;
-        this[Schema.GROUP_ID.key] = groupId;
-        this[Schema.USEABLE.key] = useable;
-        this[Schema.OVERLAP.key] = overlap;
-        this[Schema.MAX_QNY.key] = maxQny;
-        this[Schema.VOLATILE_SECONDS.key] = volatileSeconds;
-        this[Schema.PRIORITY.key] = priority;
+        this[Schema.ITEM_ID.key] = itemId || undefined;
+        this[Schema.ITEM_CATEGORY.key] = itemCategory || undefined;
+        this[Schema.GROUP_ID.key] = groupId || undefined;
+        this[Schema.USEABLE.key] = useable || undefined;
+        this[Schema.OVERLAP.key] = overlap || undefined;
+        this[Schema.MAX_QNY.key] = maxQny || undefined;
+        this[Schema.VOLATILE_SECONDS.key] = volatileSeconds || undefined;
+        this[Schema.PRIORITY.key] = priority || undefined;
     }
 
     setUpdateDate(updateDate) {

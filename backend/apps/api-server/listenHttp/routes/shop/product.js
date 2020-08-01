@@ -1,4 +1,4 @@
-const ReqShopPurchase = require('@ss/models/controller/ReqShopPurchase');
+const ReqShopProduct = require('@ss/models/controller/ReqShopProduct');
 
 const ProductDao = require('@ss/daoMongo/ProductDao');
 const ProductRewardDao = require('@ss/daoMongo/ProductRewardDao');
@@ -6,7 +6,7 @@ const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
 const ItemDao = require('@ss/daoMongo/ItemDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
-const ShopService = require('@ss/service/ShopService');
+const ProductService = require('@ss/service/ProductService');
 
 const ValidateUtil = require('@ss/util/ValidateUtil')
 const PurchaseStatus = ValidateUtil.PurchaseStatus;
@@ -15,12 +15,12 @@ const InventoryService = require('@ss/service/InventoryService');
 
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;
-    const reqShopPurchase = new ReqShopPurchase(ctx.request.body);
-    ReqShopPurchase.validModel(reqShopPurchase);
+    const reqShopPurchase = new ReqShopProduct(ctx.request.body);
+    ReqShopProduct.validModel(reqShopPurchase);
 
     const receipt = reqShopPurchase.getReceipt();
     const appstore = reqShopPurchase.getAppstore();
-    const validateReceipt = await ShopService.validateReceipt(appstore, receipt);
+    const validateReceipt = await ProductService.validateReceipt(appstore, receipt);
 
     if (validateReceipt.getPurchaseStatus() === PurchaseStatus.FAIL) {
         ctx.status = 400;
@@ -28,7 +28,7 @@ module.exports = async (ctx, next) => {
         return;
     }
 
-    const productId = ShopService.getProductId(validateReceipt);
+    const productId = ProductService.getProductId(validateReceipt);
     const productDao = new ProductDao(ctx.$dbMongo);
 
     const productInfo = await productDao.findOne({ productId });

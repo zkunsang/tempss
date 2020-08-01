@@ -9,7 +9,7 @@ const Schema = {
     APPSTORE: { key: 'appStore', required: true, type: ValidType.STRING, validRange: Object.values(AppStore) },
 }
 
-class ReqShopPurchase extends Model {
+class ReqShopProduct extends Model {
     constructor({ receipt }) {
         super();
         this[Schema.RECEIPT.key] = receipt;
@@ -25,5 +25,5 @@ class ReqShopPurchase extends Model {
     }
 }
 
-module.exports = ReqShopPurchase;
+module.exports = ReqShopProduct;
 module.exports.Schema = Schema;

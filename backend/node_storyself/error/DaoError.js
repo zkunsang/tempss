@@ -1,5 +1,7 @@
 const RuntimeError = require('./RuntimeError');
-
+/**
+ * error code 20000
+ */
 class DaoError extends RuntimeError {
     constructor(errObj, additionalMessage) {
         super('DaoError', errObj);

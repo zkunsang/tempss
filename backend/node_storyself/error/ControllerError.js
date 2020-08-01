@@ -6,7 +6,11 @@ class ControllerError extends RuntimeError {
     }
 }
 
+/**
+ * error code: 40000
+ */
 module.exports = ControllerError;
 module.exports.Code = {
-    
+    noExistItem: { code: 40000, name: 'noExistItem', message: 'no exist item'},
+    noExistStory: { code: 40001, name: 'noExistStory', message: 'no exist story'},
 }

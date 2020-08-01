@@ -1,5 +1,7 @@
 const RuntimeError = require('./RuntimeError');
-
+/**
+ * error code 10000
+ */
 class ModelError extends RuntimeError {
     constructor(errObj, additionalMessage) {
         super('ModelError', errObj);
