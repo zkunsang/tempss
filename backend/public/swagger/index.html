@@ -18,8 +18,9 @@
 
     <script type="text/javascript">
 	$(function () {
+        const discoveryUrl = location.port ? `http://${location.hostname}:${location.port}/api-docs.json`: `http://${location.hostname}/api-docs.json`
 	    window.swaggerUi = new SwaggerUi({
-                discoveryUrl: `http://${location.hostname}:${location.port}/api-docs.json`,
+                discoveryUrl,
                 apiKey:"",
                 dom_id:"swagger-ui-container",
                 supportHeaderParams: false,
