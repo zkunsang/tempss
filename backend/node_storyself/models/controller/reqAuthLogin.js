@@ -1,9 +1,9 @@
-const ValidateUtil = require('../../util');
+const Model = require('@ss/models');
 
+const ValidateUtil = require('@ss/util/ValidateUtil');
 const Platform = ValidateUtil.Platform;
 const Provider = ValidateUtil.Provider;
 const ValidType = ValidateUtil.ValidType;
-const NullAllow = ValidateUtil.NullAllow;
 const AppStore = ValidateUtil.AppStore;
 
 const Schema = {
@@ -17,8 +17,9 @@ const Schema = {
     // IS_EMULATE: { key: 'isEmulate', required: true, type: ValidType.BOOLEAN},
 }
 
-class ReqAuthLogin {
+class ReqAuthLogin extends Model {
     constructor({ uid, email, provider, deviceId, platform, clientVersion, appStore }) {
+        super();
         this[Schema.UID.key] = uid;
         this[Schema.EMAIL.key] = email;
         this[Schema.PROVIDER.key] = provider;
@@ -26,14 +27,6 @@ class ReqAuthLogin {
         this[Schema.PLATFORM.key] = platform;
         this[Schema.CLIENT_VERSION.key] = clientVersion;
         this[Schema.APPSTORE.key] = appStore;
-    }
-
-    static validModel(obj) {
-        ReqAuthLogin._validCommon(obj, NullAllow.NO);
-    }
-
-    static _validCommon(obj, nullable) {
-        ValidateUtil.valid(ReqAuthLogin, Schema, obj, nullable);
     }
 
     getUID() {

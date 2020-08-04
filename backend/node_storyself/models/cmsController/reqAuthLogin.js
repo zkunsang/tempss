@@ -1,24 +1,26 @@
-const ValidateUtil = require('../../util');
+const Model = require('@ss/models');
+
+const ValidateUtil = require('@ss/util/ValidateUtil');
 const ValidType = ValidateUtil.ValidType;
-const NullAllow = ValidateUtil.NullAllow;
 
 const Schema = {
     ADMIN_ID: { key: 'adminId', required: true, type: ValidType.STRING },
     PASSWORD: { key: 'password', required: true, type: ValidType.STRING },
 }
 
-class ReqAuthLogin {
+class ReqAuthLogin extends Model {
     constructor({ adminId, password }) {
+        super();
         this[Schema.ADMIN_ID.key] = adminId;
         this[Schema.PASSWORD.key] = password;
     }
 
-    static validModel(obj) {
-        ReqAuthLogin._validCommon(obj, NullAllow.NO);
+    getAdminId() {
+        return this[Schema.ADMIN_ID.key];
     }
 
-    static _validCommon(obj, nullable) {
-        ValidateUtil.valid(ReqAuthLogin, Schema, obj, nullable);
+    getPassword() {
+        return this[Schema.PASSWORD.key];
     }
 }
 

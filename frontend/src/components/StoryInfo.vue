@@ -1,10 +1,7 @@
 <template>
   <v-container>
     <v-layout text-center wrap>
-      <TemplateStoryVue 
-        :story-data="storyData" 
-        :is-new="false">
-      </TemplateStoryVue>
+      <TemplateStoryVue></TemplateStoryVue>
     </v-layout>
   </v-container>
 </template>
@@ -13,6 +10,7 @@
 
 import TemplateStoryVue from './TemplateStory.vue';
 import {mapActions, mapState} from 'vuex'
+import {eventBus} from '../util/eventBus';
 
 var crc = require('crc');
 const {s3Upload} = require("../util/fileutil");
@@ -32,12 +30,8 @@ export default {
         CDN_URL: 'CDN_URL'
     }),
   },
-  created() {
-    this.storyId = this.$route.params.storyId;
-    this.GET_STORY_INFO(this.storyId)
-        .then((result) => {
-            this.storyData = result;
-        });
+  async created() {
+    
   },
   methods: {
     ...mapActions([

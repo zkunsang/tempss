@@ -12,11 +12,11 @@
           <v-card-text>
             <v-form>
               <v-text-field
-                label="user_id"
+                label="adminId"
                 name="login"
                 prepend-icon="person"
                 type="text"
-                v-model="user_id"
+                v-model="adminId"
               />
 
               <v-text-field
@@ -33,7 +33,7 @@
                 name="password"
                 prepend-icon="lock"
                 type="password"
-                v-model="confirm_password"
+                v-model="confirmPassword"
               />
             </v-form>
           </v-card-text>
@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import {auth, setAuthInHeader} from '../api'
 import {mapActions} from 'vuex'
 
 export default {
@@ -71,10 +70,10 @@ export default {
       'REGIST'
     ]),
     onSubmit() {
-      if( this.password != this.confirm_password ) return this.error = "check password!";
+      if( this.password != this.confirmPassword ) return this.error = "check password!";
 
-      this.REGIST({user_id: this.user_id, password: this.password})
-        .then((body_data) => {
+      this.REGIST({adminId: this.adminId, password: this.password, confirmPassword: this.confirmPassword})
+        .then((bodyData) => {
           this.$router.push(this.rPath)
         })
         .catch((err) => {
@@ -85,13 +84,13 @@ export default {
     },
   },
   watch: {
-    user_id(test) { this.error = ''},
+    adminId(test) { this.error = ''},
     password(test) { this.error = ''},
-    confirm_password(test) { this.error = ''}
+    confirmPassword(test) { this.error = ''}
   },
   computed: {
     invalidForm() {
-      return !this.user_id || !this.password || !this.confirm_password;
+      return !this.adminId || !this.password || !this.confirmPassword;
     },
     sumbitFail() {
       return !!this.error
@@ -102,11 +101,11 @@ export default {
   },
   data() {
     return {
-      user_id: '',
+      adminId: '',
       password: '',
       rPath: '',
       error: '',
-      confirm_password: ''
+      confirmPassword: ''
     }
   }
   ,

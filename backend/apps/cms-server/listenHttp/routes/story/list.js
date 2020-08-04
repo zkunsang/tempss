@@ -1,15 +1,15 @@
-const mongo = require('@ss/dbMongo');
+const StoryDao = require('@ss/daoMongo/storyDao');
+const ReqStoryList = require('@ss/models/cmsController/ReqStoryList');
 
 module.exports = async (ctx, next) => {
-    let storyList = null;
-    try {
-        storyList = await mongo.daoStory.getList();
-    }
-    catch(err) {
-        console.error(err);
-    }
-    
+    const reqStoryList = new ReqStoryList(ctx.request.body);
+    ReqStoryList.validModel(reqStoryList);
+
+    const storyDao = new StoryDao(ctx.$dbMongo);
+    const storyList = await storyDao.findAll();
+
     ctx.status = 200;
     ctx.body = storyList;
+
     await next();
 }

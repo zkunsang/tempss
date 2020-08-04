@@ -1,6 +1,20 @@
+const moment = require('moment');
+const helper = require('@ss/helper');
+const SSError = require('@ss/error');
 
 module.exports = async (ctx, next) => {
-    console.log(`[req]${ctx.path} -- ${JSON.stringify(ctx.request.body)}`);
-    await next();
-    console.log(`[res]${ctx.path} -- ${JSON.stringify(ctx.body)}`);
+    ctx.$date = moment().unix();
+    try {
+        await next();        
+    }
+    catch (err) {
+        if(err instanceof SSError.RunTime) {
+            helper.slack.sendMessage(err.makeErrorMessage());
+        } else {
+            helper.slack.sendMessage(err);
+        }
+        console.error(err);
+        ctx.status = 400;
+        ctx.body.data = { message: err.message };
+    }
 };

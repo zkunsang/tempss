@@ -41,8 +41,8 @@
     </v-app-bar>
     <v-navigation-drawer app permanent light clipped>
       <v-list-item>
-        <v-list-item-content v-if='id'>
-          <v-list-item-title class='title'>{{id}} 님!</v-list-item-title>
+        <v-list-item-content v-if='adminId'>
+          <v-list-item-title class='title'>{{adminId}} 님!</v-list-item-title>
           <v-list-item-subtitle>안녕하세요</v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-content v-else>
@@ -83,7 +83,7 @@ export default {
     //HelloWorld,
   },
   computed: {
-    ...mapState({ id: 'id' }),
+    ...mapState({ adminId: 'adminId' }),
     isQa() {
       return config.isQa;
     },
@@ -95,9 +95,12 @@ export default {
   data: () => ({
     items: [
       { path: '/story', title: '스토리 관리', icon: 'mdi-view-dashboard' },
+      { path: '/item', title: '아이템 관리', icon: 'mdi-view-dashboard' },
+      { path: '/itemCategory', title: '아이템 카테고리', icon: 'mdi-view-dashboard' },
+      { path: '/shop', title: '상품 관리', icon: 'mdi-view-dashboard' },
+      { path: '/shopGroup', title: '상품 그룹 관리', icon: 'mdi-view-dashboard' },
       { path: '/patchtemp', title: '패치 관리', icon: 'mdi-view-dashboard' },
       { path: '/category', title: '카테고리 관리', icon: 'mdi-view-dashboard' },
-      { path: '/product', title: '상품 관리', icon: 'mdi-view-dashboard' },
       { path: '/coupon', title: '쿠폰 관리', icon: 'mdi-view-dashboard' },
     ]
   })

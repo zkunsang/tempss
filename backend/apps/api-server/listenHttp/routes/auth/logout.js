@@ -1,34 +1,21 @@
 const dbRedis = require('@ss/dbRedis');
 const SessionDao = require('@ss/daoRedis/SessionDao');
 const SSError = require('@ss/error');
-const ReqAuthLogout = require('@ss/models/controller/reqAuthLogout');
+const ReqAuthLogout = require('@ss/models/controller/ReqAuthLogout');
 
 module.exports = async (ctx, next) => {
-    try {
-        const sessionDao = new SessionDao(dbRedis);
-        const reqAuthLogout = new ReqAuthLogout(ctx.request.body);
-        ReqAuthLogout.validModel(reqAuthLogout);
-        
-        await sessionDao.del(reqAuthLogout.getSessionId());
-        
-        ctx.status = 200;
-        ctx.body = {};
+    const sessionDao = new SessionDao(dbRedis);
+    const reqAuthLogout = new ReqAuthLogout(ctx.request.body);
+    ReqAuthLogout.validModel(reqAuthLogout);
 
-        await next();
-    } catch(err) {
-        if( err instanceof SSError.RunTime ) {
-            ctx.status = 400;
-            ctx.body = err;
-        }
-        else {
-            ctx.status = 500;
-            ctx.body = {error: 'internalError'};
-        }
-        console.error(err);
-        
-        return await next();
-    }
-    
+    await sessionDao.del(reqAuthLogout.getSessionId());
+
+    ctx.status = 200;
+    ctx.body.data = {};
+
+    await next();
+
+
 };
 
 /**
@@ -46,39 +33,34 @@ module.exports = async (ctx, next) => {
  *      notes: |
  *        <br><b>requestParam</b>
  *        <br>sessionId: 세션 아이디
- *      responseClass: response
+ *      responseClass: resAuthLogout
  *      nickname: config
- *      consumes: 
+ *      consumes:
  *        - text/html
  *      parameters:
  *        - name: body
  *          paramType: body
- *          dataType: reqLogout
+ *          dataType: reqAuthLogout
  *          required: true
- *          
- */       
- 
+ *
+ */
+
 /**
  * @swagger
  * models:
- *   reqLogout:
- *     id: reqLogout
+ *   reqAuthLogout:
+ *     id: reqAuthLogout
  *     properties:
  *       sessionId:
  *         type: String
  *         required: true
  *         description: 세션 아이디
- *   response:
- *     id: response
+ *   resAuthLogout:
+ *     id: resAuthLogout
  *     properties:
- *       version:
- *         type: String
- *         required: true
- *       url:
- *         type: String  
- *         required: true  
- *       policyVersion:
- *         type: String  
- *         required: true  
- *   
+ *       common:
+ *         type: common
+ *       error:
+ *         type: error
+ *
  * */

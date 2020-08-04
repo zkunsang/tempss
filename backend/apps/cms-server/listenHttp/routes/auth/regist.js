@@ -1,22 +1,24 @@
-const mongo = require('@ss/dbMongo');
-const uuid = require('uuid');
+const dbMongo = require('@ss/dbMongo');
+const AdminDao = require('@ss/daoMongo/AdminDao');
+const ReqAuthRegist = require('@ss/models/cmsController/ReqAuthRegist');
+const Admin = require('@ss/models/mongo/Admin');
+const AdminStatus = Admin.AdminStatus;
+const AdminRole = Admin.AdminRole;
 
 module.exports = async (ctx, next) => {
-    const {id, passwd} = ctx.request.body;
+    const createDate = ctx.$date;
+    const reqAuthRegist = new ReqAuthRegist(ctx.request.body);
+    ReqAuthRegist.validModel(reqAuthRegist);
 
-    const userInfo = await mongo.findUser({id});
+    const adminDao = new AdminDao(dbMongo);
+    const admin = new Admin(reqAuthRegist);
+    admin.setAdminRole(AdminRole.NONE);
+    admin.setStatus(AdminStatus.PENDING);
+    admin.setCreateDate(createDate);
 
-    if(userInfo) {
-        ctx.status = 400;
-        ctx.body = {error: '이미 존재 하는 유저 입니다.'};
-        return await next();
-    }
-
-    await mongo.createUser({id, passwd});
-    let sessionId = uuid.v4().replace(/-/g, '');
-    
+    await adminDao.insertOne(admin);
     ctx.status = 200;
-    ctx.body = { sessionId, id };
+    ctx.body.data = {};
     return await next();
-    
 };
+

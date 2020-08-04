@@ -1,6 +1,7 @@
-const ValidateUtil = require('../../util');
+const Model = require('@ss/models');
+
+const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
-const NullAllow = ValidateUtil.NullAllow;
 
 const Schema = {
     STORY_ID: { key: 'storyId', required: true, type: ValidType.STRING },
@@ -11,30 +12,28 @@ const Schema = {
     UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
 }
 
-class Resource {
+class Resource extends Model {
     constructor({ storyId, resourceId, size, version, crc32, updateDate }) {
-        this[Schema.STORY_ID.key] = storyId;
-        this[Schema.RESOURCE_ID.key] = resourceId;
-        this[Schema.SIZE.key] = size;
-        this[Schema.VERSION.key] = version;
-        this[Schema.CRC32.key] = crc32;
-        this[Schema.UPDATE_DATE.key] = updateDate;
+        super();
+
+        this[Schema.STORY_ID.key] = storyId || undefined;
+        this[Schema.RESOURCE_ID.key] = resourceId || undefined;
+        this[Schema.SIZE.key] = size || undefined;
+        this[Schema.VERSION.key] = version || undefined;
+        this[Schema.CRC32.key] = crc32 || undefined;
+        this[Schema.UPDATE_DATE.key] = updateDate || undefined;
     }
 
     setUpdateDate(updateDate) {
         this[Schema.UPDATE_DATE.key] = updateDate;
     }
 
-    static validModel(obj) {
-        User._validCommon(obj, NullAllow.NO);
+    getStoryId() {
+        return this[Schema.STORY_ID.key];
     }
 
-    static validValue(obj) {
-        User._validCommon(obj, NullAllow.YES);
-    }
-
-    static _validCommon(obj, nullable) {
-        ValidateUtil.valid(User, Schema, obj, nullable);
+    getResourceId() {
+        return this[Schema.RESOURCE_ID.key];
     }
 }
 

@@ -6,6 +6,13 @@ import SignIn from '../components/SignIn.vue'
 import StoryList from '../components/StoryList.vue'
 import StoryInfo from '../components/StoryInfo.vue'
 import AosUpload from '../components/AosUpload.vue'
+import ItemList from '../components/ItemList.vue'
+import ItemCategory from '../components/ItemCategory.vue'
+import Shop from '../components/Shop.vue'
+import ShopGroup from '../components/ShopGroup.vue'
+
+
+
 import Home from '../components/Home.vue'
 
 import NotFound from '../components/NotFound.vue'
@@ -21,11 +28,12 @@ Vue.use(DatetimePicker);
 
 Vue.component('downloadExcel', JsonExcel);
 
-const requireAuth = (to, from, next) => {
+const requireAuth = async (to, from, next) => {
     const loginPath = `/login?rPath=${encodeURIComponent(to.path)}`;
-    const { sessionId, id } = localStorage;
+    const { sessionId, adminId } = localStorage;
     
-    store.commit('LOGIN', { sessionId, id } || {});
+    await store.commit('LOGIN', { sessionId, adminId } || {});
+    
     store.getters.isAuth ? next() : next(loginPath);
 }
 
@@ -53,6 +61,26 @@ const router = new VueRouter({
         {
             path: '/story',
             component: StoryList,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/item',
+            component: ItemList,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/itemCategory',
+            component: ItemCategory,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/shop',
+            component: Shop,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/shopGroup',
+            component: ShopGroup,
             beforeEnter: requireAuth
         },
         {

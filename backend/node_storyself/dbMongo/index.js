@@ -13,10 +13,10 @@ class Mongo {
     async ready() {
         const dbMongo = ss.configs.dbMongo;
         const url = `mongodb://${dbMongo.url}:${dbMongo.port}`;
-        
+
         try {
-            this.userConnect = await MongoClient.connect(url, { useUnifiedTopology: true });
-            this.storyConnect = await MongoClient.connect(url, { useUnifiedTopology: true });
+            this.userConnect = await MongoClient.connect(url, { useUnifiedTopology: true, ignoreUndefined: true });
+            this.storyConnect = await MongoClient.connect(url, { useUnifiedTopology: true, ignoreUndefined: true });
         }
         catch (err) {
             helper.slack.sendMessage(err);

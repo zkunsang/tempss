@@ -2,65 +2,50 @@ const dbMongo = require('@ss/dbMongo');
 const dbRedis = require('@ss/dbRedis');
 const UserDao = require('@ss/daoMongo/UserDao');
 const SessionDao = require('@ss/daoRedis/SessionDao');
-const User = require('@ss/models/mongo/user');
+const User = require('@ss/models/mongo/User');
 const SSError = require('@ss/error');
-const UserStatus = require('@ss/util').UserStatus;
-const ReqAuthLogin = require('@ss/models/controller/reqAuthLogin');
+const UserStatus = require('@ss/util/ValidateUtil').UserStatus;
+const ReqAuthLogin = require('@ss/models/controller/ReqAuthLogin');
 const shortid = require('shortid');
 
 const moment = require('moment');
 
 module.exports = async (ctx, next) => {
-    try {
-        const loginDate = moment().unix();
-        const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
-        ReqAuthLogin.validModel(reqAuthLogin);
-        
-        const uid = reqAuthLogin.getUID();
+    const loginDate = ctx.$date
+    const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
+    ReqAuthLogin.validModel(reqAuthLogin);
 
-        const userDao = new UserDao(dbMongo.userConnect);
-        const sessionDao = new SessionDao(dbRedis);
+    const uid = reqAuthLogin.getUID();
 
-        let userInfo = await userDao.findOne({ uid });
+    const userDao = new UserDao(dbMongo);
+    const sessionDao = new SessionDao(dbRedis);
 
-        const sessionId = shortid.generate();
-        
-        if (userInfo) {
-            const oldSessionId = userInfo.getSessionId();
-            userInfo.setSessionId(sessionId);
-            userInfo.setLastLoginDate(loginDate);
-            await userDao.updateOne({ uid: userInfo.getUID() }, { sessionId, lastLoginDate: loginDate });
-            await sessionDao.del(oldSessionId);
-        }
-        else {
-            userInfo = new User(reqAuthLogin);
-            userInfo.setStatus(UserStatus.NONE);
-            userInfo.setSessionId(sessionId);
-            userInfo.setLastLoginDate(loginDate);
-            userInfo.setCreateDate(loginDate);
-            await userDao.insertOne(userInfo);
-        }
+    let userInfo = await userDao.findOne({ uid });
 
-        sessionDao.set(sessionId, userInfo);
-        
-        ctx.status = 200;
-        ctx.body = { sessionId };
+    const sessionId = shortid.generate();
 
-        await next();
-    } catch(err) {
-        if( err instanceof SSError.RunTime ) {
-            ctx.status = 400;
-            ctx.body = err;
-        }
-        else {
-            ctx.status = 500;
-            ctx.body = {error: 'internalError'};
-        }
-        console.error(err);
-        
-        return await next();
+    if (userInfo) {
+        const oldSessionId = userInfo.getSessionId();
+        userInfo.setSessionId(sessionId);
+        userInfo.setLastLoginDate(loginDate);
+        await userDao.updateOne({ uid: userInfo.getUID() }, { sessionId, lastLoginDate: loginDate });
+        await sessionDao.del(oldSessionId);
     }
-    
+    else {
+        userInfo = new User(reqAuthLogin);
+        userInfo.setStatus(UserStatus.NONE);
+        userInfo.setSessionId(sessionId);
+        userInfo.setLastLoginDate(loginDate);
+        userInfo.setCreateDate(loginDate);
+        await userDao.insertOne(userInfo);
+    }    
+
+    sessionDao.set(sessionId, userInfo);
+
+    ctx.status = 200;
+    ctx.body.data = { sessionId };
+
+    await next();
 };
 
 
@@ -77,21 +62,26 @@ module.exports = async (ctx, next) => {
  *   -  httpMethod: POST
  *      summary: 로그인
  *      notes: |
- *        <br>userInfo: version
- *        <br>sessionId: 세션 아이디 입니다.
- *        <br>policyVersion: 개인 정책 버젼
- *      responseClass: response
+ *        <br>uid (String): 파이어 베이스에서 획득한 uid,
+ *        <br>email (Email),
+ *        <br>provider (String): 로그인 방법(google|facebook|email),
+ *        <br>deviceId (number),
+ *        <br>platform (String): 플랫폼(ios|aos) aos - android os,
+ *        <br>appStore (String): 스토어(google|onestore|appstore),
+ *        <br>clientVersion (String): 클라이언트 앱 버젼입니다.
+ * 
+ *      responseClass: resAuthLogin
  *      nickname: config
- *      consumes: 
+ *      consumes:
  *        - text/html
  *      parameters:
  *        - name: body
  *          paramType: body
  *          dataType: reqLogin
  *          required: true
- *          
- */       
- 
+ *
+ */
+
 /**
  * @swagger
  * models:
@@ -123,18 +113,33 @@ module.exports = async (ctx, next) => {
  *       clientVersion:
  *         type: String
  *         required: true
- *         description: 클라이언트 앱 버젼입니다. 
- *   response:
- *     id: response
+ *         description: 클라이언트 앱 버젼입니다.
+ *   resAuthLogin:
+ *     id: resAuthLogin
  *     properties:
- *       version:
+ *       common:
+ *         type: common 
+ *       error:
+ *         type: error
+ *       data:
+ *         type: data
+ *   common:
+ *     id: common
+ *     properties:
+ *       serverTime: 
+ *         type: number
+ *   error:
+ *     id: error
+ *     properties:
+ *       message:
  *         type: String
- *         required: true
- *       url:
- *         type: String  
- *         required: true  
- *       policyVersion:
- *         type: String  
- *         required: true  
- *   
+ *       additional:
+ *         type: String
+ *   data:
+ *     id: data
+ *     properties:
+ *       sessionId:
+ *         type: String
+ *     
+ *
  * */

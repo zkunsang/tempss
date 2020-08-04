@@ -5,16 +5,14 @@ import config from '../config/config'
 
 const UNAUTHORIZED = 401;
 const onUnauthorized = () => {
-  console.log("onUnauthorized");
   store.commit('LOGOUT')
   router.push(`/login?rPath=${encodeURIComponent(location.pathname)}`);
 }
 const DOMAIN = config.getBackendUrl;
 
-console.log(DOMAIN);
-
 const request = (method, url, data) => {
-
+  const { sessionId } = localStorage;
+  data = Object.assign(data || {}, {sessionId});
   return axios({
     method,
     url: DOMAIN + url,
@@ -33,16 +31,16 @@ const request = (method, url, data) => {
     })
 }
 
-export const setAuthInHeader = session_id => {
-  axios.defaults.headers.common['Authorization'] = session_id ? `Bearer ${session_id}` : null;
+export const setAuthInHeader = sessionId => {
+  axios.defaults.headers.common['sessionId'] = sessionId ? `${sessionId}` : null;
 }
 
 export const auth = {
-  login(id, passwd) {
-    return request('post', '/auth/login', { id, passwd })
+  login(adminId, password) {
+    return request('post', '/auth/login', { adminId, password })
   },
-  regist(id, passwd) {
-    return request('post', '/auth/regist', { id, passwd })
+  regist(adminId, password, confirmPassword) {
+    return request('post', '/auth/regist', { adminId, password, confirmPassword })
   }
 }
 
@@ -53,19 +51,102 @@ export const story = {
   update(story) {
     return request('post', '/story/update', story);
   },
-  storyList() {
-    return request('get', '/story/list');
+  list() {
+    return request('post', '/story/list');
   },
-  storyInfo(storyId) {
+  info(storyId) {
     return request('post', '/story/info', { storyId });
   },
-  resourceList(storyId) {
-    return request('post', '/story/resourcelist', { storyId });
+  
+}
+
+export const resource ={
+  list(storyId) {
+    return request('post', '/resource/list', { storyId });
   },
-  resourceUpdate(resoureList) {
-    return request('post', '/story/resourceupdate', resoureList);
+  update(resoureList) {
+    return request('post', '/resource/update', resoureList);
   },
 }
+
+export const item = {
+  list() {
+    return request('post', '/item/list', {});
+  },
+  delete(item) {
+    return request('post', '/item/delete', item);
+  },
+  create(item) {
+    return request('post', '/item/create', item);
+  },
+  update(item) {
+    return request('post', '/item/update', item);
+  },
+  updateMany(item) {
+    return request('post', '/item/updateMany', item);
+  },
+  updateManyMaterial(item) {
+    return request('post', '/item/updateManyMaterial', item);
+  }
+}
+
+export const product = {
+  list() {
+    return request('post', '/product/list', {});
+  },
+  delete(product) {
+    return request('post', '/product/delete', product);
+  },
+  create(product) {
+    return request('post', '/product/create', product);
+  },
+  update(product) {
+    return request('post', '/product/update', product);
+  },
+  updateMany(product) {
+    return request('post', '/product/updateMany', product);
+  },
+  updateManyReward(product) {
+    return request('post', '/product/updateManyReward', product);
+  }
+}
+
+export const productGroup = {
+  list() {
+    return request('post', '/productGroup/list', {});
+  },
+  delete(product) {
+    return request('post', '/productGroup/delete', product);
+  },
+  create(product) {
+    return request('post', '/productGroup/create', product);
+  },
+  update(product) {
+    return request('post', '/productGroup/update', product);
+  },
+  updateMany(product) {
+    return request('post', '/productGroup/updateMany', product);
+  },
+}
+
+export const category = {
+  list() {
+    return request('post', '/category/list', {});
+  },
+  delete(item) {
+    return request('post', '/category/delete', item);
+  },
+  create(item) {
+    return request('post', '/category/create', item);
+  },
+  update(item) {
+    return request('post', '/category/update', item);
+  },
+  updateMany(item) {
+    return request('post', '/category/updateMany', item);
+  }
+}
+
 
 export const banner = {
   fetch_banner_list(user_id) {

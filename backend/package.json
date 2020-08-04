@@ -9,6 +9,7 @@
     "@slack/webhook": "^5.0.3",
     "@types/fs-extra": "^9.0.1",
     "@types/ioredis": "^4.17.0",
+    "fluent-logger": "^3.4.1",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "ioredis": "^4.17.3",

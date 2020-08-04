@@ -1,31 +1,62 @@
-const SSError = require('@ss/error');
-const ValidateUtil = require('../../util');
+const Model = require('@ss/models');
+
+const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 const StoryStatus = ValidateUtil.StoryStatus;
-const NullAllow = ValidateUtil.NullAllow;
 
 const Schema = {
     STORY_ID: { key: 'storyId', required: true, type: ValidType.STRING },
     STATUS: { key: 'status', required: true, type: ValidType.NUMBER, validRange: Object.values(StoryStatus) },
-    VERSION: { key: 'version', required: true, type: ValidType.NUMBER }
+    VERSION: { key: 'version', required: true, type: ValidType.NUMBER },
+    UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
+    THUMBNAIL: { key: 'thumbnail', required: true, type: ValidType.STRING },
+    THUMBNAIL_CRC32: { key: 'thumbnailCrc32', required: true, type: ValidType.STRING },
+    THUMBNAIL_VERSION: { key: 'thumbnailVersion', required: true, type: ValidType.NUMBER },
 }
-class Story {
-    constructor({ storyId, status, version }) {
-        this[Schema.STORY_ID.key] = storyId;
-        this[Schema.STATUS.key] = status;
+
+class Story extends Model {
+    constructor({ storyId, status, version, thumbnail, thumbnailCrc32, thumbnailVersion }) {
+        super();
+
+        this[Schema.STORY_ID.key] = storyId || undefined;
+        this[Schema.STATUS.key] = status || undefined;
+        this[Schema.VERSION.key] = version || undefined;
+
+        this[Schema.THUMBNAIL.key] = thumbnail || undefined;
+        this[Schema.THUMBNAIL_CRC32.key] = thumbnailCrc32 || undefined;
+        this[Schema.THUMBNAIL_VERSION.key] = thumbnailVersion || undefined;
+    }
+
+    setVersion(version) {
         this[Schema.VERSION.key] = version;
     }
 
-    static validModel(obj) {
-        Story._validCommon(obj, NullAllow.NO);
+    setUpdateDate(updateDate) {
+        this[Schema.UPDATE_DATE.key] = updateDate;
     }
 
-    static validValue(obj) {
-        Story._validCommon(obj, NullAllow.YES);
+    getStoryId() {
+        return this[Schema.STORY_ID.key];
     }
 
-    static _validCommon(obj, nullable) {
-        ValidateUtil.valid(Story, Schema, obj, nullable);
+    getVersion() {
+        return this[Schema.VERSION.key];
+    }
+
+    getStatus() {
+        return this[Schema.STATUS.key];
+    }
+
+    getThumbnail() {
+        return this[Schema.THUMBNAIL.key];
+    }
+
+    getThumbnailVersion() {
+        return this[Schema.THUMBNAIL_VERSION.key];
+    }
+
+    getThumbnailCrc32() {
+        return this[Schema.THUMBNAIL_CRC32.key];
     }
 }
 

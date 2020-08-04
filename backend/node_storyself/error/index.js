@@ -1,7 +1,7 @@
-module.exports.RunTime = require('./runTimeError');
-module.exports.Model = require('./modelError');
-module.exports.Service = require('./serviceError');
-module.exports.Dao = require('./daoError');
-module.exports.Controller = require('./controllerError');
-module.exports.RunTime = require('./runTimeError');
-module.exports.Uncaught = require('./uncaughtError');
+module.exports.RunTime = require('./RuntimeError');
+module.exports.Model = require('./ModelError');
+module.exports.Service = require('./ServiceError');
+module.exports.Dao = require('./DaoError');
+module.exports.Controller = require('./ControllerError');
+module.exports.RunTime = require('./RuntimeError');
+module.exports.Uncaught = require('./UncaughtError');

@@ -1,13 +1,13 @@
 require('../../apps/startup');
 
 const assert = require('assert');
-const ReqAuthLogin = require('@ss/models/controller/reqAuthLogin');
-const ValidateUtil = require('@ss/util');
+const ReqAuthLogin = require('@ss/models/controller/ReqAuthLogin');
+const ValidateUtil = require('@ss/util/ValidateUtil')
+
 const Provider = ValidateUtil.Provider;
-const User = require('@ss/models/mongo/user');
 const AuthLoginSchema = ReqAuthLogin.Schema;
 
-const SSError = require('../../node_storyself/daoMongo/node_modules/@ss/error')
+const SSError = require('@ss/error')
 const TestHelper = require('../testHelper');
 
 before(() => {

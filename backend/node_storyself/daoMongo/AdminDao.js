@@ -1,29 +1,43 @@
-const Admin = require("../models/mongo/admin");
+const Admin = require("../models/mongo/Admin");
+const Dao = require('./Dao');
 
-class AdminDao {
+class AdminDao extends Dao {
     constructor(connection) {
-        this.db = connection.db('story');
-        this.collection = this.db.collection('resource');
+        super();
+        this.db = connection.storyConnect.db('story');
+        this.collection = this.db.collection('admin');
     }
 
-    async insert(admin) {
-        admin.insertValid();
-        await this.collection.insertOne(admin);
+    static model = Admin;
+
+    static requireInsertFieldList() {
+        return [
+            Admin.Schema.ADMIN_ID.key,
+            Admin.Schema.PASSWORD.key,
+            Admin.Schema.ADMIN_ROLE.key,
+            Admin.Schema.CREATE_DATE.key,
+            Admin.Schema.STATUS.key,
+        ];
     }
 
-    async update(where, $set) {
-        await this.collection.updateOne(where, {$set});
+    static allowWhereFieldList() {
+        return [
+            Admin.Schema.ADMIN_ID.key,
+        ];
     }
 
-    async getList() {
-        const result = await this.collection.find().toArray();
-        return result;
-    }
+    static allowSetFieldList() {
+        return [
+            Admin.Schema.ADMIN_ROLE.key,
+            Admin.Schema.PASSWORD.key,
+        ]
+    };
 
-    async getOne() {
-        const result = await this.collection.find().toArray();
-        return result;
-    }
+    static notAllowSetFieldList() {
+        return [
+            Admin.Schema.ADMIN_ID.key,
+        ]
+    };
 }
 
 module.exports = AdminDao;

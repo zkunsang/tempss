@@ -1,28 +1,20 @@
-const ValidateUtil = require('../../util');
+const Model = require('@ss/models');
 
-const Platform = ValidateUtil.Platform;
-const Provider = ValidateUtil.Provider;
+const ValidateUtil = require('@ss/util/ValidateUtil');
 const ValidType = ValidateUtil.ValidType;
-const NullAllow = ValidateUtil.NullAllow;
-const AppStore = ValidateUtil.AppStore;
 
 const Schema = {
     ADMIN_ID: { key: 'adminId', required: true, type: ValidType.STRING },
     PASSWORD: { key: 'password', required: true, type: ValidType.STRING },
+    CONFIRM_PASSWORD: { key: 'confirmPassword', required: true, type: ValidType.STRING },
 }
 
-class ReqAuthRegist {
-    constructor({ adminId, password }) {
+class ReqAuthRegist extends Model{
+    constructor({ adminId, password, confirmPassword }) {
+        super();
         this[Schema.ADMIN_ID.key] = adminId;
         this[Schema.PASSWORD.key] = password;
-    }
-
-    static validModel(obj) {
-        ReqAuthRegist._validCommon(obj, NullAllow.NO);
-    }
-
-    static _validCommon(obj, nullable) {
-        ValidateUtil.valid(ReqAuthRegist, Schema, obj, nullable);
+        this[Schema.CONFIRM_PASSWORD.key] = confirmPassword;
     }
 }
 

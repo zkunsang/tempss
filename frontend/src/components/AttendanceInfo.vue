@@ -14,7 +14,7 @@
       <template v-slot:top>
         <v-alert v-if="isLive" type="info" dense>데이터 수정 -> 디자인 적용</v-alert>    
           <v-toolbar flat color="white">
-            <v-toolbar-title>출석 리스트</v-toolbar-title>
+            <v-toolbar-title>아이템 리스트</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-btn color="primary" dark class="mb-2" @click="onCreate">New Item</v-btn>
             <v-spacer></v-spacer>
@@ -238,8 +238,6 @@ export default {
           this.attendance_list = body_data.attendance_list;
           this.item_list = body_data.attendance_item_list;
 
-          console.log(this.attendance_list);
-          console.log(this.item_list);
           this.attendance_item_arranged_map = {};
 
           this.item_list.forEach((item) => {
@@ -301,10 +299,6 @@ export default {
     },
     close () {
       this.dialog = false
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
     },
     async save () {
       this.insert ?

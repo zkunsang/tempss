@@ -1,8 +1,9 @@
-const ValidateUtil = require('../../util');
+const Model = require('@ss/models');
+
+const ValidateUtil = require('@ss/util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 const UserStatus = ValidateUtil.UserStatus;
 const Provider = ValidateUtil.Provider;
-const NullAllow = ValidateUtil.NullAllow;
 
 const Schema = {
     UID: { key: 'uid', required: true, type: ValidType.STRING },
@@ -15,16 +16,18 @@ const Schema = {
     SESSION_ID: { key: 'sessionId', required: false, type: ValidType.STRING }
 }
 
-class User {
+class User extends Model {
     constructor({ uid, email, provider, status, createDate, lastLoginDate, policyVersion, sessionId }) {
-        this[Schema.UID.key] = uid;
-        this[Schema.EMAIL.key] = email;
-        this[Schema.PROVIDER.key] = provider;
-        this[Schema.STATUS.key] = status;
-        this[Schema.CREATE_DATE.key] = createDate;
-        this[Schema.LAST_LOGIN_DATE.key] = lastLoginDate;
-        this[Schema.POLICY_VERSION.key] = policyVersion;
-        this[Schema.SESSION_ID.key] = sessionId;
+        super();
+
+        this[Schema.UID.key] = uid || undefined;
+        this[Schema.EMAIL.key] = email || undefined;
+        this[Schema.PROVIDER.key] = provider || undefined;
+        this[Schema.STATUS.key] = status || undefined;
+        this[Schema.CREATE_DATE.key] = createDate || undefined;
+        this[Schema.LAST_LOGIN_DATE.key] = lastLoginDate || undefined;
+        this[Schema.POLICY_VERSION.key] = policyVersion || undefined;
+        this[Schema.SESSION_ID.key] = sessionId || undefined;
     }
 
     getSessionId() {
@@ -53,18 +56,6 @@ class User {
 
     setCreateDate(createDate) {
         this[Schema.CREATE_DATE.key] = createDate;
-    }
-
-    static validModel(obj) {
-        User._validCommon(obj, NullAllow.NO);
-    }
-
-    static validValue(obj) {
-        User._validCommon(obj, NullAllow.YES);
-    }
-
-    static _validCommon(obj, nullable) {
-        ValidateUtil.valid(User, Schema, obj, nullable);
     }
 };
 
