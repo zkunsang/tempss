@@ -4,3 +4,4 @@ coverage
 backend/configs/*
 !backend/configs/sample
 !backend/configs/index.js
+*.pem
