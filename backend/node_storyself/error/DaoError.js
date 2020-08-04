@@ -27,4 +27,3 @@ module.exports.Code = {
     deleteOneLength: { code: 20013, name: 'deleteOneLength', message: 'delete length error' },
     deleteManyLength: { code: 20014, name: 'deleteManyLength', message: 'delete many length error' },
 }
-

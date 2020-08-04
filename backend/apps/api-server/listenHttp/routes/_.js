@@ -3,9 +3,31 @@ const helper = require('@ss/helper');
 const SSError = require('@ss/error');
 
 
+class CommonPacket {
+    constructor(ctx, startDate, endDate) {
+        this.pathname = ctx.path;
+        this.ip = ctx.ip;
+        
+
+        const body = ctx.request.body;
+        this.deviceId = body.deviceId;
+        this.deviceName = body.deviceName;
+        this.osVersion = body.osVersion;
+        this.gameLanguage = body.gameLanguage;
+
+        this.body = JSON.stringify(ctx.request.body);
+        // this.body = ctx.request.body;
+        this.res = ctx.body;
+        this.status = ctx.status;
+        this.ms = endDate - startDate;
+        this.endDate = moment(endDate).format();
+        this.startDate = moment(startDate).format();
+    }
+}
 
 module.exports = async (ctx, next) => {
-    ctx.$date = moment().unix();
+    ctx.$date = moment().valueOf();
+    
     try {
         await next();
     }
@@ -32,10 +54,8 @@ module.exports = async (ctx, next) => {
             helper.slack.sendMessage(err);
             uncaughtError(ctx, err);
         }
-
-        console.error(err);
-
     }
+    helper.fluent.sendLog('network', new CommonPacket(ctx, ctx.$date, moment().valueOf()));
 };
 
 function uncaughtError(ctx, err) {

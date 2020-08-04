@@ -35,6 +35,17 @@ class RedisConfig {
     }
 }
 
+class FluentConfig{
+    constructor(config) {
+        this.tag = config.tag;
+        this.host = config.host;
+        this.port = config.port;
+        this.timeout = config.timeout;
+        this.reconnectInterval = config.reconnectInterval;
+        this.useFluent = config.useFluent;
+    }
+}
+
 module.exports = class Config {
     constructor(configPath) {
         this.configPath = configPath;
@@ -50,6 +61,7 @@ module.exports = class Config {
             this.dbMongo = new MongoConfig(require(`@cf/${this.configPath}/dbMongo.json`));
             this.dbRedis = new RedisConfig(require(`@cf/${this.configPath}/dbRedis.json`));
             this.slack = new SlackConfig(require(`@cf/${this.configPath}/slack.json`));
+            this.fluent = new FluentConfig(require(`@cf/${this.configPath}/fluent.json`));
         } catch (e) {
             throw msg + e.message;
         }
