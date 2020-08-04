@@ -18,5 +18,4 @@ module.exports.Code = {
     notValidUnixTimeStamp: { code: 10007, name: 'notValidUnixTimeStamp', message: 'check valid unixtimestamp' },
     validRangeType: { code: 10008, name: 'validRangeType', message: 'check validRange Type' },
     validRangeValue: { code: 10009, name: 'validRangeValue', message: 'check validRange Value ' }
-
 }

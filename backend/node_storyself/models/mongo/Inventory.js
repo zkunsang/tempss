@@ -10,10 +10,11 @@ const Schema = {
     UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
     CREATE_DATE: { key: 'createDate', required: true, type: ValidType.UNIX_TIMESTAMP },
     END_DATE: { key: 'endDate', required: false, type: ValidType.UNIX_TIMESTAMP },
+    OBJECT_ID: { key: '_id', required: false, type: ValidType.OBJECT },
 }
 
 class Inventory extends Model {
-    constructor({ uid, itemId, itemQny, updateDate, createDate, endDate }) {
+    constructor({ uid, itemId, itemQny, updateDate, createDate, endDate, _id }) {
         super();
         this[Schema.UID.key] = uid || undefined;
         this[Schema.ITEM_ID.key] = itemId || undefined;
@@ -21,6 +22,7 @@ class Inventory extends Model {
         this[Schema.UPDATE_DATE.key] = updateDate || undefined;
         this[Schema.CREATE_DATE.key] = createDate || undefined;
         this[Schema.END_DATE.key] = endDate || undefined;
+        this[Schema.OBJECT_ID.key] = _id || undefined;
     }
 
     setUID(uid) {
@@ -61,6 +63,14 @@ class Inventory extends Model {
 
     getCreateDate() {
         return this[Schema.CREATE_DATE.key];
+    }
+
+    getEndDate() {
+        return this[Schema.END_DATE.key];
+    }
+
+    getObjectId() {
+        return this[Schema.OBJECT_ID.key];
     }
 
     addItem(inventory) {

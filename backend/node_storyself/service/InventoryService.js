@@ -23,7 +23,7 @@ const PUT_ACTION = {
     STORY_BUY: 'storybuy',      // 스토리 구매
 }
 
-const USE_ACTION = {  
+const USE_ACTION = {
     CEHAT: 'cheat',             // cheat
     STORY_BUY: 'storybuy'       // 스토리 구매
 }
@@ -82,7 +82,7 @@ class InventoryService extends Service {
 
             const volatileSec = itemData.getVolatileSeconds();
             if (volatileSec) {
-                putInventory.addEndDate(createDate + volatileSec);
+                putInventory.setEndDate(createDate + volatileSec);
                 insertList.push(putInventory);
                 continue;
             }
@@ -103,7 +103,7 @@ class InventoryService extends Service {
             updateList.push(userInventory);
         }
 
-        return new InventoryPutObject({insertList, updateList});
+        return new InventoryPutObject({ insertList, updateList });
     }
 
     async putItem(putObject, actions) {
@@ -126,15 +126,15 @@ class InventoryService extends Service {
 
         const deleteList = [];
         const updateList = [];
-        
+
         const updateDate = this.updateDate;
         for (const useInventory of sortedInventoryList) {
             useInventory.setUpdateDate(updateDate);
             const itemId = useInventory.getItemId();
             const itemData = itemMap[itemId];
 
-            InventoryService.checkItemData(itemData);
-            InventoryService.checkItemUseable(itemData);
+            InventoryService.checkItemData(itemData, itemId);
+            InventoryService.checkItemUseable(itemData, itemId);
 
             const groupId = itemData.getGroupId();
 
@@ -143,7 +143,7 @@ class InventoryService extends Service {
             InventoryService.calculateUse(userInventoryList, useInventory, itemMap, deleteList, updateList);
         }
 
-        return new InventoryUseObject({deleteList, updateList});
+        return new InventoryUseObject({ deleteList, updateList });
     }
 
     async useItem(useObject, actions) {
@@ -154,14 +154,11 @@ class InventoryService extends Service {
 
     async deleteItemList(deleteInventoryList) {
         for (const deleteInventory of deleteInventoryList) {
-            const uid = deleteInventory.getUID();
-            const itemId = deleteInventory.getItemId();
-            const createDate = deleteInventory.getCreateDate();
+            const _id = deleteInventory.getObjectId();
 
-            delete deleteInventory[Inventory.Schema.UID.key];
-            delete deleteInventory[Inventory.Schema.UID.key];
+            delete deleteInventory[Inventory.Schema.OBJECT_ID.key];
 
-            await this.inventoryDao.deleteOne({ uid, itemId, createDate }, deleteInventory);
+            await this.inventoryDao.deleteOne({ _id }, deleteInventory);
         }
     }
 
@@ -171,12 +168,13 @@ class InventoryService extends Service {
 
     async updateItemList(updateInventoryList) {
         for (const updateInventory of updateInventoryList) {
-            const uid = updateInventory.getUID();
-            const itemId = updateInventory.getItemId();
+            const _id = updateInventory.getObjectId();
 
+            delete updateInventory[Inventory.Schema.OBJECT_ID.key];
             delete updateInventory[Inventory.Schema.UID.key];
             delete updateInventory[Inventory.Schema.ITEM_ID.key];
-            await this.inventoryDao.updateOne({ uid, itemId }, updateInventory)
+
+            await this.inventoryDao.updateOne({ _id }, updateInventory)
         }
     }
 
@@ -237,13 +235,13 @@ class InventoryService extends Service {
 
     static checkItemData(itemData, itemId) {
         if (!itemData) {
-            throw new SSError.Service(SSError.Service.Code.putItemNoExistItem, `${itemId} - not exist`)
+            throw new SSError.Service(SSError.Service.Code.putItemNoExistItem, `${itemId} - not exist`);
         }
     }
 
-    static checkItemUseable(itemData) {
+    static checkItemUseable(itemData, itemId) {
         if (!itemData.getUseable()) {
-            throw new SSError.Service(SSError.Service.Code.putItemNoExistItem, `${itemId} - not exist`)
+            throw new SSError.Service(SSError.Service.Code.useItemNoUseableItem, `${itemId} - not useable`);
         }
     }
 
@@ -301,7 +299,7 @@ class InventoryService extends Service {
                 break;
             }
             else {
-                userInventory.minusItem(inventory);
+                userInventory.minusItem(userInventory);
                 useInventory.setItemQny(deleteCnt - invenItemQny);
                 deleteList.push(userInventory);
                 break;
@@ -310,7 +308,7 @@ class InventoryService extends Service {
     }
 
     static makeInventoryObject(itemId, itemQny) {
-        return new Inventory({itemId, itemQny});
+        return new Inventory({ itemId, itemQny });
     }
 
     async processExchange(useInventoryList, putInventoryList) {
@@ -330,15 +328,15 @@ class InventoryService extends Service {
         const useObject = await this.checkUseItem(useInventoryList);
         await this.useItem(useObject);
     }
-    
+
     static sortInventoryList(inventoryList) {
         let returnObject = {};
-        for(const inventory of inventoryList) {
+        for (const inventory of inventoryList) {
             const itemId = inventory.getItemId();
             const itemQny = inventory.getItemQny();
-            
+
             let tempInventory = returnObject[itemId]
-            if(tempInventory) {
+            if (tempInventory) {
                 tempInventory.setItemQny(tempInventory.getItemQny() + itemQny);
             }
             else {

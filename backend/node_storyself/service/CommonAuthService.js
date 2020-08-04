@@ -11,7 +11,7 @@ const UserDao = require('@ss/daoMongo/UserDao');
 module.exports = async (ctx, next) => {
     const reqSession = new ReqSession(ctx.request.body);
     ReqSession.validModel(reqSession);
-
+    
     const sessionDao = new SessionDao(dbRedis);
 
     const sessionId = reqSession.getSessionId();

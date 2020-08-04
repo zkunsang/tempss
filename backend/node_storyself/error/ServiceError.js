@@ -21,7 +21,6 @@ module.exports.Code = {
     emptyArray: { code: 30003, name: 'emptyArray', message: 'not allow empty array' },
     wrongArrayObject: { code: 30004, name: 'wrongArrayObject', message: 'array includes wrong object' },
     
-
     putItemNoExistItem: { code: 31001, name: 'putItemNoExistItem', message: 'put item no exist item' },
     putItemOverMaxQny: { code: 31002, name: 'putItemOverMaxQny', message: 'over max qny' },
     useItemNotEnoughItem: { code: 31003, name: 'putItemNotEnughItem', message: 'not enough Item' },
@@ -29,5 +28,4 @@ module.exports.Code = {
 
     noExistItemList: { code: 32001, name: 'noExistItemList', message: 'found not exist item' },
     noExistStoryList: { code: 32002, name: 'noExistStoryList', message: 'found not exist story' },
-
 }

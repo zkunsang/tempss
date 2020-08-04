@@ -22,6 +22,7 @@ class InvetoryDao extends Dao {
 
     static allowWhereFieldList() {
         return [
+            Invetory.Schema.OBJECT_ID.key,
             Invetory.Schema.UID.key,
             Invetory.Schema.ITEM_ID.key,
         ];

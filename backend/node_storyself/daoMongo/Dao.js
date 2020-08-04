@@ -119,7 +119,7 @@ class Dao {
     static checkNotAllowSetField($set) {
         const notAllowList = this.constructor.notAllowSetFieldList().filter((item) => $set[item]);
         if (notAllowList.length > 0) {
-            throw new SSError.Dao(SSError.Dao.Code.notAllowSetData, `${this.constructor.name} - ${notAllowList.join(',')} not allow set field`)
+            throw new SSError.Dao(SSError.Dao.Code.notAllowSetField, `${this.constructor.name} - ${notAllowList.join(',')} not allow set field`)
         }
     }
 
