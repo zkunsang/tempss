@@ -27,46 +27,70 @@ module.exports = async (ctx, next) => {
     await inventoryService.processPut(reqCheatPutItem.getInventoryList(), InventoryService.PUT_ACTION.CHEAT);
     
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
 
     await next();
 }
 
 /**
  * @swagger
- * resourcePath: /api
+ * resourcePath: /cheat
  * description: All about API
  */
 
 /**
  * @swagger
- * path: /config
+ * path: /cheat/putItem
  * operations:
- *   -  httpMethod: GET
- *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *   -  httpMethod: POST
+ *      summary: 치트 아이템 획득
  *      notes: |
- *        <br>version: version
- *        <br>url: cdn주소입니다.
- *        <br>policyVersion: 개인 정책 버젼
- *      responseClass: appInfo
+ *        <br><b>requestParam</b>
+ *        <br>sessionId: 세션 아이디
+ *        <br>putList: 인벤토리 리스트
+ *      responseClass: resCheatPutItem
  *      nickname: config
  *      consumes:
  *        - text/html
+ *      parameters:
+ *        - name: body
+ *          paramType: body
+ *          dataType: reqCheatPutItem
+ *          required: true
+ *
  */
 
 /**
  * @swagger
  * models:
- *   appInfo:
- *     id: AppInfo
+ *   reqCheatPutItem:
+ *     id: reqCheatPutItem
  *     properties:
- *       version:
+ *       sessionId:
  *         type: String
  *         required: true
- *       url:
+ *         description: 세션 아이디
+ *       putList:
+ *         type: array
+ *         items: 
+ *           type: inventory
+ *         required: true
+ *         description: 아이템 리스트
+ *   resCheatPutItem:
+ *     id: resCheatPutItem
+ *     properties:
+ *       common:
+ *         type: common
+ *       error:
+ *         type: error
+ *   inventory:
+ *     id: inventory
+ *     properties:
+ *       itemId:
  *         type: String
  *         required: true
- *       policyVersion:
- *         type: String
+ *       itemQny:
+ *         type: number
  *         required: true
- */
+ *
+ * */

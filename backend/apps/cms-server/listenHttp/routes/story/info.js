@@ -12,7 +12,7 @@ module.exports = async (ctx, next) => {
     if (!storyData) {
         console.error(err);
         ctx.status = 400;
-        ctx.body = { message: err.message };
+        ctx.body.data = { message: err.message };
 
         await next();
     }

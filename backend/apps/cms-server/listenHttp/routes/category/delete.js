@@ -11,7 +11,7 @@ module.exports = async (ctx, next) => {
 
     if (!itemCategoryInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'no exist category' };
+        ctx.body.data = { message: 'no exist category' };
         await next();
         return;
     }
@@ -19,6 +19,6 @@ module.exports = async (ctx, next) => {
     await itemCategoryDao.deleteOne({itemCategory});
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }

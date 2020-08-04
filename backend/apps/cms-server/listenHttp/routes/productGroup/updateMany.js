@@ -21,7 +21,7 @@ module.exports = async (ctx, next) => {
         ctx.status = 200;
         const deleteGroup =
             ArrayUtil.getArrayValueByKey(deleteList, ProductGroup.Schema.GROUP_ID.key);
-        ctx.body = { message: `delete method not allowed - ${deleteGroup.join(',')}` };
+        ctx.body.data = { message: `delete method not allowed - ${deleteGroup.join(',')}` };
         await next();
         return;
     }
@@ -30,7 +30,7 @@ module.exports = async (ctx, next) => {
     await insertGroupList(productGroupDao, insertList, updateDate)
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }
 

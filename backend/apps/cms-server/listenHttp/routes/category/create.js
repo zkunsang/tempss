@@ -13,7 +13,7 @@ module.exports = async (ctx, next) => {
 
     if (itemCategoryInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'already exist' };
+        ctx.body.data = { message: 'already exist' };
         await next();
         return;
     }
@@ -24,7 +24,7 @@ module.exports = async (ctx, next) => {
     await itemCategoryDao.insertOne(createCategoryInfo)
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 
 }

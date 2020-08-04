@@ -22,6 +22,6 @@ module.exports = async (ctx, next) => {
     const productGroupList = await productGroupDao.findAll();
 
     ctx.status = 200;
-    ctx.body = { itemList, productList, productRewardList, productGroupList };
+    ctx.body.data = { itemList, productList, productRewardList, productGroupList };
     await next();
 }

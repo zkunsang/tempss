@@ -15,7 +15,7 @@ module.exports = async (ctx, next) => {
     if (!oldStoryData) {
         console.error(err);
         ctx.status = 400;
-        ctx.body = { message: 'no story' };
+        ctx.body.data = { message: 'no story' };
 
         await next();
         return;
@@ -33,7 +33,7 @@ module.exports = async (ctx, next) => {
     await storyDao.updateOne({ storyId }, newStoryData);
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 
 }

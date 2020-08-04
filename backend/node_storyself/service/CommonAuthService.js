@@ -19,7 +19,7 @@ module.exports = async (ctx, next) => {
 
     if(!sessionObj) {
         ctx.status = 401;
-        ctx.body = {message: 'no user exist session'};
+        ctx.body.data = {message: 'no user exist session'};
         return;
     }
 

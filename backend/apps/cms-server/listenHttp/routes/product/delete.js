@@ -14,7 +14,7 @@ module.exports = async (ctx, next) => {
 
     if(!findProduct) {
         ctx.status = 400;
-        ctx.body = { message: 'not exist product' };    
+        ctx.body.data = { message: 'not exist product' };    
         await next();
         return;
     }
@@ -25,7 +25,7 @@ module.exports = async (ctx, next) => {
     await productRewardDao.deleteMany({productId}, findRewardList.length);
     
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }
 

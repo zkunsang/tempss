@@ -50,46 +50,60 @@ module.exports = async (ctx, next) => {
     await inventoryService.processExchange(useInventoryList, putInventoryList);
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
 
     await next();
 }
 
 /**
  * @swagger
- * resourcePath: /api
+ * resourcePath: /shop
  * description: All about API
  */
 
 /**
  * @swagger
- * path: /config
+ * path: /shop/story
  * operations:
- *   -  httpMethod: GET
- *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *   -  httpMethod: POST
+ *      summary: 동화 구매
  *      notes: |
- *        <br>version: version
- *        <br>url: cdn주소입니다.
- *        <br>policyVersion: 개인 정책 버젼
- *      responseClass: appInfo
+ *        <br><b>requestParam</b>
+ *        <br>sessionId: 세션 아이디
+ *        <br>storyList: 동화 정보
+ *      responseClass: resShopStory
  *      nickname: config
  *      consumes:
  *        - text/html
+ *      parameters:
+ *        - name: body
+ *          paramType: body
+ *          dataType: reqShopStory
+ *          required: true
+ *
  */
 
 /**
  * @swagger
  * models:
- *   appInfo:
- *     id: AppInfo
+ *   reqShopStory:
+ *     id: reqShopStory
  *     properties:
- *       version:
+ *       sessionId:
  *         type: String
  *         required: true
- *       url:
- *         type: String
+ *         description: 세션 아이디
+ *       storyList:
+ *         type: array
+ *         items: 
+ *           type: string
  *         required: true
- *       policyVersion:
- *         type: String
- *         required: true
- */
+ *         description: 동화 아이디
+ *   resShopStory:
+ *     id: resShopStory
+ *     properties:
+ *       common:
+ *         type: common
+ *       error:
+ *         type: error
+ * */

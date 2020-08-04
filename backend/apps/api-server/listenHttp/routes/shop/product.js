@@ -24,7 +24,7 @@ module.exports = async (ctx, next) => {
 
     if (validateReceipt.getPurchaseStatus() === PurchaseStatus.FAIL) {
         ctx.status = 400;
-        ctx.body = { message: 'receipt failed' };
+        ctx.body.data = { message: 'receipt failed' };
         return;
     }
 
@@ -35,7 +35,7 @@ module.exports = async (ctx, next) => {
 
     if (!productInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'no exist product info' };
+        ctx.body.data = { message: 'no exist product info' };
         return;
     }
 
@@ -51,7 +51,7 @@ module.exports = async (ctx, next) => {
     await inventoryService.putItem(productRewardList, InventoryService.GET_ACTION.PURCHASE);
     
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
 
 
     await next();
@@ -59,39 +59,55 @@ module.exports = async (ctx, next) => {
 
 /**
  * @swagger
- * resourcePath: /api
+ * resourcePath: /shop
  * description: All about API
  */
 
 /**
  * @swagger
- * path: /config
+ * path: /shop/product
  * operations:
- *   -  httpMethod: GET
- *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *   -  httpMethod: POST
+ *      summary: 상품 구매
  *      notes: |
- *        <br>version: version
- *        <br>url: cdn주소입니다.
- *        <br>policyVersion: 개인 정책 버젼
- *      responseClass: appInfo
+ *        <br><b>requestParam</b>
+ *        <br>receipt: 영수증
+ *        <br>appStore (String): 스토어(google|onestore|appstore),
+ *      responseClass: resShopPurchase
  *      nickname: config
  *      consumes:
  *        - text/html
+ *      parameters:
+ *        - name: body
+ *          paramType: body
+ *          dataType: reqShopPurchase
+ *          required: true
+ *
  */
 
 /**
  * @swagger
  * models:
- *   appInfo:
- *     id: AppInfo
+ *   reqShopPurchase:
+ *     id: reqShopPurchase
  *     properties:
- *       version:
+ *       sessionId:
  *         type: String
  *         required: true
- *       url:
+ *         description: 세션 아이디
+ *       receipt:
  *         type: String
  *         required: true
- *       policyVersion:
+ *         description: 영수증
+ *       appStore:
  *         type: String
  *         required: true
- */
+ *         description: 앱스토어
+ *   resShopPurchase:
+ *     id: resShopPurchase
+ *     properties:
+ *       common:
+ *         type: common
+ *       error:
+ *         type: error
+ * */

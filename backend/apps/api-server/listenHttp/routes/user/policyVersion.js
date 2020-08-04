@@ -17,7 +17,7 @@ module.exports = async (ctx, next) => {
     await userDao.update({ uid: userInfo.getUID() }, { policyVersion: policyVersion });
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
 
     await next();
 };

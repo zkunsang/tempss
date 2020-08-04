@@ -13,7 +13,7 @@ module.exports = async (ctx, next) => {
 
     if (!findGroupInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'no exsit group' };
+        ctx.body.data = { message: 'no exsit group' };
         await next();
         return;
     }
@@ -25,6 +25,6 @@ module.exports = async (ctx, next) => {
     await productGroupDao.updateOne({ groupId }, productGroup)
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }

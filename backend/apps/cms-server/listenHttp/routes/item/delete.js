@@ -15,7 +15,7 @@ module.exports = async (ctx, next) => {
 
     if(!findItemInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'already not exist item' };    
+        ctx.body.data = { message: 'already not exist item' };    
         await next();
         return;
     }
@@ -26,7 +26,7 @@ module.exports = async (ctx, next) => {
     await itemMaterialDao.deleteMany({itemId}, findMaterialList.length);
     
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }
 

@@ -27,46 +27,60 @@ module.exports = async (ctx, next) => {
     await inventoryService.processUse(reqCheatUseItem.getInventoryList(), InventoryService.USE_ACTION.CHEAT);
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
 
     await next();
 }
 
 /**
  * @swagger
- * resourcePath: /api
+ * resourcePath: /cheat
  * description: All about API
  */
 
 /**
  * @swagger
- * path: /config
+ * path: /cheat/useItem
  * operations:
- *   -  httpMethod: GET
- *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *   -  httpMethod: POST
+ *      summary: 치트 아이템 소비
  *      notes: |
- *        <br>version: version
- *        <br>url: cdn주소입니다.
- *        <br>policyVersion: 개인 정책 버젼
- *      responseClass: appInfo
+ *        <br><b>requestParam</b>
+ *        <br>sessionId: 세션 아이디
+ *        <br>useList: 인벤토리 리스트
+ *      responseClass: resCheatUseItem
  *      nickname: config
  *      consumes:
  *        - text/html
+ *      parameters:
+ *        - name: body
+ *          paramType: body
+ *          dataType: reqCheatUseItem
+ *          required: true
+ *
  */
 
 /**
  * @swagger
  * models:
- *   appInfo:
- *     id: AppInfo
+ *   reqCheatUseItem:
+ *     id: reqCheatUseItem
  *     properties:
- *       version:
+ *       sessionId:
  *         type: String
  *         required: true
- *       url:
- *         type: String
+ *         description: 세션 아이디
+ *       useList:
+ *         type: array
+ *         items: 
+ *           type: inventory
  *         required: true
- *       policyVersion:
- *         type: String
- *         required: true
- */
+ *         description: 아이템 리스트
+ *   resCheatUseItem:
+ *     id: resCheatUseItem
+ *     properties:
+ *       common:
+ *         type: common
+ *       error:
+ *         type: error
+ * */

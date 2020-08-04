@@ -18,7 +18,7 @@ module.exports = async (ctx, next) => {
 
     await adminDao.insertOne(admin);
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     return await next();
 };
 

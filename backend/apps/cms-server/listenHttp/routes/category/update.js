@@ -13,7 +13,7 @@ module.exports = async (ctx, next) => {
 
     if (!itemCategoryInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'no exsit category' };
+        ctx.body.data = { message: 'no exsit category' };
         await next();
         return;
     }
@@ -25,6 +25,6 @@ module.exports = async (ctx, next) => {
     await itemCategoryDao.updateOne({ itemCategory}, updateCategoryInfo)
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }

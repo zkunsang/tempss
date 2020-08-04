@@ -20,7 +20,7 @@ module.exports = async (ctx, next) => {
 
     if (findProduct) {
         ctx.status = 400;
-        ctx.body = { message: 'already exist item' };
+        ctx.body.data = { message: 'already exist item' };
         await next();
         return;
     }
@@ -29,7 +29,7 @@ module.exports = async (ctx, next) => {
 
     if (findRewardList.length > 0) {
         ctx.status = 400;
-        ctx.body = { message: 'already exist reward item' };
+        ctx.body.data = { message: 'already exist reward item' };
         await next();
         return;
     }
@@ -38,7 +38,7 @@ module.exports = async (ctx, next) => {
     await insertProductRewardInfo(productRewardDao, product, productRewardList, updateDate);
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }
 

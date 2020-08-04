@@ -7,7 +7,6 @@ class CommonPacket {
     constructor(ctx, startDate, endDate) {
         this.pathname = ctx.path;
         this.ip = ctx.ip;
-        
 
         const body = ctx.request.body;
         this.deviceId = body.deviceId;
@@ -27,7 +26,11 @@ class CommonPacket {
 
 module.exports = async (ctx, next) => {
     ctx.$date = moment().valueOf();
-    
+    ctx.body = ctx.body || {};
+    ctx.body.common = ctx.body.common || {};
+    ctx.body.error = ctx.body.error || {};
+    ctx.body.data = ctx.body.data || {};
+
     try {
         await next();
     }
@@ -55,12 +58,14 @@ module.exports = async (ctx, next) => {
             uncaughtError(ctx, err);
         }
     }
+    
+    ctx.body.common.serverTime = ctx.$date;
     helper.fluent.sendLog('network', new CommonPacket(ctx, ctx.$date, moment().valueOf()));
 };
 
 function uncaughtError(ctx, err) {
     ctx.status = 500;
-    ctx.body = { 
+    ctx.body.error = { 
         message: err.message,
         additional: err.additionalMessage
      };
@@ -68,7 +73,7 @@ function uncaughtError(ctx, err) {
 
 function processDaoError(ctx, err) {
     ctx.status = 500;
-    ctx.body = { 
+    ctx.body.error = { 
         message: err.message,
         additional: err.additionalMessage
      };
@@ -76,7 +81,7 @@ function processDaoError(ctx, err) {
 
 function processModelError(ctx, err) {
     ctx.status = 400;
-    ctx.body = {
+    ctx.body.error = {
         message: err.message,
         additional: err.additionalMessage
     };
@@ -84,7 +89,7 @@ function processModelError(ctx, err) {
 
 function processServiceError(ctx, err) {
     ctx.status = 400;
-    ctx.body = {
+    ctx.body.error = {
         message: err.message,
         additional: err.additionalMessage
     };
@@ -92,7 +97,7 @@ function processServiceError(ctx, err) {
 
 function processControllerError(ctx, err) {
     ctx.status = 400;
-    ctx.body = {
+    ctx.body.error = {
         message: err.message,
         additional: err.additionalMessage
     };

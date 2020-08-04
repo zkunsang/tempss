@@ -4,24 +4,19 @@ const ss = require('@ss');
 const apiConfig = ss.configs.apiServer;
 
 module.exports = async (ctx, next) => {
-    try {
-        ctx.status = 200;
-        ctx.body = {
-            url: apiConfig.cdnUrl,
-            version: apiConfig.appVersion,
-            policyVersion: apiConfig.policyVersion
-        };    
-    }
-    catch(err) {
-        console.error(err);
-    }
-    
+    ctx.status = 200;
+    ctx.body.data = {
+        url: apiConfig.cdnUrl,
+        version: apiConfig.appVersion,
+        policyVersion: apiConfig.policyVersion
+    };
+
     await next();
 }
 
 /**
  * @swagger
- * resourcePath: /api
+ * resourcePath: /config
  * description: All about API
  */
 
@@ -37,10 +32,10 @@ module.exports = async (ctx, next) => {
  *        <br>policyVersion: 개인 정책 버젼
  *      responseClass: appInfo
  *      nickname: config
- *      consumes: 
+ *      consumes:
  *        - text/html
  */
- 
+
 /**
  * @swagger
  * models:
@@ -51,9 +46,9 @@ module.exports = async (ctx, next) => {
  *         type: String
  *         required: true
  *       url:
- *         type: String  
- *         required: true  
+ *         type: String
+ *         required: true
  *       policyVersion:
- *         type: String  
- *         required: true  
+ *         type: String
+ *         required: true
  */

@@ -18,7 +18,7 @@ module.exports = async (ctx, next) => {
 
     if(findItemInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'already exist item' };    
+        ctx.body.data = { message: 'already exist item' };    
         await next();
         return;
     }
@@ -27,7 +27,7 @@ module.exports = async (ctx, next) => {
 
     if(itemMaterialList.length > 0 ){
         ctx.status = 400;
-        ctx.body = { message: 'already exist material item' };    
+        ctx.body.data = { message: 'already exist material item' };    
         await next();
         return;
     }
@@ -40,7 +40,7 @@ module.exports = async (ctx, next) => {
     await itemMaterialDao.insertMany(materialList);
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }
 

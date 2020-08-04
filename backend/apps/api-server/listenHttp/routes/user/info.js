@@ -16,7 +16,7 @@ module.exports = async (ctx, next) => {
     const inventoryList = await inventoryDao.findMany({uid});
 
     ctx.status = 200;
-    ctx.body = { inventoryList };
+    ctx.body.data = { inventoryList };
 
     await next();
 };
@@ -29,21 +29,21 @@ module.exports = async (ctx, next) => {
 
 /**
  * @swagger
- * path: /user/policyVersion
+ * path: /user/info
  * operations:
  *   -  httpMethod: POST
- *      summary: 개인 정보 보호 정책 수락
+ *      summary: 유저 인포
  *      notes: |
  *        <br><b>requestParam</b>
- *        <br>sessionId: 세션 아이디
- *      responseClass: resPolicyVersion
+ *        <br>sessionId: 세션 아이디 
+ *      responseClass: resUserInfo
  *      nickname: config
  *      consumes:
  *        - text/html
  *      parameters:
  *        - name: body
  *          paramType: body
- *          dataType: reqUserPolicyVersion
+ *          dataType: reqUserInfo
  *          required: true
  *
  */
@@ -51,28 +51,32 @@ module.exports = async (ctx, next) => {
 /**
  * @swagger
  * models:
- *   reqUserPolicyVersion:
- *     id: reqUserPolicyVersion
+ *   reqUserInfo:
+ *     id: reqUserInfo
  *     properties:
  *       sessionId:
  *         type: String
  *         required: true
  *         description: 세션 아이디
- *       policyVersion:
- *         type: Number
- *         required: true
- *         description: 개인정보 버젼
- *   resPolicyVersion:
- *     id: resPolicyVersion
+ *   resUserInfo:
+ *     id: resUserInfo
  *     properties:
- *       version:
+ *       inventoryList:
+ *         type: array
+ *         items: 
+ *           type: inventory
+ *   inventory:
+ *     id: inventory
+ *     properties:
+ *       itemId: 
  *         type: String
- *         required: true
- *       url:
- *         type: String
- *         required: true
- *       policyVersion:
- *         type: String
- *         required: true
- *
+ *       itemQny:
+ *         type: number
+ *       createDate:
+ *         type: number
+ *       updateDate:
+ *         type: number
+ *       endDate:
+ *         type: number
+ * 
  * */

@@ -26,7 +26,7 @@ module.exports = async (ctx, next) => {
 
     if (!productInfo) {
         ctx.status = 400;
-        ctx.body = { message: 'no exist product info' };
+        ctx.body.data = { message: 'no exist product info' };
         return;
     }
 
@@ -43,46 +43,75 @@ module.exports = async (ctx, next) => {
     await inventoryService.processPut(inventoryList);
     
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
 
     await next();
 }
 
 /**
  * @swagger
- * resourcePath: /api
+ * resourcePath: /cheat
  * description: All about API
  */
 
 /**
  * @swagger
- * path: /config
+ * path: /cheat/purchase
  * operations:
- *   -  httpMethod: GET
- *      summary: 로비 진입전 앱에 필요한 기본 정보.
+ *   -  httpMethod: POST
+ *      summary: 치트 구매
  *      notes: |
- *        <br>version: version
- *        <br>url: cdn주소입니다.
- *        <br>policyVersion: 개인 정책 버젼
- *      responseClass: appInfo
+ *        <br><b>requestParam</b>
+ *        <br>sessionId: 세션 아이디
+ *      responseClass: resCheatPurchase
  *      nickname: config
  *      consumes:
  *        - text/html
+ *      parameters:
+ *        - name: body
+ *          paramType: body
+ *          dataType: reqCheatPurchase
+ *          required: true
+ *
  */
 
 /**
  * @swagger
  * models:
- *   appInfo:
- *     id: AppInfo
+ *   reqCheatPurchase:
+ *     id: reqCheatPurchase
  *     properties:
- *       version:
+ *       sessionId:
  *         type: String
  *         required: true
- *       url:
+ *         description: 세션 아이디
+ *       productId:
  *         type: String
  *         required: true
- *       policyVersion:
+ *         description: 상품 아이디
+ *   resCheatPurchase:
+ *     id: resCheatPurchase
+ *     properties:
+ *       common:
+ *         type: common
+ *       error:
+ *         type: error
+ *   common:
+ *     id: common
+ *     properties:
+ *       serverTime: 
+ *         type: number
+ *   error:
+ *     id: error
+ *     properties:
+ *       message:
  *         type: String
- *         required: true
- */
+ *       additional:
+ *         type: String
+ *   data:
+ *     id: data
+ *     properties:
+ *       sessionId:
+ *         type: String
+ *
+ * */

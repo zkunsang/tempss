@@ -21,7 +21,7 @@ module.exports = async (ctx, next) => {
         ctx.status = 200;
         const deleteCategory =
             ArrayUtil.getArrayValueByKey(deleteList, ItemCategory.Schema.ITEM_CATEGORY.key);
-        ctx.body = { message: `delete method not allowed - ${deleteCategory.join(',')}` };
+        ctx.body.data = { message: `delete method not allowed - ${deleteCategory.join(',')}` };
         await next();
         return;
     }
@@ -30,7 +30,7 @@ module.exports = async (ctx, next) => {
     await insertCategoryList(itemCategoryDao, insertList, updateDate)
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }
 

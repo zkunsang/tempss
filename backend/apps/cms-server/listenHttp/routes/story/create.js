@@ -15,7 +15,7 @@ module.exports = async (ctx, next) => {
     if (storyData) {
         console.error(err);
         ctx.status = 400;
-        ctx.body = { message: 'already exist story' };
+        ctx.body.data = { message: 'already exist story' };
 
         await next();
         return;
@@ -27,7 +27,7 @@ module.exports = async (ctx, next) => {
     await storyDao.insertOne(insertStoryData);
 
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
 
     await next();
 

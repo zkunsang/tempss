@@ -26,6 +26,6 @@ module.exports = async (ctx, next) => {
     await insertItemList(itemDao, itemList, updateDate);
     
     ctx.status = 200;
-    ctx.body = {};
+    ctx.body.data = {};
     await next();
 }
