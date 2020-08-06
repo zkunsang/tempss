@@ -4,6 +4,7 @@ const SSError = require('@ss/error');
 
 module.exports = async (ctx, next) => {
     ctx.$date = moment().unix();
+    ctx.body = ctx.body || {};
     try {
         await next();        
     }

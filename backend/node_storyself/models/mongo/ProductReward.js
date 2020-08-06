@@ -15,10 +15,11 @@ const Schema = {
 class ProductReward extends Model {
     constructor({ productId, rewardType, rewardId, rewardQny }) {
         super();
-        this[Schema.PRODUCT_ID.key] = productId || undefined;
-        this[Schema.REWARD_TYPE.key] = rewardType || undefined;
-        this[Schema.REWARD_ID.key] = rewardId || undefined;
-        this[Schema.REWARD_QNY.key] = rewardQny || undefined;
+        
+        this[Schema.PRODUCT_ID.key] = ValidateUtil.setNullUndefined(productId);
+        this[Schema.REWARD_TYPE.key] = ValidateUtil.setNullUndefined(rewardType);
+        this[Schema.REWARD_ID.key] = ValidateUtil.setNullUndefined(rewardId);
+        this[Schema.REWARD_QNY.key] = ValidateUtil.setNullUndefined(rewardQny);
     }
 
     setUpdateDate(updateDate) {

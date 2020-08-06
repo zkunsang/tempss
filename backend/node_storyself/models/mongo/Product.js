@@ -20,16 +20,17 @@ const Schema = {
 class Product extends Model {
     constructor({ productId, groupId, productType, cost, apple, google, startDate, endDate, serverLimit, userLimit }) {
         super();
-        this[Schema.PRODUCT_ID.key] = productId || undefined;
-        this[Schema.GROUP_ID.key] = groupId || undefined;
-        this[Schema.PRODUCT_TYPE.key] = productType || undefined;
-        this[Schema.COST.key] = cost || undefined;
-        this[Schema.GOOGLE.key] = google || undefined;
-        this[Schema.APPLE.key] = apple || undefined;
-        this[Schema.START_DATE.key] = startDate || undefined;
-        this[Schema.END_DATE.key] = endDate || undefined;
-        this[Schema.SERVER_LIMIT.key] = serverLimit || undefined;
-        this[Schema.USER_LIMIT.key] = userLimit || undefined;
+        
+        this[Schema.PRODUCT_ID.key] = ValidateUtil.setNullUndefined(productId);
+        this[Schema.GROUP_ID.key] = ValidateUtil.setNullUndefined(groupId);
+        this[Schema.PRODUCT_TYPE.key] = ValidateUtil.setNullUndefined(productType);
+        this[Schema.COST.key] = ValidateUtil.setNullUndefined(cost);
+        this[Schema.GOOGLE.key] = ValidateUtil.setNullUndefined(google);
+        this[Schema.APPLE.key] = ValidateUtil.setNullUndefined(apple);
+        this[Schema.START_DATE.key] = ValidateUtil.setNullUndefined(startDate);
+        this[Schema.END_DATE.key] = ValidateUtil.setNullUndefined(endDate);
+        this[Schema.SERVER_LIMIT.key] = ValidateUtil.setNullUndefined(serverLimit);
+        this[Schema.USER_LIMIT.key] = ValidateUtil.setNullUndefined(userLimit);
     }
 
     setUpdateDate(updateDate) {

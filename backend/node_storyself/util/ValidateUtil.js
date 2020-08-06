@@ -1,5 +1,6 @@
 const moment = require('moment');
 const SSError = require('@ss/error');
+const { isNumber } = require('lodash');
 
 const NullAllow = {
     YES: true,
@@ -207,6 +208,11 @@ class ValidateUtil {
         if (!validRange.includes(item)) {
             throw new SSError.Model(SSError.Model.Code.validRangeValue, `${model.name} - [${field}] check validRange value`);
         }
+    }
+
+    setNullUndefined(item) {
+        if(item === 0) return item;
+        return item || undefined;
     }
 }
 

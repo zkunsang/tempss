@@ -19,15 +19,15 @@ const Schema = {
 class User extends Model {
     constructor({ uid, email, provider, status, createDate, lastLoginDate, policyVersion, sessionId }) {
         super();
-
-        this[Schema.UID.key] = uid || undefined;
-        this[Schema.EMAIL.key] = email || undefined;
-        this[Schema.PROVIDER.key] = provider || undefined;
-        this[Schema.STATUS.key] = status || undefined;
-        this[Schema.CREATE_DATE.key] = createDate || undefined;
-        this[Schema.LAST_LOGIN_DATE.key] = lastLoginDate || undefined;
-        this[Schema.POLICY_VERSION.key] = policyVersion || undefined;
-        this[Schema.SESSION_ID.key] = sessionId || undefined;
+        
+        this[Schema.UID.key] = ValidateUtil.setNullUndefined(uid);
+        this[Schema.EMAIL.key] = ValidateUtil.setNullUndefined(email);
+        this[Schema.PROVIDER.key] = ValidateUtil.setNullUndefined(provider);
+        this[Schema.STATUS.key] = ValidateUtil.setNullUndefined(status);
+        this[Schema.CREATE_DATE.key] = ValidateUtil.setNullUndefined(createDate);
+        this[Schema.LAST_LOGIN_DATE.key] = ValidateUtil.setNullUndefined(lastLoginDate);
+        this[Schema.POLICY_VERSION.key] = ValidateUtil.setNullUndefined(policyVersion);
+        this[Schema.SESSION_ID.key] = ValidateUtil.setNullUndefined(sessionId);
     }
 
     getSessionId() {

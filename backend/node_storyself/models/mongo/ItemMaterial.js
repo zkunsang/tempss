@@ -14,9 +14,9 @@ const Schema = {
 class ItemMaterial extends Model {
     constructor({ itemId, materialId, materialQny }) {
         super();
-        this[Schema.ITEM_ID.key] = itemId || undefined;
-        this[Schema.MATERIAL_ID.key] = materialId || undefined;
-        this[Schema.MATERIAL_QNY.key] = materialQny || undefined;
+        this[Schema.ITEM_ID.key] = ValidateUtil.setNullUndefined(itemId);
+        this[Schema.MATERIAL_ID.key] = ValidateUtil.setNullUndefined(materialId);
+        this[Schema.MATERIAL_QNY.key] = ValidateUtil.setNullUndefined(materialQny);
     }
 
     setUpdateDate(updateDate) {

@@ -9,7 +9,7 @@ module.exports = async (ctx, next) => {
     const storyList = await storyDao.findAll();
 
     ctx.status = 200;
-    ctx.body = storyList;
+    ctx.body.data = storyList;
 
     await next();
 }

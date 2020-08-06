@@ -18,13 +18,13 @@ class Story extends Model {
     constructor({ storyId, status, version, thumbnail, thumbnailCrc32, thumbnailVersion }) {
         super();
 
-        this[Schema.STORY_ID.key] = storyId || undefined;
-        this[Schema.STATUS.key] = status || undefined;
-        this[Schema.VERSION.key] = version || undefined;
+        this[Schema.STORY_ID.key] = ValidateUtil.setNullUndefined(storyId);
+        this[Schema.STATUS.key] = ValidateUtil.setNullUndefined(status);
+        this[Schema.VERSION.key] = ValidateUtil.setNullUndefined(version);
 
-        this[Schema.THUMBNAIL.key] = thumbnail || undefined;
-        this[Schema.THUMBNAIL_CRC32.key] = thumbnailCrc32 || undefined;
-        this[Schema.THUMBNAIL_VERSION.key] = thumbnailVersion || undefined;
+        this[Schema.THUMBNAIL.key] = ValidateUtil.setNullUndefined(thumbnail);
+        this[Schema.THUMBNAIL_CRC32.key] = ValidateUtil.setNullUndefined(thumbnailCrc32);
+        this[Schema.THUMBNAIL_VERSION.key] = ValidateUtil.setNullUndefined(thumbnailVersion);
     }
 
     setVersion(version) {

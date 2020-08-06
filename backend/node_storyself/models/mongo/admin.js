@@ -16,11 +16,11 @@ const Schema = {
 class Admin extends Model {
     constructor({ adminId, password, adminRole, createDate, status }) {
         super();
-        this[Schema.ADMIN_ID.key] = adminId || undefined;
-        this[Schema.PASSWORD.key] = password || undefined;
-        this[Schema.ADMIN_ROLE.key] = adminRole || undefined;
-        this[Schema.CREATE_DATE.key] = createDate || undefined;
-        this[Schema.STATUS.key] = status || undefined;
+        this[Schema.ADMIN_ID.key] = ValidateUtil.setNullUndefined(adminId);
+        this[Schema.PASSWORD.key] = ValidateUtil.setNullUndefined(password);
+        this[Schema.ADMIN_ROLE.key] = ValidateUtil.setNullUndefined(adminRole);
+        this[Schema.CREATE_DATE.key] = ValidateUtil.setNullUndefined(createDate);
+        this[Schema.STATUS.key] = ValidateUtil.setNullUndefined(status);
     }
 
     setAdminRole(adminRole) {

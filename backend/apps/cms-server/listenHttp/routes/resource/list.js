@@ -9,6 +9,6 @@ module.exports = async (ctx, next) => {
     const resourceList = await resourceDao.findMany({ storyId: reqResourceList.getStoryId() });
 
     ctx.status = 200;
-    ctx.body = resourceList || [];
+    ctx.body.data = resourceList || [];
     await next();
 }

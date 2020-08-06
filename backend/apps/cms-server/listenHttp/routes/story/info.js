@@ -18,7 +18,7 @@ module.exports = async (ctx, next) => {
     }
 
     ctx.status = 200;
-    ctx.body = storyData;
+    ctx.body.data = storyData;
 
     await next();
 }

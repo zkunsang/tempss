@@ -16,13 +16,14 @@ const Schema = {
 class Inventory extends Model {
     constructor({ uid, itemId, itemQny, updateDate, createDate, endDate, _id }) {
         super();
-        this[Schema.UID.key] = uid || undefined;
-        this[Schema.ITEM_ID.key] = itemId || undefined;
-        this[Schema.ITEM_QNY.key] = itemQny || undefined;
-        this[Schema.UPDATE_DATE.key] = updateDate || undefined;
-        this[Schema.CREATE_DATE.key] = createDate || undefined;
-        this[Schema.END_DATE.key] = endDate || undefined;
-        this[Schema.OBJECT_ID.key] = _id || undefined;
+            
+        this[Schema.UID.key] = ValidateUtil.setNullUndefined(uid);
+        this[Schema.ITEM_ID.key] = ValidateUtil.setNullUndefined(itemId);
+        this[Schema.ITEM_QNY.key] = ValidateUtil.setNullUndefined(itemQny);
+        this[Schema.UPDATE_DATE.key] = ValidateUtil.setNullUndefined(updateDate);
+        this[Schema.CREATE_DATE.key] = ValidateUtil.setNullUndefined(createDate);
+        this[Schema.END_DATE.key] = ValidateUtil.setNullUndefined(endDate);
+        this[Schema.OBJECT_ID.key] = ValidateUtil.setNullUndefined(_id);
     }
 
     setUID(uid) {

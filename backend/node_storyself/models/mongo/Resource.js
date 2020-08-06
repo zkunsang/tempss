@@ -16,12 +16,12 @@ class Resource extends Model {
     constructor({ storyId, resourceId, size, version, crc32, updateDate }) {
         super();
 
-        this[Schema.STORY_ID.key] = storyId || undefined;
-        this[Schema.RESOURCE_ID.key] = resourceId || undefined;
-        this[Schema.SIZE.key] = size || undefined;
-        this[Schema.VERSION.key] = version || undefined;
-        this[Schema.CRC32.key] = crc32 || undefined;
-        this[Schema.UPDATE_DATE.key] = updateDate || undefined;
+        this[Schema.STORY_ID.key] = ValidateUtil.setNullUndefined(storyId);
+        this[Schema.RESOURCE_ID.key] = ValidateUtil.setNullUndefined(resourceId);
+        this[Schema.SIZE.key] = ValidateUtil.setNullUndefined(size);
+        this[Schema.VERSION.key] = ValidateUtil.setNullUndefined(version);
+        this[Schema.CRC32.key] = ValidateUtil.setNullUndefined(crc32);
+        this[Schema.UPDATE_DATE.key] = ValidateUtil.setNullUndefined(updateDate);
     }
 
     setUpdateDate(updateDate) {
