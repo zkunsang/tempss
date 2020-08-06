@@ -26,6 +26,4 @@ module.exports = async (ctx, next) => {
     ctx.status = 200;
     ctx.body.data = {};
     await next();
-    
-
 }
