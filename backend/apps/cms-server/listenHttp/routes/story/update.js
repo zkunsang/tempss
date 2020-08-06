@@ -13,7 +13,6 @@ module.exports = async (ctx, next) => {
 
     const oldStoryData = await storyDao.findOne({ storyId });
     if (!oldStoryData) {
-        console.error(err);
         ctx.status = 400;
         ctx.body.data = { message: 'no story' };
 

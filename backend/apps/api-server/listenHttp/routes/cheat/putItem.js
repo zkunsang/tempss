@@ -6,9 +6,6 @@ const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
 const InventoryService = require('@ss/service/InventoryService');
 
-function makeStoryInventoryList(useList) {
-    return useList.map((item) => InventoryService.makeInventoryObject(item.getItemId(), 1));
-}
 
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;

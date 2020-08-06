@@ -1,4 +1,5 @@
 const ss = require('@ss');
+const UserDao =  require('@ss/daoMongo/UserDao')
 const ReqUserPolicy = require('@ss/models/controller/ReqUserPolicy');
 
 module.exports = async (ctx, next) => {
@@ -14,6 +15,7 @@ module.exports = async (ctx, next) => {
         throw new Error({ errMessage: 'wrong policyVersion' });
     }
 
+    const userDao = new UserDao(ctx.$dbMongo);
     await userDao.update({ uid: userInfo.getUID() }, { policyVersion: policyVersion });
 
     ctx.status = 200;

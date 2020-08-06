@@ -15,6 +15,7 @@ const InventoryService = require('@ss/service/InventoryService');
 
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;
+    const userInfo = ctx.$userInfo
     const reqShopPurchase = new ReqShopProduct(ctx.request.body);
     ReqShopProduct.validModel(reqShopPurchase);
 

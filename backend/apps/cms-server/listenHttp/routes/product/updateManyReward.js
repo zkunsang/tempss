@@ -1,7 +1,6 @@
 const ReqProductUpdateManyReward = require('@ss/models/cmsController/ReqProductUpdateManyReward');
 
 const ProductRewardDao = require('@ss/daoMongo/ProductRewardDao');
-const Item = require('@ss/models/mongo/Item');
 
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;

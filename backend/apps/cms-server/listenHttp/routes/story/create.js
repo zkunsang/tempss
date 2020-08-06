@@ -13,7 +13,6 @@ module.exports = async (ctx, next) => {
 
     const storyData = await storyDao.findOne({ storyId });
     if (storyData) {
-        console.error(err);
         ctx.status = 400;
         ctx.body.data = { message: 'already exist story' };
 

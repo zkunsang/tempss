@@ -1,6 +1,5 @@
 const dbRedis = require('@ss/dbRedis');
 const SessionDao = require('@ss/daoRedis/SessionDao');
-const SSError = require('@ss/error');
 const ReqAuthLogout = require('@ss/models/controller/ReqAuthLogout');
 
 module.exports = async (ctx, next) => {

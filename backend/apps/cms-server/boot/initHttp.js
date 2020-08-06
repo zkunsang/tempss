@@ -17,7 +17,7 @@ module.exports = async () => {
     router.mapping(path + '/routes');
     koa.use(router.routes());
 
-    koa.on('error', (err, ctx) => {
+    koa.on('error', (err) => {
         console.error(err);
     });
 

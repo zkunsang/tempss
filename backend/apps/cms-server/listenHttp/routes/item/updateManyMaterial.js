@@ -1,7 +1,6 @@
 const ReqItemUpdateManyMaterial = require('@ss/models/cmsController/ReqItemUpdateManyMaterial');
 
 const ItemMaterialDao = require('@ss/daoMongo/ItemMaterialDao');
-const Item = require('@ss/models/mongo/Item');
 
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;

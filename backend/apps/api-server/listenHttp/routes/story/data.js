@@ -27,7 +27,7 @@ module.exports = async (ctx, next) => {
     const storyList = await storyDao.findAll();
 
     ctx.status = 200;
-    ctx.body.data = { itemList, itemMaterialList, productList, productGroupList, productRewardList, resourceList, storyList };;
+    ctx.body.data = { itemList, itemMaterialList, productList, productGroupList, productRewardList, resourceList, storyList };
     await next();
 }
 

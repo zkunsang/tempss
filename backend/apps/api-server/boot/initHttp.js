@@ -20,7 +20,7 @@ function initKoa() {
     koa.use(router.routes());
     koa.use(swagger.routes(path));
 
-    koa.on('error', (err, ctx) => {
+    koa.on('error', (err) => {
         console.error(err);
     });
 

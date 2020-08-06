@@ -9,7 +9,7 @@ const AdminDao = require('@ss/daoMongo/AdminDao');
 
 module.exports = async (ctx, next) => {
     try {
-        const reqSession = new ReqSession(ctx.request.body);;
+        const reqSession = new ReqSession(ctx.request.body);
         ReqSession.validModel(reqSession);
 
         const cmsSessionDao = new CmsSessionDao(dbRedis);
