@@ -56,6 +56,7 @@ export default {
     this.GET_STORY_LIST()
       .then((body) => {
         this.storyList = body;
+        console.log(this.storyList);
         // this.patchInfo = body.patchInfo;
         this.patchInfo = 'patchInfo';
       });

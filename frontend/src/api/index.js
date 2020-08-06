@@ -12,14 +12,14 @@ const DOMAIN = config.getBackendUrl;
 
 const request = (method, url, data) => {
   const { sessionId } = localStorage;
-  data = Object.assign(data || {}, {sessionId});
+  data = Object.assign(data || {}, { sessionId });
   return axios({
     method,
     url: DOMAIN + url,
     data,
   })
     .then((result) => {
-      return result.data;
+      return result.data.data;
     })
     .catch(result => {
       let status = result.response.status;
@@ -37,6 +37,7 @@ export const setAuthInHeader = sessionId => {
 
 export const auth = {
   login(adminId, password) {
+    console.log(adminId, password)
     return request('post', '/auth/login', { adminId, password })
   },
   regist(adminId, password, confirmPassword) {
@@ -57,10 +58,10 @@ export const story = {
   info(storyId) {
     return request('post', '/story/info', { storyId });
   },
-  
+
 }
 
-export const resource ={
+export const resource = {
   list(storyId) {
     return request('post', '/resource/list', { storyId });
   },

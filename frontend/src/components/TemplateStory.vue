@@ -116,7 +116,9 @@ export default {
   },
   async created() {
     this.storyId = this.$route.params.storyId;
+    console.log(this.storyId);
     if( this.storyId ) {
+      
       this.storyData =  await this.GET_STORY_INFO(this.storyId)
       this.originStoryData = Object.assign(this.storyData);
       this.thumbImg = this.getSrcUrl(this.storyData);
