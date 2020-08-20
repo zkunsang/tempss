@@ -98,7 +98,7 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template v-slot:item.item="{ item }">
+        <template v-slot:[`item.item`]="{ item }">
           <div v-for="(product_item, index) in attendance_item_arranged_map[item.reward_index]" :key="index">
             {{product_item.reward_type}}
             {{product_item.item_category}}
@@ -107,7 +107,7 @@
             {{product_item.seq_title ? `[${get_title_name(product_item.seq_title)}]` : ''}}
           </div>
         </template>
-        <template v-slot:item.action="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-icon small class="mr-2" @click="editItem(item)"> edit </v-icon>
           <v-icon small @click="deleteItem(item)"> delete </v-icon>
         </template>

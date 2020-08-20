@@ -71,7 +71,7 @@
         sort-by="updateDate"
         class="elevation-1"
       >
-        <template v-slot:item.resourceId="{ item }">
+        <template v-slot:[`item.resourceId`]="{ item }">
           <a :href="`aos/${item.url}`">{{item.resourceId}}</a>
         </template>
         

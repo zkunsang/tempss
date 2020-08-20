@@ -141,13 +141,13 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template v-slot:item.materialItem="{ item }">
+        <template v-slot:[`item.materialItem`]="{ item }">
           <div v-for="(materialItem, index) in itemArrangedMap[item.itemId]" :key="index">
             {{materialItem.materialId}}
             {{materialItem.materialQny}}
           </div>
         </template>
-        <template v-slot:item.action="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-icon small class="mr-2" @click="editItem(item)"> edit </v-icon>
           <v-icon small @click="deleteItem(item)"> delete </v-icon>
         </template>

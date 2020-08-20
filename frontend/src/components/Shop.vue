@@ -160,13 +160,13 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template v-slot:item.rewardItem="{ item }">
+        <template v-slot:[`item.rewardItem`]="{ item }">
           <div v-for="(rewardItem, index) in productArrangedMap[item.productId]" :key="index">
             {{rewardItem.materialId}}
             {{rewardItem.materialQny}}
           </div>
         </template>
-        <template v-slot:item.action="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-icon small class="mr-2" @click="editProduct(item)"> edit </v-icon>
           <v-icon small @click="deleteProduct(item)"> delete </v-icon>
         </template>

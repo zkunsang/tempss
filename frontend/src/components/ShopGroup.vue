@@ -75,7 +75,7 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template v-slot:item.action="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-icon small class="mr-2" @click="onEdit(item)"> edit </v-icon>
           <v-icon small @click="onDelete(item)"> delete </v-icon>
         </template>

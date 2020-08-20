@@ -40,9 +40,21 @@
                 이미지
             </v-col>
             <v-col>
-                <img class="thumbImg" v-if="!!thumbImg" :src="thumbImg" width="1px" />
-                <img class="thumbImg" v-else :src="thumbImg" width="1px"/>
-                <v-file-input accept="image/*" label="File input" @change="onThumbChange"></v-file-input>
+              <img class="thumbImg" v-if="!!thumbImg" :src="thumbImg" width="1px" />
+              <img class="thumbImg" v-else :src="thumbImg" width="1px"/>
+              <v-file-input accept="image/*" label="File input" @change="onThumbChange"></v-file-input>
+            </v-col>
+            </v-row>
+        </v-card>
+        <v-divider/>
+        <v-card>
+            <v-row>
+            <v-col>
+                텍스트 파일
+            </v-col>
+            <v-col>
+              <v-btn :disabled="!storyData.textFile" @click="downloadTextFile">파일 다운로드</v-btn>
+              <v-file-input accept="xml/*" label="File input" @change="onTextFileChange"></v-file-input>
             </v-col>
             </v-row>
         </v-card>
@@ -98,6 +110,7 @@ export default {
     return {
       thumbFile: null,
       thumbImg: null,
+      textFile: null,
       dialog: false,
       patchInfo: 'temp',
       saveError: '',
@@ -143,7 +156,28 @@ export default {
       const thumbUrl = `${this.CDN_URL}${storyData.storyId}/thumbnail/${storyData.thumbnailVersion}/${storyData.thumbnail}`;
       return storyData.thumbnail ? thumbUrl : no_image;
     },
-    
+    onTextFileChange(textFile) {
+      if(!textFile) {
+        this.textFile = null;
+        return;
+      }
+      
+      textFile.arrayBuffer().then((data) => {
+        this.textFile = textFile;
+        this.textFile.crc = crc.crc32(data).toString(16);
+      });
+    },
+    getTextFileUrl() {
+      if(!this.storyData.textFile) return null; 
+      return `${this.CDN_URL}${this.storyData.storyId}/textFile/${this.storyData.textFileVersion}/${this.storyData.textFile}`;
+    },
+    downloadTextFile() {
+      const link = document.createElement('a')
+      link.href = this.getTextFileUrl();
+      link.setAttribute('download', `${this.storyData.textFile}`)
+      document.body.appendChild(link)
+      link.click()
+    },
     onThumbChange(thumbFile) {
       if(!thumbFile) {
         this.thumbImg = null;
@@ -174,16 +208,23 @@ export default {
       let saveFunc = this.isNew ? this.CREATE_STORY : this.UPDATE_STORY;
       this.storyData.status = this.storyData.status ? 1 : 0;
 
-      console.log('onSave', this.storyData);
+      if(this.textFile) {
+        this.storyData.textFile = `${this.textFile.name}`;
+        this.storyData.textFileCrc32 = this.textFile.crc;
+        this.storyData.textFileVersion = this.originStoryData.textFileVersion || 0 + 1;
+      }
 
       const result = await saveFunc(this.storyData);
 
       if( this.thumbFile ) {
         await s3Upload(this.thumbFile, `${this.storyData.storyId}/thumbnail/${this.storyData.thumbnailVersion}/${this.storyData.thumbnail}`);
       }
-      this.dialog = false
 
-      
+      if(this.textFile) {
+        await s3Upload(this.textFile, `${this.storyData.storyId}/textFile/${this.storyData.textFileVersion}/${this.storyData.textFile}`);
+      }
+
+      this.dialog = false
     }
   }
 };
