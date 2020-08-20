@@ -12,10 +12,13 @@ const Schema = {
     THUMBNAIL: { key: 'thumbnail', required: true, type: ValidType.STRING },
     THUMBNAIL_CRC32: { key: 'thumbnailCrc32', required: true, type: ValidType.STRING },
     THUMBNAIL_VERSION: { key: 'thumbnailVersion', required: true, type: ValidType.NUMBER },
+    TEXTFILE: { key: 'textFile', required: true, type: ValidType.STRING },
+    TEXTFILE_CRC32: { key: 'textFileCrc32', required: true, type: ValidType.STRING },
+    TEXTFILE_VERSION: { key: 'textFileVersion', required: true, type: ValidType.NUMBER },
 }
 
 class Story extends Model {
-    constructor({ storyId, status, version, thumbnail, thumbnailCrc32, thumbnailVersion }) {
+    constructor({ storyId, status, version, thumbnail, thumbnailCrc32, thumbnailVersion, textFile, textFileVersion, textFileCrc32 }) {
         super();
 
         this[Schema.STORY_ID.key] = ValidateUtil.setNullUndefined(storyId);
@@ -25,6 +28,10 @@ class Story extends Model {
         this[Schema.THUMBNAIL.key] = ValidateUtil.setNullUndefined(thumbnail);
         this[Schema.THUMBNAIL_CRC32.key] = ValidateUtil.setNullUndefined(thumbnailCrc32);
         this[Schema.THUMBNAIL_VERSION.key] = ValidateUtil.setNullUndefined(thumbnailVersion);
+
+        this[Schema.TEXTFILE.key] = ValidateUtil.setNullUndefined(textFile);
+        this[Schema.TEXTFILE_CRC32.key] = ValidateUtil.setNullUndefined(textFileCrc32);
+        this[Schema.TEXTFILE_VERSION.key] = ValidateUtil.setNullUndefined(textFileVersion);
     }
 
     setVersion(version) {
@@ -57,6 +64,18 @@ class Story extends Model {
 
     getThumbnailCrc32() {
         return this[Schema.THUMBNAIL_CRC32.key];
+    }
+
+    getTextFile() {
+        return this[Schema.TEXTFILE.key];
+    }
+
+    getTextFileVersion() {
+        return this[Schema.TEXTFILE_VERSION.key];
+    }
+
+    getTextFileCrc32() {
+        return this[Schema.TEXTFILE_CRC32.key];
     }
 }
 

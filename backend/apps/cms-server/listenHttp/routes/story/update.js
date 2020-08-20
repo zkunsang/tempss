@@ -39,10 +39,16 @@ module.exports = async (ctx, next) => {
 
 function checkChange(newStoryData, oldStoryData) {
     let checkCount = 0;
+    
     if (newStoryData.getStatus() !== oldStoryData.getStatus()) checkCount++;
+    
     if (newStoryData.getThumbnail() !== oldStoryData.getThumbnail()) checkCount++;
     if (newStoryData.getThumbnailVersion() !== oldStoryData.getThumbnailVersion()) checkCount++;
     if (newStoryData.getThumbnailCrc32() !== oldStoryData.getThumbnailCrc32()) checkCount++;
+
+    if (newStoryData.getTextFile() !== oldStoryData.getTextFile()) checkCount++;
+    if (newStoryData.getTextFileCrc32() !== oldStoryData.getTextFileCrc32()) checkCount++;
+    if (newStoryData.getTextFileVersion() !== oldStoryData.getTextFileVersion()) checkCount++;
 
     if (checkCount === 0) {
         throw new Error('no change');

@@ -1,5 +1,4 @@
 const SSError = require('@ss/error');
-const { upperFirst } = require('lodash');
 
 class Dao {
     constructor() {}

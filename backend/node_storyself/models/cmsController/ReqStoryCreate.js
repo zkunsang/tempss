@@ -10,7 +10,9 @@ const Schema = {
     THUMBNAIL: { key: 'thumbnail', required: true, type: ValidType.STRING },
     THUMBNAIL_CRC32: { key: 'thumbnailCrc32', required: true, type: ValidType.STRING },
     THUMBNAIL_VERSION: { key: 'thumbnailVersion', required: true, type: ValidType.NUMBER },
-
+    TEXTFILE: { key: 'textFile', required: true, type: ValidType.STRING },
+    TEXTFILE_CRC32: { key: 'textFileCrc32', required: true, type: ValidType.STRING },
+    TEXTFILE_VERSION: { key: 'textFileVersion', required: true, type: ValidType.NUMBER },
 }
 
 class ReqStoryCreate extends Model {
@@ -18,9 +20,14 @@ class ReqStoryCreate extends Model {
         super();
         this[Schema.STORY_ID.key] = storyId;
         this[Schema.STATUS.key] = status;
+
         this[Schema.THUMBNAIL.key] = thumbnail;
         this[Schema.THUMBNAIL_CRC32.key] = thumbnailCrc32;
         this[Schema.THUMBNAIL_VERSION.key] = thumbnailVersion;
+
+        this[Schema.TEXTFILE.key] = thumbnail;
+        this[Schema.TEXTFILE_CRC32.key] = thumbnailCrc32;
+        this[Schema.TEXTFILE_VERSION.key] = thumbnailVersion;
     }
 
     getStoryId() {
