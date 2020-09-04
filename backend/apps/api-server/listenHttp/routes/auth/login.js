@@ -1,10 +1,18 @@
 const dbMongo = require('@ss/dbMongo');
 const dbRedis = require('@ss/dbRedis');
+
 const UserDao = require('@ss/daoMongo/UserDao');
+const InventoryDao = require('@ss/daoMongo/InventoryDao');
+const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
+const ItemDao = require('@ss/daoMongo/ItemDao');
 const SessionDao = require('@ss/daoRedis/SessionDao');
+
+const InventoryService =require('@ss/service/InventoryService');
+
 const User = require('@ss/models/mongo/User');
 const UserStatus = require('@ss/util/ValidateUtil').UserStatus;
 const ReqAuthLogin = require('@ss/models/controller/ReqAuthLogin');
+
 const shortid = require('shortid');
 
 module.exports = async (ctx, next) => {
@@ -16,6 +24,9 @@ module.exports = async (ctx, next) => {
 
     const userDao = new UserDao(dbMongo);
     const sessionDao = new SessionDao(dbRedis);
+    const inventoryDao = new InventoryDao(dbMongo);
+    const itemCategoryDao = new ItemCategoryDao(dbMongo);
+    const itemDao = new ItemDao(dbMongo);
 
     let userInfo = await userDao.findOne({ uid });
 
@@ -36,11 +47,17 @@ module.exports = async (ctx, next) => {
         userInfo.setCreateDate(loginDate);
         await userDao.insertOne(userInfo);
     }    
-
+    
     sessionDao.set(sessionId, userInfo);
 
+    const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, loginDate);
+    const userInventoryList = await inventoryService.getUserInventoryList();
+
     ctx.status = 200;
-    ctx.body.data = { sessionId };
+    ctx.body.data = { 
+        sessionId,
+        inventoryList: userInventoryList
+    };
 
     await next();
 };

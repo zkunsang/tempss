@@ -47,6 +47,11 @@ class InventoryService extends Service {
         this[Schema.UPDATE_DATE.key] = updateDate;
     }
 
+    async getUserInventoryList() {
+        const uid = this.userInfo.uid;
+        return await this.inventoryDao.findMany({uid});
+    }
+    
     async checkPutItem(putInventoryList) {
         Service.Validate.checkArrayObject(putInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(putInventoryList);
@@ -56,7 +61,8 @@ class InventoryService extends Service {
 
         const uid = this.userInfo.getUID();
 
-        const userInventoryListAll = await this.inventoryDao.findMany({ uid });
+        
+        const userInventoryListAll = await this.getUserInventoryList(); 
         const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll, itemMap);
 
         const insertList = [];
@@ -106,7 +112,7 @@ class InventoryService extends Service {
         return new InventoryPutObject({ insertList, updateList });
     }
 
-    async putItem(putObject, actions) {
+    async putItem(putObject) {
         InventoryPutObject.validModel(putObject);
         await this.insertItemList(putObject.getInsertList());
         await this.updateItemList(putObject.getUpdateList());
@@ -146,7 +152,7 @@ class InventoryService extends Service {
         return new InventoryUseObject({ deleteList, updateList });
     }
 
-    async useItem(useObject, actions) {
+    async useItem(useObject) {
         InventoryUseObject.validModel(useObject);
         await this.deleteItemList(useObject.getDeleteList());
         await this.updateItemList(useObject.getUpdateList());
@@ -204,13 +210,14 @@ class InventoryService extends Service {
         }
     }
 
-    static checkUserQny(userInventoryList, useInventory) {
+    static checkUserQny(userInventoryList, useInventory, itemData) {
         const userQny = userInventoryList.reduce((acc, item) => acc += item.getItemQny(), 0);
         const useQny = useInventory.getItemQny();
+        
         if (userQny < useQny) {
             throw new SSError.Service(
                 SSError.Service.Code.useItemNotEnoughItem,
-                `${itemData.getItemId()} - ${userQny} < ${addQny}`);
+                `${itemData.getItemId()} - ${userQny} < ${useQny}`);
         }
     }
 
