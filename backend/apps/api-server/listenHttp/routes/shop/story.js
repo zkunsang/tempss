@@ -49,8 +49,9 @@ module.exports = async (ctx, next) => {
 
     await inventoryService.processExchange(useInventoryList, putInventoryList);
 
+    const userInventoryList = await inventoryService.getUserInventoryList();
     ctx.status = 200;
-    ctx.body.data = {};
+    ctx.body.data = { inventoryList: userInventoryList };
 
     await next();
 }
