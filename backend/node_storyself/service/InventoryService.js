@@ -265,7 +265,7 @@ class InventoryService extends Service {
         const userNonVolatileList = [];
 
         let totalQny = 0;
-        for (const userInventory of userInventoryList) {
+        for (const userInventory of userInventoryList || []) {
             const itemId = userInventory.getItemId();
             const itemData = itemMap[itemId];
             InventoryService.checkItemData(itemData, itemId);

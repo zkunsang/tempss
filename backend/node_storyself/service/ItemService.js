@@ -8,7 +8,7 @@ const ItemMaterial = require('@ss/models/mongo/ItemMaterial');
 
 const ItemDao = require('@ss/daoMongo/ItemDao');
 const ItemMaterialDao = require('@ss/daoMongo/ItemMaterialDao');
-const InventoryDao = require('@ss/daoMongo/InventoryDao');
+// const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
 const SSError = require('@ss/error');
 const _ = require('lodash');
@@ -84,9 +84,9 @@ class ItemService extends Service {
         return ItemMaterial.makeInvetoryObjectList(materialList);
     }
 
-    getExchangeStoryInventoryInfo(storyInvenList) {
-        const putInventoryList = storyInvenList;
-        const useInventoryList = this.getMaterialInventoryList(storyInvenList);
+    getExchangeInventoryInfo(inventoryList) {
+        const putInventoryList = inventoryList;
+        const useInventoryList = this.getMaterialInventoryList(inventoryList);
 
         return { useInventoryList, putInventoryList }
     }

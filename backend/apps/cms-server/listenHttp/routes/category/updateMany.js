@@ -13,18 +13,20 @@ module.exports = async (ctx, next) => {
     const beforeList = await itemCategoryDao.findAll();
     const afterList = ItemCategoryDao.mappingList(reqCategoryUpdateMany.getCategoryList());
 
-    const { insertList, updateList, deleteList } = ArrayUtil.compareArrayByKey(beforeList,
+    const { insertList, updateList } = ArrayUtil.compareArrayByKey(beforeList,
         afterList,
         ItemCategory.Schema.ITEM_CATEGORY.key);
 
-    if (deleteList.length > 0) {
-        ctx.status = 200;
-        const deleteCategory =
-            ArrayUtil.getArrayValueByKey(deleteList, ItemCategory.Schema.ITEM_CATEGORY.key);
-        ctx.body.data = { message: `delete method not allowed - ${deleteCategory.join(',')}` };
-        await next();
-        return;
-    }
+    // if (deleteList.length > 0) {
+    //     deleteList = [];
+        
+    //     // ctx.status = 200;
+    //     // const deleteCategory =
+    //     //     ArrayUtil.getArrayValueByKey(deleteList, ItemCategory.Schema.ITEM_CATEGORY.key);
+    //     // ctx.body.data = { message: `delete method not allowed - ${deleteCategory.join(',')}` };
+    //     // await next();
+    //     // return;
+    // }
 
     await updateCategoryList(itemCategoryDao, updateList, updateDate);
     await insertCategoryList(itemCategoryDao, insertList, updateDate)
@@ -46,8 +48,9 @@ async function updateCategoryList(itemCategoryDao, updateList, updateDate) {
     for (const updateItem of updateList) {
         updateItem.setUpdateDate(updateDate);
 
+        const itemCategory = updateItem.getItemCategory();
         delete updateItem[ItemCategory.Schema.ITEM_CATEGORY.key];
 
-        await itemCategoryDao.updateOne({ itemCategory: updateItem.getItemCategory() }, updateItem);
+        await itemCategoryDao.updateOne({ itemCategory }, updateItem);
     }
 }

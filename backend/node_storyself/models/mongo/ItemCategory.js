@@ -20,9 +20,11 @@ class ItemCategory extends Model {
         this[Schema.UPDATE_DATE.key] = updateDate;
     }
 
-    getItemId() {
-        return this[Schema.ITEM_ID.key] = updateDate;
+    getItemCategory() {
+        return this[Schema.ITEM_CATEGORY.key];
     }
+
+    
 }
 
 module.exports = ItemCategory;

@@ -1,4 +1,4 @@
-const ReqShopStory = require('@ss/models/controller/ReqShopStory');
+const ReqShopAccessory = require('@ss/models/controller/ReqShopAccessory');
 
 const ItemDao = require('@ss/daoMongo/ItemDao');
 const StoryDao = require('@ss/daoMongo/StoryDao');
@@ -10,13 +10,9 @@ const ItemService = require('@ss/service/ItemService');
 const StoryService = require('@ss/service/StoryService');
 const InventoryService = require('@ss/service/InventoryService');
 
-function makeStoryInventoryList(storyList) {
-    return storyList.map((item) => InventoryService.makeInventoryObject(item, 1));
-}
-
 module.exports = async (ctx, next) => {
-    const reqShopStory = new ReqShopStory(ctx.request.body);
-    ReqShopStory.validModel(reqShopStory);
+    const reqShopAccessory = new ReqShopAccessory(ctx.request.body);
+    ReqShopAccessory.validModel(reqShopAccessory);
     
     const updateDate = ctx.$date;
     const userInfo = ctx.$userInfo;
@@ -36,13 +32,13 @@ module.exports = async (ctx, next) => {
     ItemService.validModel(itemService);
     StoryService.validModel(storyService);
     
-    const needStoryList = reqShopStory.getStoryList();
-    storyService.getStoryList(needStoryList);
+    const itemId = reqShopAccessory.getItemId();
+    itemService.getItemList([itemId]);
     
-    const storyInvenList = makeStoryInventoryList(needStoryList);
+    const itemInventory = InventoryService.makeInventoryObject(itemId, 1);
 
     const { putInventoryList, useInventoryList } 
-        = itemService.getExchangeInventoryInfo(storyInvenList);
+        = itemService.getExchangeInventoryInfo([itemInventory]);
 
     const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);
@@ -64,22 +60,22 @@ module.exports = async (ctx, next) => {
 
 /**
  * @swagger
- * path: /shop/story
+ * path: /shop/accessory
  * operations:
  *   -  httpMethod: POST
- *      summary: 동화 구매
+ *      summary: 악세사리 구매
  *      notes: |
  *        <br><b>requestParam</b>
  *        <br>sessionId: 세션 아이디
- *        <br>storyList: 동화 정보
- *      responseClass: resShopStory
+ *        <br>itemId: 아이템 아이디
+ *      responseClass: resShopAccessory
  *      nickname: config
  *      consumes:
  *        - text/html
  *      parameters:
  *        - name: body
  *          paramType: body
- *          dataType: reqShopStory
+ *          dataType: reqShopAccessory
  *          required: true
  *
  */
@@ -87,21 +83,19 @@ module.exports = async (ctx, next) => {
 /**
  * @swagger
  * models:
- *   reqShopStory:
- *     id: reqShopStory
+ *   reqShopAccessory:
+ *     id: reqShopAccessory
  *     properties:
  *       sessionId:
  *         type: String
  *         required: true
  *         description: 세션 아이디
- *       storyList:
- *         type: array
- *         items: 
- *           type: string
+ *       itemId:
+ *         type: String
  *         required: true
- *         description: 동화 아이디
- *   resShopStory:
- *     id: resShopStory
+ *         description: 아이템 아이디
+ *   resShopAccessory:
+ *     id: resShopAccessory
  *     properties:
  *       common:
  *         type: common
