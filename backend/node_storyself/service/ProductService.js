@@ -53,7 +53,8 @@ class ProductService {
 
     static async getAccessToken() {
         
-        const code = '4/4AHDJIpb-TldzueIKJEjrhEP4OxAy7RKxX46RJgd0skBEvOHwR347xy6POKscJIeSS_ETmEBI4FyNkv-Hr6zaxg';
+        const code = '4/4AFlMztb3xe48ueRP-mUJ32do7xVG5s-UH2jZoPv0-S2j-A-PaPKWaYuL2TerfRoMmM-ZTwaonZL3hq-zzcptrs';
+        // "/google/authredirect?code=4/4AFlMztb3xe48ueRP-mUJ32do7xVG5s-UH2jZoPv0-S2j-A-PaPKWaYuL2TerfRoMmM-ZTwaonZL3hq-zzcptrs&scope=https://www.googleapis.com/auth/androidpublisher"
         const {tokens} = await helper.googleAuth.oAuth2Client.getToken(code);
 
         return tokens.access_token;

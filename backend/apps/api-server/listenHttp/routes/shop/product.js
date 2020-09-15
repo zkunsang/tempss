@@ -20,20 +20,19 @@ function makeInventoryList(productRewardList) {
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;
     const userInfo = ctx.$userInfo
-    const reqShopPurchase = new ReqShopProduct(ctx.request.body);
-    ReqShopProduct.validModel(reqShopPurchase);
+    const reqShopProduct = new ReqShopProduct(ctx.request.body);
+    ReqShopProduct.validModel(reqShopProduct);
 
-    const receipt = reqShopPurchase.getReceipt();
-    const appstore = reqShopPurchase.getAppstore();
-    const validateReceipt = await ProductService.validateReceipt(appstore, receipt);
+    const appstore = reqShopProduct.getAppStore();
+    const receipt = await ProductService.validateReceipt(appstore, reqShopProduct);
 
-    if (validateReceipt.getPurchaseStatus() === PurchaseStatus.FAIL) {
+    if (receipt.purchaseState === PurchaseStatus.FAIL) {
         ctx.status = 400;
         ctx.body.data = { message: 'receipt failed' };
         return;
     }
 
-    const productId = ProductService.getProductId(validateReceipt);
+    const productId = ProductService.getProductId(receipt.productId);
     const productDao = new ProductDao(ctx.$dbMongo);
 
     const productInfo = await productDao.findOne({ productId });
@@ -49,7 +48,7 @@ module.exports = async (ctx, next) => {
     const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
     const itemDao = new ItemDao(ctx.$dbMongo);
 
-    const productRewardList = await productRewardDao.findMany({productId});
+    const productRewardList = await productRewardDao.findMany({ productId });
 
     const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
 
@@ -65,8 +64,6 @@ module.exports = async (ctx, next) => {
     
     
     ctx.status = 200;
-    ctx.body.data = {};
-
 
     await next();
 }
