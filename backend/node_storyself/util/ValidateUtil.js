@@ -68,8 +68,8 @@ const CommonBoolean = {
 }
 
 const PurchaseStatus = {
-    SUCCESS: '0',
-    FAIL: '1'
+    SUCCESS: 0,
+    FAIL: 1
 }
 
 class ValidateUtil {

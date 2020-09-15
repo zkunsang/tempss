@@ -1,33 +1,63 @@
+const ss = require('@ss');
 const ValidateUtil = require('@ss/util/ValidateUtil');
+const Receipt = require('@ss/models/mongo/Receipt');
+const fetch = require('node-fetch');
+const FormData = require('form-data');
 const AppStore = ValidateUtil.AppStore;
+const helper = require('@ss/helper');
+
 
 class ProductService {
     constructor() {
-
+        this.accessTokenStore = null;
     }
 
-    static async validateReceipt(appStore, receipt) {
+    static async init() {
         
+    }
+
+    static async validateReceipt(appStore, reqShopProduct) {
         if (appStore === AppStore.GOOGLE) {
-            return await validateReceiptGoogle(receipt);
+            return await this.validateReceiptGoogle(reqShopProduct);
         }
     }
 
-    static async validateReceiptGoogle(receipt) {
+    static async validateReceiptGoogle(reqShopProduct) {
+
+        // OAuth token획득
+        const accessToken = await this.getAccessToken();
+    
         // 구글 벨리 데이트
-        const productId = 'tempProductId';
-        const orderId = 'orderId'
-        const packageName = 'packageName';
-        const purchaseStatus = '0';
-        const purchaseToken = 'purchaseToken';
-        return new Receipt({ productId, orderId, packageName, purchaseStatus, purchaseToken });
+        const productId = reqShopProduct.getProductId();
+        const transactionId = reqShopProduct.getTransactionId()
+        const purchaseDate = reqShopProduct.getPurchaseDate();
+        const purchaseState = reqShopProduct.getPurchaseState();
+        const purchaseToken = reqShopProduct.getPurchaseToken();
+        const packageName = reqShopProduct.getPackageName();
+
+        let url = `https://www.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/products/${productId}/tokens/${purchaseToken}?access_token=${accessToken}`;
+        const result = await this.checkValidate(url);
+
+        return new Receipt({ productId, transactionId, purchaseDate, purchaseState, purchaseToken, packageName });
 
     }
 
-    static getProductId(receipt) {
-        const productId = receipt.getProductId();
-        return productId.split('.')[4];
+    static getProductId(productId) {
+        return productId.split('.')[3];
+    }
+
+    static async checkValidate(url) {
+        const result = await fetch(url);
+        return await result.json();
+    }
+
+    static async getAccessToken() {
+        
+        const code = '4/4AHDJIpb-TldzueIKJEjrhEP4OxAy7RKxX46RJgd0skBEvOHwR347xy6POKscJIeSS_ETmEBI4FyNkv-Hr6zaxg';
+        const {tokens} = await helper.googleAuth.oAuth2Client.getToken(code);
+
+        return tokens.access_token;
     }
 }
 
-module.exports = new ProductService();
+module.exports = ProductService;

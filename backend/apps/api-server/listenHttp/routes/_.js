@@ -59,7 +59,7 @@ module.exports = async (ctx, next) => {
         }
     }
     
-    ctx.body.common.serverTime = ctx.$date;
+    // ctx.body.common.serverTime = ctx.$date;
     helper.fluent.sendLog('network', new CommonPacket(ctx, ctx.$date, moment().valueOf()));
 };
 

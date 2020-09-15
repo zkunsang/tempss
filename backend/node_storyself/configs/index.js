@@ -35,7 +35,7 @@ class RedisConfig {
     }
 }
 
-class FluentConfig{
+class FluentConfig {
     constructor(config) {
         this.tag = config.tag;
         this.host = config.host;
@@ -46,12 +46,23 @@ class FluentConfig{
     }
 }
 
+class GoogleOAuth2Config {
+    constructor(config) {
+        this.client_id = config.client_id;
+        this.client_secret = config.client_secret;
+        this.redirect_url = config.redirect_url;
+    }
+}
+
+
 module.exports = class Config {
     constructor(configPath) {
         this.configPath = configPath;
         this.apiServer = null;
         this.dbMongo = null;
         this.slack = null;
+        this.fluent = null;
+        this.googleOAuth2 = null;
     }
 
     ready() {
@@ -62,6 +73,7 @@ module.exports = class Config {
             this.dbRedis = new RedisConfig(require(`@cf/${this.configPath}/dbRedis.json`));
             this.slack = new SlackConfig(require(`@cf/${this.configPath}/slack.json`));
             this.fluent = new FluentConfig(require(`@cf/${this.configPath}/fluent.json`));
+            this.googleOAuth2 = new GoogleOAuth2Config(require(`@cf/${this.configPath}/googleOAuth2.json`));
         } catch (e) {
             throw msg + e.message;
         }

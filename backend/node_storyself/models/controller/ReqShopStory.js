@@ -8,7 +8,7 @@ const Schema = {
     COUPON_ID: { key: 'couponId', required: false, type: ValidType.STRING },
 }
 
-class ReqShopProduct extends Model {
+class ReqShopStory extends Model {
     constructor({ storyList, couponId }) {
         super();
         this[Schema.STORY_LIST.key] = storyList;
@@ -24,5 +24,5 @@ class ReqShopProduct extends Model {
     }
 }
 
-module.exports = ReqShopProduct;
+module.exports = ReqShopStory;
 module.exports.Schema = Schema;
