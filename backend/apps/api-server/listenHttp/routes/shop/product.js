@@ -5,6 +5,7 @@ const ProductRewardDao = require('@ss/daoMongo/ProductRewardDao');
 const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
 const ItemDao = require('@ss/daoMongo/ItemDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
+const ReceiptDao = require('@ss/daoMongo/ReceiptDao');
 
 const ProductService = require('@ss/service/ProductService');
 
@@ -23,14 +24,22 @@ module.exports = async (ctx, next) => {
     const reqShopProduct = new ReqShopProduct(ctx.request.body);
     ReqShopProduct.validModel(reqShopProduct);
 
-    const appstore = reqShopProduct.getAppStore();
-    const receipt = await ProductService.validateReceipt(appstore, reqShopProduct);
+    const receipt = await ProductService.validateReceipt(userInfo.getUID(), reqShopProduct, updateDate);
 
     if (receipt.purchaseState === PurchaseStatus.FAIL) {
         ctx.status = 400;
         ctx.body.data = { message: 'receipt failed' };
         return;
     }
+
+    const receiptDao = new ReceiptDao(ctx.$dbMongo);
+
+    // 지급 된 영수증이 있는지 확인
+    // 지급 완료된 상태이면 에러 
+    // receiptDao.findOne();
+
+    // 영수증 먼저 등록
+    await receiptDao.insertOne(receipt);
 
     const productId = ProductService.getProductId(receipt.productId);
     const productDao = new ProductDao(ctx.$dbMongo);
@@ -39,7 +48,10 @@ module.exports = async (ctx, next) => {
 
     if (!productInfo) {
         ctx.status = 400;
-        ctx.body.data = { message: 'no exist product info' };
+        ctx.body.data = {
+            inventoryList: userInventoryList,
+            purchaseState: 0
+        };
         return;
     }
 
@@ -61,9 +73,6 @@ module.exports = async (ctx, next) => {
         inventoryList: userInventoryList,
         purchaseState: 0
      };
-    
-    
-    ctx.status = 200;
 
     await next();
 }

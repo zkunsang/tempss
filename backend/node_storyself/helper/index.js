@@ -12,7 +12,7 @@ class Helper {
     async ready() {
         await this.slack.ready();
         await this.fluent.ready();
-        await this.googleAuth.ready();
+        // await this.googleAuth.ready();
     }
 };
 

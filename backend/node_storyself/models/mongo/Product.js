@@ -14,11 +14,12 @@ const Schema = {
     END_DATE: { key: 'endDate', required: false, type: ValidType.UNIX_TIMESTAMP },
     SERVER_LIMIT: { key: 'serverLimit', required: true, type: ValidType.NUMBER },
     USER_LIMIT: { key: 'userLimit', required: true, type: ValidType.NUMBER },
+    TAG_COLOR: { key: 'tagColor', required: true, type: ValidType.STRING },
     UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
 }
 
 class Product extends Model {
-    constructor({ productId, groupId, productType, cost, apple, google, startDate, endDate, serverLimit, userLimit }) {
+    constructor({ productId, groupId, productType, cost, apple, google, startDate, endDate, serverLimit, userLimit, tagColor }) {
         super();
         
         this[Schema.PRODUCT_ID.key] = ValidateUtil.setNullUndefined(productId);
@@ -31,6 +32,7 @@ class Product extends Model {
         this[Schema.END_DATE.key] = ValidateUtil.setNullUndefined(endDate);
         this[Schema.SERVER_LIMIT.key] = ValidateUtil.setNullUndefined(serverLimit);
         this[Schema.USER_LIMIT.key] = ValidateUtil.setNullUndefined(userLimit);
+        this[Schema.TAG_COLOR.key] = ValidateUtil.setNullUndefined(tagColor);
     }
 
     setUpdateDate(updateDate) {

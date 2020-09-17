@@ -25,7 +25,7 @@ class FluentHelper {
 
     sendLog(category, log) {
         if(!this.fluentConfig.useFluent) {
-            console.log(log);
+            // console.log(log);
             return;
         }
         this.logger.emit(category, log);

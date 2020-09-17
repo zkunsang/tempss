@@ -17,6 +17,7 @@ class ProductDao extends Dao {
             Product.Schema.COST.key,
             Product.Schema.GOOGLE.key,
             Product.Schema.UPDATE_DATE.key,
+            Product.Schema.TAG_COLOR.key,
         ];
     }
 
@@ -39,6 +40,7 @@ class ProductDao extends Dao {
             Product.Schema.END_DATE.key,
             Product.Schema.SERVER_LIMIT.key,
             Product.Schema.USER_LIMIT.key,
+            Product.Schema.TAG_COLOR.key,
             Product.Schema.UPDATE_DATE.key,
         ]
     };
