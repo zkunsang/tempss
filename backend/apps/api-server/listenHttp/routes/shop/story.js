@@ -31,8 +31,8 @@ module.exports = async (ctx, next) => {
     const storyService = new StoryService(storyDao)
 
     await itemService.ready();
+    
     await storyService.ready();
-
     ItemService.validModel(itemService);
     StoryService.validModel(storyService);
     
@@ -43,6 +43,8 @@ module.exports = async (ctx, next) => {
 
     const { putInventoryList, useInventoryList } 
         = itemService.getExchangeInventoryInfo(storyInvenList);
+
+    itemService.applyCoupon(useInventoryList, reqShopStory.getCouponId());
 
     const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);

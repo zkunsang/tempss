@@ -90,6 +90,18 @@ class ItemService extends Service {
 
         return { useInventoryList, putInventoryList }
     }
+    
+    applyCoupon(useInventoryList, couponId) {
+        for(const inventory of useInventoryList) {
+            this.applyCouponInventory(inventory, couponId);
+        }
+    }
+
+    applyCouponInventory(inventory, couponId) {
+        if(couponId === "defaultSale") {
+            inventory.setItemQny(parseInt(inventory.getItemQny() * 0.9));
+        }
+    }
 }
 
 module.exports = ItemService;

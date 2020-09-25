@@ -83,6 +83,8 @@ class Inventory extends Model {
         this[Schema.ITEM_QNY.key] -= inventory.getItemQny();
         this.setUpdateDate(inventory.getUpdateDate());
     }
+
+    
 }
 
 module.exports = Inventory;
