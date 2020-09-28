@@ -28,4 +28,7 @@ module.exports.Code = {
 
     noExistItemList: { code: 32001, name: 'noExistItemList', message: 'found not exist item' },
     noExistStoryList: { code: 32002, name: 'noExistStoryList', message: 'found not exist story' },
+
+    nonValidGoogleReceipt: { code: 33001, name: 'nonValidGoogleReceipt', message: 'nonValidGoogleReceipt' },
+    alreadyProcessedReceipt: { code: 33002, name: 'alreadyProcessedReceipt', message: 'alreadyProcessedReceipt' },
 }

@@ -16,6 +16,7 @@ module.exports = async (ctx, next) => {
         }
         console.error(err);
         ctx.status = 400;
+        ctx.body.error = { message: err.message };
         ctx.body.data = { message: err.message };
     }
 };

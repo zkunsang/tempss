@@ -1,11 +1,9 @@
-const ss = require('@ss');
 const ValidateUtil = require('@ss/util/ValidateUtil');
 const Receipt = require('@ss/models/mongo/Receipt');
 const fetch = require('node-fetch');
-const FormData = require('form-data');
 const AppStore = ValidateUtil.AppStore;
 const helper = require('@ss/helper');
-
+const SSError = require('@ss/error');
 
 class ProductService {
     constructor() {
@@ -37,7 +35,22 @@ class ProductService {
         const appStore = reqShopProduct.getAppStore();
 
         let url = `https://www.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/products/${productId}/tokens/${purchaseToken}?access_token=${accessToken}`;
-        // const result = await this.checkValidate(url);
+        const result = await this.checkValidate(url);
+
+        if(result.purchaseState !== 0) {
+            throw new SSError.Service(SSError.Service.Code.nonValidGoogleReceipt, `${uid} - ${purchaseToken}`);
+        }
+
+        // acknowledgementState: 1
+        // consumptionState: 0
+        // developerPayload: '{"developerPayload":"","is_free_trial":false,"has_introductory_price_trial":false,"is_updated":false,"accountId":""}'
+        // kind: 'androidpublisher#productPurchase'
+        // orderId: 'GPA.3343-7169-0659-62909'
+        // purchaseState: 0
+        // purchaseTimeMillis: '1601283067574'
+        // purchaseType: 0
+        // regionCode: 'KR'
+        
 
         return new Receipt({ uid, productId, transactionId, purchaseDate, purchaseState, purchaseToken, packageName, appStore, updateDate });
     }
@@ -51,14 +64,8 @@ class ProductService {
         return await result.json();
     }
 
-    static async getAccessToken() {
-        return '';
-        
-        const code = '4/4AFlMztb3xe48ueRP-mUJ32do7xVG5s-UH2jZoPv0-S2j-A-PaPKWaYuL2TerfRoMmM-ZTwaonZL3hq-zzcptrs';
-        // "/google/authredirect?code=4/4AFlMztb3xe48ueRP-mUJ32do7xVG5s-UH2jZoPv0-S2j-A-PaPKWaYuL2TerfRoMmM-ZTwaonZL3hq-zzcptrs&scope=https://www.googleapis.com/auth/androidpublisher"
-        const {tokens} = await helper.googleAuth.oAuth2Client.getToken(code);
-
-        return tokens.access_token;
+    static getAccessToken() {
+        return helper.googleAuth.getAccessToken();
     }
 }
 

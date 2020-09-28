@@ -202,7 +202,7 @@ export default {
       if(this.thumbFile) {
         this.storyData.thumbnail = `${this.thumbFile.name}`;
         this.storyData.thumbnailCrc32 = this.thumbFile.crc;
-        this.storyData.thumbnailVersion = this.originStoryData.thumbnailVersion || 0 + 1;
+        this.storyData.thumbnailVersion = (this.originStoryData.thumbnailVersion || 0) + 1;
       }
 
       let saveFunc = this.isNew ? this.CREATE_STORY : this.UPDATE_STORY;
@@ -211,7 +211,7 @@ export default {
       if(this.textFile) {
         this.storyData.textFile = `${this.textFile.name}`;
         this.storyData.textFileCrc32 = this.textFile.crc;
-        this.storyData.textFileVersion = this.originStoryData.textFileVersion || 0 + 1;
+        this.storyData.textFileVersion = (this.originStoryData.textFileVersion || 0) + 1;
       }
 
       const result = await saveFunc(this.storyData);

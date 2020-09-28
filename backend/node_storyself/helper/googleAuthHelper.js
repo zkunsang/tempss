@@ -1,34 +1,33 @@
+const ioredis = require('ioredis');
+
 const ss = require('@ss');
-const fetch = require('node-fetch');
+
+const googleAuthChannel = "googleAuth"
 
 class GoogleAuthHelper {
     constructor() {
-        this.oAuth2Client = null;
-        this.slackConfig = null;
+        this.accessToken = null;
     }
 
     async ready() {
+        const { host, port } = ss.configs.dbRedisGoogleAuth;
+        this.redis = new ioredis({ host, port });
+        this.accessToken = await this.redis.get(googleAuthChannel);
         
-        const { google } = require('googleapis');
-        this.oAuth2Client = new google.auth.OAuth2(
-            ss.configs.googleOAuth2.client_id,
-            ss.configs.googleOAuth2.client_secret,
-            ss.configs.googleOAuth2.redirect_url
-        );
+        this.redis.subscribe(googleAuthChannel, async () => {
+            console.log(`subscribe start - ${this.accessToken}`);
+        })
 
-        const scopes = ['https://www.googleapis.com/auth/androidpublisher'];
+        this.redis.on("message", (channel, message) => {
+            console.log(`${channel}-${message}`);
+            if(channel == googleAuthChannel) {
+                this.accessToken = message;
+            }
+        })
+    }
 
-        return;
-        // let url = this.oAuth2Client.generateAuthUrl({
-        //     access_type: 'offline',
-        //     scope: scopes,
-        //     approval_prompt: 'force'
-        // });
-
-        // const result = await fetch(url);
-        // const jsonResult = await result.text();
-
-        // console.log(jsonResult);
+    getAccessToken() {
+        return this.accessToken;
     }
 }
 

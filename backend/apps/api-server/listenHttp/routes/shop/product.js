@@ -34,12 +34,14 @@ module.exports = async (ctx, next) => {
 
     const receiptDao = new ReceiptDao(ctx.$dbMongo);
 
-    // 지급 된 영수증이 있는지 확인
-    // 지급 완료된 상태이면 에러 
-    // receiptDao.findOne();
+    const receiptHistory = await receiptDao.findOne({uid, purchaseToken});
 
-    // 영수증 먼저 등록
-    await receiptDao.insertOne(receipt);
+    // 이미 처리된 내역이 있으면
+    if(receiptHistory) {
+        ctx.status = 400;
+        ctx.body.data = { purchaseState: 1 };
+        return;
+    }
 
     const productId = ProductService.getProductId(receipt.productId);
     const productDao = new ProductDao(ctx.$dbMongo);
@@ -48,12 +50,12 @@ module.exports = async (ctx, next) => {
 
     if (!productInfo) {
         ctx.status = 400;
-        ctx.body.data = {
-            inventoryList: userInventoryList,
-            purchaseState: 0
-        };
+        ctx.body.data = { purchaseState: 1 };
         return;
     }
+
+    // 영수증 먼저 등록
+    await receiptDao.insertOne(receipt);
 
     const productRewardDao = new ProductRewardDao(ctx.$dbMongo);
     const inventoryDao = new InventoryDao(ctx.$dbMongo);

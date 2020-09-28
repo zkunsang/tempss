@@ -46,11 +46,11 @@ class FluentConfig {
     }
 }
 
-class GoogleOAuth2Config {
+// redis for google auth pub/sub
+class RedisGoogleAuthPubSub {
     constructor(config) {
-        this.client_id = config.client_id;
-        this.client_secret = config.client_secret;
-        this.redirect_url = config.redirect_url;
+        this.host = config.host;
+        this.port = config.port;
     }
 }
 
@@ -73,7 +73,7 @@ module.exports = class Config {
             this.dbRedis = new RedisConfig(require(`@cf/${this.configPath}/dbRedis.json`));
             this.slack = new SlackConfig(require(`@cf/${this.configPath}/slack.json`));
             this.fluent = new FluentConfig(require(`@cf/${this.configPath}/fluent.json`));
-            this.googleOAuth2 = new GoogleOAuth2Config(require(`@cf/${this.configPath}/googleOAuth2.json`));
+            this.dbRedisGoogleAuth = new RedisGoogleAuthPubSub(require(`@cf/${this.configPath}/dbRedisGoogleAuthPubSub.json`));
         } catch (e) {
             throw msg + e.message;
         }
