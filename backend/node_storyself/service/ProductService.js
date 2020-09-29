@@ -27,12 +27,9 @@ class ProductService {
     
         // 구글 벨리 데이트
         const productId = reqShopProduct.getProductId();
-        const transactionId = reqShopProduct.getTransactionId()
-        const purchaseDate = reqShopProduct.getPurchaseDate();
-        const purchaseState = reqShopProduct.getPurchaseState();
         const purchaseToken = reqShopProduct.getPurchaseToken();
         const packageName = reqShopProduct.getPackageName();
-        const appStore = reqShopProduct.getAppStore();
+        
 
         let url = `https://www.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/products/${productId}/tokens/${purchaseToken}?access_token=${accessToken}`;
         const result = await this.checkValidate(url);
@@ -51,6 +48,12 @@ class ProductService {
         // purchaseType: 0
         // regionCode: 'KR'
         
+        // 영수증 검증 기록 저장(history)
+        
+        const transactionId = reqShopProduct.getTransactionId();
+        const purchaseDate = reqShopProduct.getPurchaseDate();
+        const purchaseState = reqShopProduct.getPurchaseState();
+        const appStore = reqShopProduct.getAppStore();
 
         return new Receipt({ uid, productId, transactionId, purchaseDate, purchaseState, purchaseToken, packageName, appStore, updateDate });
     }

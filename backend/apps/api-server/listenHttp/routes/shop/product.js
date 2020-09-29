@@ -24,7 +24,8 @@ module.exports = async (ctx, next) => {
     const reqShopProduct = new ReqShopProduct(ctx.request.body);
     ReqShopProduct.validModel(reqShopProduct);
 
-    const receipt = await ProductService.validateReceipt(userInfo.getUID(), reqShopProduct, updateDate);
+    const uid = userInfo.getUID();
+    const receipt = await ProductService.validateReceipt(uid, reqShopProduct, updateDate);
 
     if (receipt.purchaseState === PurchaseStatus.FAIL) {
         ctx.status = 400;
@@ -32,9 +33,11 @@ module.exports = async (ctx, next) => {
         return;
     }
 
+    const transactionId = receipt.getTransactionId();
+
     const receiptDao = new ReceiptDao(ctx.$dbMongo);
 
-    const receiptHistory = await receiptDao.findOne({uid, purchaseToken});
+    const receiptHistory = await receiptDao.findOne({ transactionId });
 
     // 이미 처리된 내역이 있으면
     if(receiptHistory) {
