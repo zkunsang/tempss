@@ -62,7 +62,7 @@ module.exports = class Config {
         this.dbMongo = null;
         this.slack = null;
         this.fluent = null;
-        this.googleOAuth2 = null;
+        this.dbRedisGoogleAuth = null;
     }
 
     ready() {

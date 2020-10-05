@@ -1,9 +1,9 @@
-const ValidateUtil = require('@ss/util/ValidateUtil');
-const Receipt = require('@ss/models/mongo/Receipt');
+const ValidateUtil = require('../util/ValidateUtil');
+const Receipt = require('../models/mongo/Receipt');
 const fetch = require('node-fetch');
 const AppStore = ValidateUtil.AppStore;
-const helper = require('@ss/helper');
-const SSError = require('@ss/error');
+const helper = require('../helper');
+const SSError = require('../error');
 
 class ProductService {
     constructor() {
@@ -29,7 +29,6 @@ class ProductService {
         const productId = reqShopProduct.getProductId();
         const purchaseToken = reqShopProduct.getPurchaseToken();
         const packageName = reqShopProduct.getPackageName();
-        
 
         let url = `https://www.googleapis.com/androidpublisher/v3/applications/${packageName}/purchases/products/${productId}/tokens/${purchaseToken}?access_token=${accessToken}`;
         const result = await this.checkValidate(url);
@@ -49,7 +48,6 @@ class ProductService {
         // regionCode: 'KR'
         
         // 영수증 검증 기록 저장(history)
-        
         const transactionId = reqShopProduct.getTransactionId();
         const purchaseDate = reqShopProduct.getPurchaseDate();
         const purchaseState = reqShopProduct.getPurchaseState();

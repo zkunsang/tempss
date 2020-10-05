@@ -1,4 +1,4 @@
-const ValidateUtil = require('@ss/util/ValidateUtil')
+const ValidateUtil = require('../util/ValidateUtil')
 
 const NullAllow = ValidateUtil.NullAllow;
 

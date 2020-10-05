@@ -1,6 +1,5 @@
 const ioredis = require('ioredis');
-
-const ss = require('@ss');
+const ss = require('../index.js');
 
 const googleAuthChannel = "googleAuth"
 

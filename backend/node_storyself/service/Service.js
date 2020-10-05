@@ -1,5 +1,5 @@
-const SSError = require('@ss/error');
-const ValidateUtil = require('@ss/util/ValidateUtil')
+const SSError = require('../error');
+const ValidateUtil = require('../util/ValidateUtil')
 const NullAllow = ValidateUtil.NullAllow;
 
 class Service {

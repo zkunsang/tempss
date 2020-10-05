@@ -6,7 +6,7 @@ const UserDao = require('../daoMongo/UserDao');
 const Wrapper = require('./wrapper')
 const SSError = require('../error');
 
-const helper = require('@ss/helper');
+const helper = require('../helper');
 
 class DaoWrapper extends Wrapper {
     constructor() { 

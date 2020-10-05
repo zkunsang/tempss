@@ -1,6 +1,5 @@
 const logger = require('fluent-logger');
-// const serverIp = require('ip').address(); // server ip
-const ss = require('@ss');
+const ss = require('../index.js');
 
 class FluentHelper {
     constructor() {

@@ -1,7 +1,7 @@
-const Model = require('@ss/models');
-const Inventory = require("@ss/models/mongo/Inventory");
+const Model = require('../../models');
+const Inventory = require('../../models/mongo/Inventory');
 
-const ValidateUtil = require('@ss/util/ValidateUtil')
+const ValidateUtil = require('../../util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 
 const Schema = {

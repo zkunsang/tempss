@@ -1,5 +1,5 @@
 const { IncomingWebhook } = require('@slack/webhook');
-const ss = require('@ss');
+const ss = require('../index.js');
 
 class SlackHelper {
     constructor() {

@@ -1,19 +1,19 @@
-const ValidateUtil = require('@ss/util/ValidateUtil');
+const ValidateUtil = require('../util/ValidateUtil');
 const ValidType = ValidateUtil.ValidType;
 
-const Service = require('@ss/service/Service');
+const Service = require('../service/Service');
 
-const Item = require('@ss/models/mongo/Item');
-const User = require('@ss/models/mongo/User');
-const Inventory = require('@ss/models/mongo/Inventory');
+const Item = require('../models/mongo/Item');
+const User = require('../models/mongo/User');
+const Inventory = require('../models/mongo/Inventory');
 
-const InventoryPutObject = require('@ss/models/service/InventoryPutObject');
-const InventoryUseObject = require('@ss/models/service/InventoryUseObject');
+const InventoryPutObject = require('../models/service/InventoryPutObject');
+const InventoryUseObject = require('../models/service/InventoryUseObject');
 
-const InventoryDao = require('@ss/daoMongo/InventoryDao');
-const ItemDao = require('@ss/daoMongo/ItemDao');
-const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
-const SSError = require('@ss/error');
+const InventoryDao = require('../daoMongo/InventoryDao');
+const ItemDao = require('../daoMongo/ItemDao');
+const ItemCategoryDao = require('../daoMongo/ItemCategoryDao');
+const SSError = require('../error');
 const _ = require('lodash');
 
 

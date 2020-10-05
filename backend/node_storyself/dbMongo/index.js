@@ -1,7 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
 
-const ss = require('@ss');
-const helper = require('@ss/helper');
+const ss = require('../index');
+const helper = require('../helper');
 
 class Mongo {
     constructor() {

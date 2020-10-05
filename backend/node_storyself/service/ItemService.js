@@ -1,16 +1,16 @@
-const ValidateUtil = require('@ss/util/ValidateUtil');
-const ArrayUtil = require('@ss/util/ArrayUtil');
+const ValidateUtil = require('../util/ValidateUtil');
+const ArrayUtil = require('../util/ArrayUtil');
 const ValidType = ValidateUtil.ValidType;
-const Service = require('@ss/service/Service');
+const Service = require('../service/Service');
 
-const Item = require('@ss/models/mongo/Item');
-const ItemMaterial = require('@ss/models/mongo/ItemMaterial');
+const Item = require('../models/mongo/Item');
+const ItemMaterial = require('../models/mongo/ItemMaterial');
 
-const ItemDao = require('@ss/daoMongo/ItemDao');
-const ItemMaterialDao = require('@ss/daoMongo/ItemMaterialDao');
-// const InventoryDao = require('@ss/daoMongo/InventoryDao');
+const ItemDao = require('../daoMongo/ItemDao');
+const ItemMaterialDao = require('../daoMongo/ItemMaterialDao');
+// const InventoryDao = require('../daoMongo/InventoryDao');
 
-const SSError = require('@ss/error');
+const SSError = require('../error');
 const _ = require('lodash');
 
 const Schema = {

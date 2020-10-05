@@ -1,4 +1,4 @@
-const SSError = require('@ss/error');
+const SSError = require('../error');
 
 class Dao {
     constructor() {}

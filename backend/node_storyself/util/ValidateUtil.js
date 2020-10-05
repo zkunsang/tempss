@@ -1,6 +1,5 @@
 const moment = require('moment');
-const SSError = require('@ss/error');
-const { isNumber } = require('lodash');
+const SSError = require('../error');
 
 const NullAllow = {
     YES: true,

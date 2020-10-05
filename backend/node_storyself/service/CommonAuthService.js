@@ -1,12 +1,11 @@
+const dbMongo = require('../dbMongo');
+const dbRedis = require('../dbRedis');
 
-const dbMongo = require('@ss/dbMongo');
-const dbRedis = require('@ss/dbRedis');
+const ReqSession = require('../models/cmsController/ReqSession');
+const SessionDao = require('../daoRedis/SessionDao');
 
-const ReqSession = require('@ss/models/cmsController/ReqSession');
-const SessionDao = require('@ss/daoRedis/SessionDao');
-
-const User = require('@ss/models/mongo/User');
-const UserDao = require('@ss/daoMongo/UserDao');
+const User = require('../models/mongo/User');
+const UserDao = require('../daoMongo/UserDao');
 
 module.exports = async (ctx, next) => {
     const reqSession = new ReqSession(ctx.request.body);

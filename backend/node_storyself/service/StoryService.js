@@ -1,9 +1,9 @@
-const ValidateUtil = require('@ss/util/ValidateUtil');
+const ValidateUtil = require('../util/ValidateUtil');
 const ValidType = ValidateUtil.ValidType;
-const Service = require('@ss/service/Service');
-const Story = require('@ss/models/mongo/Story');
-const StoryDao = require('@ss/daoMongo/StoryDao');
-const SSError = require('@ss/error');
+const Service = require('../service/Service');
+const Story = require('../models/mongo/Story');
+const StoryDao = require('../daoMongo/StoryDao');
+const SSError = require('../error');
 const _ = require('lodash');
 
 const Schema = {

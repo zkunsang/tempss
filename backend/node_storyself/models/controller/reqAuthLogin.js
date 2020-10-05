@@ -1,6 +1,6 @@
-const Model = require('@ss/models');
+const Model = require('../../models');
 
-const ValidateUtil = require('@ss/util/ValidateUtil');
+const ValidateUtil = require('../../util/ValidateUtil');
 const Platform = ValidateUtil.Platform;
 const Provider = ValidateUtil.Provider;
 const ValidType = ValidateUtil.ValidType;

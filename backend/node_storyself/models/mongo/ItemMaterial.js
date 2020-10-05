@@ -1,8 +1,8 @@
-const Model = require('@ss/models');
+const Model = require('../../models');
 
-const ValidateUtil = require('@ss/util/ValidateUtil')
+const ValidateUtil = require('../../util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
-const Inventory = require('@ss/models/mongo/Inventory');
+const Inventory = require('../../models/mongo/Inventory');
 
 const Schema = {
     ITEM_ID: { key: 'itemId', required: true, type: ValidType.STRING },

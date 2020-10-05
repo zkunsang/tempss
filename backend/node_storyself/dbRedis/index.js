@@ -1,7 +1,7 @@
 const ioredis = require('ioredis');
 
-const ss = require('@ss');
-const helper = require('@ss/helper');
+const ss = require('../index.js');
+const helper = require('../helper');
 
 class Redis {
     constructor() {

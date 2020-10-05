@@ -50,6 +50,9 @@
     "apiLocal": "env NODE_ENV=apiLocal pm2 start apps/api-server/app.js",
     "apiDev": "env NODE_ENV=apiDev pm2 start apps/api-server/app.js  -i max"
   },
+  "_moduleAliases": {
+    "@ss": "node_storyself"
+  },
   "author": "",
   "license": "ISC"
 }

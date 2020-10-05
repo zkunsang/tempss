@@ -1,9 +1,9 @@
-const Model = require('@ss/models');
+const Model = require('../../models');
 
-const ValidateUtil = require('@ss/util/ValidateUtil')
+const ValidateUtil = require('../../util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 
-const InventoryDao = require('@ss/daoMongo/InventoryDao');
+const InventoryDao = require('../../daoMongo/InventoryDao');
 
 const Schema = {
     USE_LIST: { key: 'useList', required: true, type: ValidType.ARRAY },
