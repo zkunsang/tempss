@@ -1,5 +1,5 @@
 const moment = require('moment')
-const CommonPacketLog = require('@ss/models/logPacket/CommonPacketLog.js')
+const NetworkLog = require('@ss/models/apilog/NetworkLog.js')
 
 const helper = require('@ss/helper');
 const SSError = require('@ss/error');
@@ -40,7 +40,7 @@ module.exports = async (ctx, next) => {
     }
     
     // ctx.body.common.serverTime = ctx.$date;
-    helper.fluent.sendLog('network', new CommonPacketLog(ctx, ctx.$date, moment().valueOf()));
+    helper.fluent.sendLog('network', new NetworkLog(ctx, ctx.$date, moment().valueOf()));
 };
 
 function uncaughtError(ctx, err) {

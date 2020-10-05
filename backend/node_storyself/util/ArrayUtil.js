@@ -7,6 +7,10 @@ class ArrayUtil {
         const mapBefore = _.keyBy(arrayBefore, key);
         const mapAfter = _.keyBy(arrayAfter, key);
 
+        return this.compareArrayByKey(mapBefore, mapAfter, arrayBefore, arrayAfter, key)
+    }
+
+    compareArrayByKeyWithMap(mapBefore, mapAfter, arrayBefore, arrayAfter, key) {
         const insertList = [];
         const deleteList = [];
         const updateList = [];

@@ -1,6 +1,6 @@
 const moment = require('moment')
 
-class CommonPacketLog {
+class NetworkLog {
     constructor(ctx, startDate, endDate) {
         this.pathname = ctx.path;
         this.ip = ctx.ip;
@@ -21,4 +21,4 @@ class CommonPacketLog {
     }
 }
 
-module.exports = CommonPacketLog;
+module.exports = NetworkLog;

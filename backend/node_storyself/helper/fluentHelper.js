@@ -19,15 +19,26 @@ class FluentHelper {
                 timeout: this.fluentConfig.timeout, // 1.0,
                 reconnectInterval: this.fluentConfig.reconnectInterval // 600000 // 10 minutes
             });
-
     }
 
     sendLog(category, log) {
         if(!this.fluentConfig.useFluent) {
-            // console.log(log);
+            console.log(`${category} - ${JSON.stringify(log)}`);
             return;
         }
-        this.logger.emit(category, log);
+
+        if (typeof log !== 'object') {
+            this.logger.emit(category, log);
+        }
+        else if (typeof log === 'Array') {
+            for(const l in logs) {
+                this.logger.emit(category, log);
+            }
+            
+        }
+        else {
+            console.error('not supported log')
+        }
     }
 }
 

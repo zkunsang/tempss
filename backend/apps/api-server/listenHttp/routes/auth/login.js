@@ -1,6 +1,8 @@
 const dbMongo = require('@ss/dbMongo');
 const dbRedis = require('@ss/dbRedis');
 
+const helper = require('@ss/helper');
+
 const UserDao = require('@ss/daoMongo/UserDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
 const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
@@ -13,10 +15,12 @@ const User = require('@ss/models/mongo/User');
 const UserStatus = require('@ss/util/ValidateUtil').UserStatus;
 const ReqAuthLogin = require('@ss/models/controller/ReqAuthLogin');
 
+const LoginLog = require('@ss/models/apilog/LoginLog');
+
 const shortid = require('shortid');
 
 module.exports = async (ctx, next) => {
-    const loginDate = ctx.$date
+    const loginDate = ctx.$date;
     const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
     ReqAuthLogin.validModel(reqAuthLogin);
 
@@ -58,6 +62,8 @@ module.exports = async (ctx, next) => {
         sessionId,
         inventoryList: userInventoryList
     };
+
+    helper.fluent.sendLog('login', new LoginLog(reqAuthLogin, { ip: ctx.ip, loginDate }));
 
     await next();
 };

@@ -1,4 +1,4 @@
-const ProductGroup = require('../models/mongo/ProductGroup.js');
+const ProductGroup = require('../models/mongo/ProductGroup');
 const Dao = require('./Dao');
 
 class ProductGroupDao extends Dao {

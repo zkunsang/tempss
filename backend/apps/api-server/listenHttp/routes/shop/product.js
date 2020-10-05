@@ -57,7 +57,6 @@ module.exports = async (ctx, next) => {
         return;
     }
 
-    // 영수증 먼저 등록
     await receiptDao.insertOne(receipt);
 
     const productRewardDao = new ProductRewardDao(ctx.$dbMongo);

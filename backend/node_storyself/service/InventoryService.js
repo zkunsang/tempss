@@ -1,6 +1,7 @@
 const ValidateUtil = require('../util/ValidateUtil');
 const ValidType = ValidateUtil.ValidType;
 
+const helper = require('../helper');
 const Service = require('../service/Service');
 
 const Item = require('../models/mongo/Item');
@@ -13,9 +14,12 @@ const InventoryUseObject = require('../models/service/InventoryUseObject');
 const InventoryDao = require('../daoMongo/InventoryDao');
 const ItemDao = require('../daoMongo/ItemDao');
 const ItemCategoryDao = require('../daoMongo/ItemCategoryDao');
+
+const InventoryChangeInsert = require('../models/service/InventoryChangeInsert');
+const InventoryChangeUpdate = require('../models/service/InventoryChangeUpdate');
+
 const SSError = require('../error');
 const _ = require('lodash');
-
 
 const PUT_ACTION = {
     CEHAT: 'cheat',             // cheat
@@ -69,6 +73,9 @@ class InventoryService extends Service {
         const updateList = [];
 
         const createDate = this.updateDate;
+        const beforeInvenMap = {};
+
+        // 변경전 해당 아이템 그룹들의 총량을 미리 계산?
         for (const putInventory of sortedInventoryList) {
             putInventory.setUID(uid);
             putInventory.setUpdateDate(createDate);
@@ -85,7 +92,8 @@ class InventoryService extends Service {
             const userInventoryList = userInventoryMap[groupId];
 
             InventoryService.checkMaxQny(userInventoryList, putInventory, itemData);
-
+            InventoryService.createBeforeInvenInfo(userInventoryList, beforeInvenMap);
+            
             const volatileSec = itemData.getVolatileSeconds();
             if (volatileSec) {
                 putInventory.setEndDate(createDate + volatileSec);
@@ -105,17 +113,106 @@ class InventoryService extends Service {
             }
 
             userInventory.addItem(putInventory);
-
             updateList.push(userInventory);
         }
 
-        return new InventoryPutObject({ insertList, updateList });
+        return new InventoryPutObject({ insertList, updateList, beforeInvenMap });
     }
 
+    /**
+     * 
+     * @param {InventoryPutObject} putObject 
+     */
     async putItem(putObject) {
         InventoryPutObject.validModel(putObject);
         await this.insertItemList(putObject.getInsertList());
         await this.updateItemList(putObject.getUpdateList());
+        
+        const uid = this[Schema.USER_INFO.key].getUID();
+        const updateDate = this[Schema.UPDATE_DATE.key];
+
+        this.logPutItem(uid, updateDate, putObject);
+    }
+
+    /**
+     * 
+     * @param {InventoryPutObject} putObject 
+     */
+    logPutItem(uid, logDate, putObject) {
+        const changeList = this.getPutInventoryChangeList(putObject);
+        const changeLogList = this.createChangeLogList(uid, logDate, changeList);
+        helper.fluent.sendLog('inventory', changeLogList);
+    }
+
+    createChangeLogList(uid, logDate, changeList) {
+        return changeList.map((change) => change.getInvenLog(uid, logDate));
+    }
+    
+    /**
+     * 
+     * @param {InventoryPutObject} putObject 
+     */
+    getPutInventoryChangeList(putObject) {
+        const beforeInvenMap = putObject.getBeforeInvenMap();
+        const updateList = putObject.getUpdateList();
+        const insertList = putObject.getInsertList()
+
+        // 신규 추가된 아이템
+        const afterInvenMap = {};
+        
+        // item별로 처리
+        this.makeAfterMap(afterInvenMap, insertList);
+        this.makeAfterMap(afterInvenMap, updateList);
+        this.makeAfterMapWithMap(afterInvenMap, beforeInvenMap);
+
+        const beforeList = Object.values(beforeInvenMap);
+        const afterList = Object.values(afterInvenMap);
+
+        const changeList = []
+        
+        // 이전 리스트
+        for (const beforeInven of beforeList) {
+            const itemId = beforeInven.getItemId();
+            const afterInven = afterInvenMap[itemId];
+
+            if(afterInven.getItemQny() == beforeInven.getItemQny()) {
+                continue;
+            }
+
+            const changeMap = new InventoryChangeUpdate({ beforeInven, afterInven });
+            changeList.push(changeMap);
+        }
+
+        for (const insertInven of insertList) {
+            const changeMap = new InventoryChangeInsert({ insertInven });
+            changeList.push(changeMap);
+        }
+
+        return changeList;
+    }
+
+    makeAfterMap(afterInvenMap, invenList) {
+        for (const inventory of invenList) {
+            const itemId = inventory.getItemId();
+            if(!afterInvenMap[itemId]) {
+                afterInvenMap[itemId] = inventory;
+            }
+            else {
+                afterInvenMap[itemId].addItem(inventory);
+            }
+        }
+    }
+
+    makeAfterMapWithMap(afterInvenMap, beforeInvenMap) {
+        const beforeList = Object.values(beforeInvenMap);
+
+        for (const beforeInven of beforeList) {
+            const itemId = beforeInven.getItemId();
+
+            if(!afterInvenMap[itemId]) {
+                afterInvenMap[itemId] = beforeInven;
+            }
+        }
     }
 
     async checkUseItem(useInventoryList) {
@@ -175,13 +272,33 @@ class InventoryService extends Service {
     async updateItemList(updateInventoryList) {
         for (const updateInventory of updateInventoryList) {
             const _id = updateInventory.getObjectId();
+            const copyInventory = Object.assign({}, updateInventory);
 
-            delete updateInventory[Inventory.Schema.OBJECT_ID.key];
-            delete updateInventory[Inventory.Schema.UID.key];
-            delete updateInventory[Inventory.Schema.ITEM_ID.key];
+            delete copyInventory[Inventory.Schema.OBJECT_ID.key];
+            delete copyInventory[Inventory.Schema.UID.key];
+            delete copyInventory[Inventory.Schema.ITEM_ID.key];
 
-            await this.inventoryDao.updateOne({ _id }, updateInventory)
+            await this.inventoryDao.updateOne({ _id }, copyInventory)
         }
+    }
+    
+    async processExchange(useInventoryList, putInventoryList) {
+        const putObject = await this.checkPutItem(putInventoryList);
+        const useObject = await this.checkUseItem(useInventoryList);
+
+        await this.useItem(useObject);
+        await this.putItem(putObject);
+    }
+
+    async processPut(putInventoryList) {
+        const putObject = await this.checkPutItem(putInventoryList);
+        await this.putItem(putObject);
+        
+    }
+
+    async processUse(useInventoryList) {
+        const useObject = await this.checkUseItem(useInventoryList);
+        await this.useItem(useObject);
     }
 
     static findUserInventoryItem(userInventoryList, invetory) {
@@ -318,23 +435,6 @@ class InventoryService extends Service {
         return new Inventory({ itemId, itemQny });
     }
 
-    async processExchange(useInventoryList, putInventoryList) {
-        const putObject = await this.checkPutItem(putInventoryList);
-        const useObject = await this.checkUseItem(useInventoryList);
-
-        await this.useItem(useObject);
-        await this.putItem(putObject);
-    }
-
-    async processPut(putInventoryList) {
-        const putObject = await this.checkPutItem(putInventoryList);
-        await this.putItem(putObject);
-    }
-
-    async processUse(useInventoryList) {
-        const useObject = await this.checkUseItem(useInventoryList);
-        await this.useItem(useObject);
-    }
 
     static sortInventoryList(inventoryList) {
         let returnObject = {};
@@ -351,6 +451,22 @@ class InventoryService extends Service {
             }
         }
         return Object.values(returnObject);
+    }
+
+    // using object id create map info once
+    static createBeforeInvenInfo(userInventoryList, beforeInvenMap) {
+        if (!userInventoryList) { return; }
+        
+        for (const inventory of userInventoryList) {
+            const itemId = inventory.getItemId();
+            
+            if(!beforeInvenMap[itemId]) {
+                beforeInvenMap[itemId] = new Inventory(inventory);
+            }
+            else {
+                beforeInvenMap[itemId].addItem(inventory);
+            }
+        }
     }
 }
 

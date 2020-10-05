@@ -1,4 +1,4 @@
-const Product = require('../models/mongo/Product.js');
+const Product = require('../models/mongo/Product');
 const Dao = require('./Dao');
 
 class ProductDao extends Dao {
