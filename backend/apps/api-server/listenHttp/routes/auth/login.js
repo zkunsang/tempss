@@ -55,7 +55,9 @@ module.exports = async (ctx, next) => {
     sessionDao.set(sessionId, userInfo);
 
     const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, loginDate);
+    
     const userInventoryList = await inventoryService.getUserInventoryList();
+    InventoryService.removeObjectIdList(userInventoryList);
 
     ctx.status = 200;
     ctx.body.data = { 

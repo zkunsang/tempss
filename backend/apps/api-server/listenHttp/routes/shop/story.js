@@ -25,13 +25,10 @@ module.exports = async (ctx, next) => {
     const storyDao = new StoryDao(ctx.$dbMongo);
     const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
     const inventoryDao = new InventoryDao(ctx.$dbMongo);
-    const itemMaterialDao = new ItemMaterialDao(ctx.$dbMongo);
     
-    const itemService = new ItemService(itemDao, itemMaterialDao);
+    const itemService = new ItemService();
     const storyService = new StoryService(storyDao)
 
-    await itemService.ready();
-    
     await storyService.ready();
     ItemService.validModel(itemService);
     StoryService.validModel(storyService);
@@ -52,6 +49,7 @@ module.exports = async (ctx, next) => {
     await inventoryService.processExchange(useInventoryList, putInventoryList);
 
     const userInventoryList = await inventoryService.getUserInventoryList();
+    InventoryService.removeObjectIdList(userInventoryList);
     ctx.status = 200;
     ctx.body.data = { inventoryList: userInventoryList };
 

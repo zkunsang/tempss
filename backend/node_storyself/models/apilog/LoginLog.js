@@ -36,7 +36,7 @@ class LoginLog extends Model {
         this.clientVersion = clientVersion;
 
         this.ip = ip;
-        this.loginDate = loginDate;
+        this.loginDate = moment(loginDate).format();
     }
 }
 

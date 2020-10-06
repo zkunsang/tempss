@@ -1,30 +1,19 @@
-const ItemDao = require('@ss/daoMongo/ItemDao');
-
-const ItemMaterialDao = require('@ss/daoMongo/ItemMaterialDao');
-const ProductDao = require('@ss/daoMongo/ProductDao');
-const ProductGroupDao = require('@ss/daoMongo/ProductGroupDao');
-const ProductRewardDao = require('@ss/daoMongo/ProductRewardDao');
-const ResourceDao = require('@ss/daoMongo/ResourceDao');
-const StoryDao = require('@ss/daoMongo/StoryDao');
+const ItemMaterialCache = require('@ss/dbCache/ItemMaterialCache');
+const ItemCache = require('@ss/dbCache/ItemCache');
+const ProductCache = require('@ss/dbCache/ProductCache');
+const ProductGroupCache = require('@ss/dbCache/ProductGroupCache');
+const ProductRewardCache = require('@ss/dbCache/ProductRewardCache');
+const ResourceCache = require('@ss/dbCache/ResourceCache');
+const StoryCache = require('@ss/dbCache/StoryCache');
 
 module.exports = async (ctx, next) => {
-    const dbMongo = ctx.$dbMongo;
-
-    const itemDao = new ItemDao(dbMongo);
-    const itemMaterialDao = new ItemMaterialDao(dbMongo);
-    const productDao = new ProductDao(dbMongo);
-    const productGroupDao = new ProductGroupDao(dbMongo);
-    const productRewardDao = new ProductRewardDao(dbMongo);
-    const resourceDao = new ResourceDao(dbMongo);
-    const storyDao = new StoryDao(dbMongo);
-
-    const itemList = await itemDao.findAll();
-    const itemMaterialList = await itemMaterialDao.findAll();
-    const productList = await productDao.findAll();
-    const productGroupList = await productGroupDao.findAll();
-    const productRewardList = await productRewardDao.findAll();
-    const resourceList = await resourceDao.findAll();
-    const storyList = await storyDao.findAll();
+    const itemList = ItemCache.getList();
+    const itemMaterialList = ItemMaterialCache.getList();
+    const productList = ProductCache.getList();
+    const productGroupList = ProductGroupCache.getList();
+    const productRewardList = ProductRewardCache.getList();
+    const resourceList = ResourceCache.getList();
+    const storyList = StoryCache.getList();
 
     ctx.status = 200;
     ctx.body.data = { itemList, itemMaterialList, productList, productGroupList, productRewardList, resourceList, storyList };

@@ -43,6 +43,8 @@ module.exports = async (ctx, next) => {
     await inventoryService.processPut(inventoryList);
     
     const userInventoryList = await inventoryService.getUserInventoryList();
+    InventoryService.removeObjectIdList(userInventoryList);
+    
     ctx.status = 200;
     ctx.body.data = { inventoryList: userInventoryList };
 

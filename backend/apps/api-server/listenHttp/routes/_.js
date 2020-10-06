@@ -6,6 +6,7 @@ const SSError = require('@ss/error');
 
 module.exports = async (ctx, next) => {
     ctx.$date = moment().valueOf();
+
     ctx.body = ctx.body || {};
     ctx.body.common = ctx.body.common || {};
     ctx.body.error = ctx.body.error || {};
@@ -34,7 +35,7 @@ module.exports = async (ctx, next) => {
 
             helper.slack.sendMessage(err.makeErrorMessage());
         } else {
-            helper.slack.sendMessage(err);
+            helper.slack.sendMessage(err.stack);
             uncaughtError(ctx, err);
         }
     }

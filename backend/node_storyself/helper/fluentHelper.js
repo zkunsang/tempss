@@ -27,14 +27,13 @@ class FluentHelper {
             return;
         }
 
-        if (typeof log !== 'object') {
-            this.logger.emit(category, log);
-        }
-        else if (typeof log === 'Array') {
-            for(const l in logs) {
-                this.logger.emit(category, log);
+        if (Array.isArray(log)) {
+            for(const l of log) {
+                this.logger.emit(category, l);
             }
-            
+        }
+        else if (typeof log === 'object') {
+            this.logger.emit(category, log);
         }
         else {
             console.error('not supported log')

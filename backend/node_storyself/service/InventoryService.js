@@ -17,6 +17,7 @@ const ItemCategoryDao = require('../daoMongo/ItemCategoryDao');
 
 const InventoryChangeInsert = require('../models/service/InventoryChangeInsert');
 const InventoryChangeUpdate = require('../models/service/InventoryChangeUpdate');
+const InventoryChangeDelete = require('../models/service/InventoryChangeDelete');
 
 const SSError = require('../error');
 const _ = require('lodash');
@@ -55,7 +56,7 @@ class InventoryService extends Service {
         const uid = this.userInfo.uid;
         return await this.inventoryDao.findMany({uid});
     }
-    
+
     async checkPutItem(putInventoryList) {
         Service.Validate.checkArrayObject(putInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(putInventoryList);
@@ -65,7 +66,6 @@ class InventoryService extends Service {
 
         const uid = this.userInfo.getUID();
 
-        
         const userInventoryListAll = await this.getUserInventoryList(); 
         const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll, itemMap);
 
@@ -119,6 +119,43 @@ class InventoryService extends Service {
         return new InventoryPutObject({ insertList, updateList, beforeInvenMap });
     }
 
+    async checkUseItem(useInventoryList) {
+        Service.Validate.checkArrayObject(useInventoryList, Inventory);
+        const sortedInventoryList = InventoryService.sortInventoryList(useInventoryList);
+
+        const itemList = await this.itemDao.findAll();
+        const itemMap = _.keyBy(itemList, Item.Schema.ITEM_ID.key);
+
+        const uid = this.userInfo.getUID();
+
+        const userInventoryListAll = await this.inventoryDao.findMany({ uid });
+        const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll, itemMap);
+
+        const deleteList = [];
+        const updateList = [];
+        const beforeInvenMap = {}
+
+        const updateDate = this.updateDate;
+        for (const useInventory of sortedInventoryList) {
+            useInventory.setUpdateDate(updateDate);
+            const itemId = useInventory.getItemId();
+            const itemData = itemMap[itemId];
+
+            InventoryService.checkItemData(itemData, itemId);
+            InventoryService.checkItemUseable(itemData, itemId);
+
+            const groupId = itemData.getGroupId();
+
+            const userInventoryList = userInventoryMap[groupId];
+
+            // 순서 주의
+            InventoryService.createBeforeInvenInfo(userInventoryList, beforeInvenMap);
+            InventoryService.calculateUse(userInventoryList, useInventory, itemMap, deleteList, updateList);
+        }
+
+        return new InventoryUseObject({ deleteList, updateList, beforeInvenMap });
+    }
+
     /**
      * 
      * @param {InventoryPutObject} putObject 
@@ -140,6 +177,16 @@ class InventoryService extends Service {
      */
     logPutItem(uid, logDate, putObject) {
         const changeList = this.getPutInventoryChangeList(putObject);
+        const changeLogList = this.createChangeLogList(uid, logDate, changeList);
+        helper.fluent.sendLog('inventory', changeLogList);
+    }
+
+    /**
+     * 
+     * @param {InventoryUseObject} useObject 
+     */
+    logUseItem(uid, logDate, useObject) {
+        const changeList = this.getUseInventoryChangeList(useObject);
         const changeLogList = this.createChangeLogList(uid, logDate, changeList);
         helper.fluent.sendLog('inventory', changeLogList);
     }
@@ -191,6 +238,43 @@ class InventoryService extends Service {
         return changeList;
     }
 
+    /**
+     * 
+     * @param {InventoryUseObject} useObject 
+     */
+    getUseInventoryChangeList(useObject) {
+        const beforeInvenMap = useObject.getBeforeInvenMap();
+        const updateList = useObject.getUpdateList();
+        const deleteList = useObject.getDeleteList()
+
+        // 신규 추가된 아이템
+        const afterInvenMap = {};
+        
+        // item별로 처리
+        this.makeAfterMap(afterInvenMap, deleteList);
+        this.makeAfterMap(afterInvenMap, updateList);
+        this.makeAfterMapWithMap(afterInvenMap, beforeInvenMap);
+
+        const beforeList = Object.values(beforeInvenMap);
+
+        const changeList = []
+        
+        // 이전 리스트
+        for (const beforeInven of beforeList) {
+            const itemId = beforeInven.getItemId();
+            const afterInven = afterInvenMap[itemId];
+
+            if(afterInven.getItemQny() == beforeInven.getItemQny()) {
+                continue;
+            }
+
+            const changeMap = new InventoryChangeUpdate({ beforeInven, afterInven });
+            changeList.push(changeMap);
+        }
+
+        return changeList;
+    }
+
     makeAfterMap(afterInvenMap, invenList) {
         for (const inventory of invenList) {
             const itemId = inventory.getItemId();
@@ -215,50 +299,22 @@ class InventoryService extends Service {
         }
     }
 
-    async checkUseItem(useInventoryList) {
-        Service.Validate.checkArrayObject(useInventoryList, Inventory);
-        const sortedInventoryList = InventoryService.sortInventoryList(useInventoryList);
-
-        const itemList = await this.itemDao.findAll();
-        const itemMap = _.keyBy(itemList, Item.Schema.ITEM_ID.key);
-
-        const uid = this.userInfo.getUID();
-
-        const userInventoryListAll = await this.inventoryDao.findMany({ uid });
-        const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll, itemMap);
-
-        const deleteList = [];
-        const updateList = [];
-
-        const updateDate = this.updateDate;
-        for (const useInventory of sortedInventoryList) {
-            useInventory.setUpdateDate(updateDate);
-            const itemId = useInventory.getItemId();
-            const itemData = itemMap[itemId];
-
-            InventoryService.checkItemData(itemData, itemId);
-            InventoryService.checkItemUseable(itemData, itemId);
-
-            const groupId = itemData.getGroupId();
-
-            const userInventoryList = userInventoryMap[groupId];
-
-            InventoryService.calculateUse(userInventoryList, useInventory, itemMap, deleteList, updateList);
-        }
-
-        return new InventoryUseObject({ deleteList, updateList });
-    }
+    
 
     async useItem(useObject) {
         InventoryUseObject.validModel(useObject);
         await this.deleteItemList(useObject.getDeleteList());
         await this.updateItemList(useObject.getUpdateList());
+
+        const uid = this[Schema.USER_INFO.key].getUID();
+        const updateDate = this[Schema.UPDATE_DATE.key];
+
+        this.logUseItem(uid, updateDate, useObject);
     }
 
     async deleteItemList(deleteInventoryList) {
         for (const deleteInventory of deleteInventoryList) {
             const _id = deleteInventory.getObjectId();
-
             delete deleteInventory[Inventory.Schema.OBJECT_ID.key];
 
             await this.inventoryDao.deleteOne({ _id }, deleteInventory);
@@ -467,6 +523,14 @@ class InventoryService extends Service {
                 beforeInvenMap[itemId].addItem(inventory);
             }
         }
+    }
+
+    static removeObjectIdList(inventoryList) {
+        return inventoryList.map(InventoryService.removeObjectId)
+    }
+
+    static removeObjectId(inventory) {
+        delete inventory[Inventory.Schema.OBJECT_ID.key];
     }
 }
 

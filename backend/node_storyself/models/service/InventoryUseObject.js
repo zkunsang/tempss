@@ -6,13 +6,15 @@ const ValidType = ValidateUtil.ValidType;
 const Schema = {
     DELETE_LIST: { key: 'deleteList', required: true, type: ValidType.ARRAY },
     UPDATE_LIST: { key: 'updateList', required: true, type: ValidType.ARRAY },
+    BEFORE_INVEN_MAP: { key: 'beforeInvenMap', required: true, type: ValidType.OBJECT },
 }
 
 class InventoryUseObject extends Model {
-    constructor({ updateList, deleteList }) {
+    constructor({ updateList, deleteList, beforeInvenMap }) {
         super();
         this[Schema.UPDATE_LIST.key] = updateList;
         this[Schema.DELETE_LIST.key] = deleteList;
+        this[Schema.BEFORE_INVEN_MAP.key] = beforeInvenMap;
     }
 
     getUpdateList() {
@@ -21,6 +23,10 @@ class InventoryUseObject extends Model {
 
     getDeleteList() {
         return this[Schema.DELETE_LIST.key];
+    }
+
+    getBeforeInvenMap() {
+        return this[Schema.BEFORE_INVEN_MAP.key];
     }
 }
 
