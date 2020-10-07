@@ -40,8 +40,7 @@ module.exports = async (ctx, next) => {
         }
     }
     
-    // ctx.body.common.serverTime = ctx.$date;
-    helper.fluent.sendLog('network', new NetworkLog(ctx, ctx.$date, moment().valueOf()));
+    helper.fluent.sendNetworkLog(new NetworkLog(ctx, ctx.$date, moment().valueOf()));
 };
 
 function uncaughtError(ctx, err) {

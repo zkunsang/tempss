@@ -7,6 +7,7 @@ const ResourceCache = require('@ss/dbCache/ResourceCache');
 const StoryCache = require('@ss/dbCache/StoryCache');
 
 module.exports = async (ctx, next) => {
+    // 데이터 버젼 테이블만 내려 받는 형식으로 변경
     const itemList = ItemCache.getList();
     const itemMaterialList = ItemMaterialCache.getList();
     const productList = ProductCache.getList();

@@ -1,45 +1,27 @@
-const ValidateUtil = require('../util/ValidateUtil');
-const ValidType = ValidateUtil.ValidType;
 const Service = require('../service/Service');
-const Story = require('../models/mongo/Story');
-const StoryDao = require('../daoMongo/StoryDao');
 const SSError = require('../error');
-const _ = require('lodash');
-
-const Schema = {
-    STORY_DAO: { key: 'storyDao', required: true, type: ValidType.OBJECT, validObject: StoryDao },
-    STORY_LIST: { key: 'storyList', required: true, type: ValidType.ARRAY },
-    STORY_MAP: { key: 'storyMap', required: true, type: ValidType.OBJECT },
-}
+const StoryCache = require('@ss/dbCache/StoryCache');
 
 class StoryService extends Service {
-    constructor(storyDao) {
+    constructor() {
         super();
-        this[Schema.STORY_DAO.key] = storyDao;
-        this[Schema.STORY_LIST.key] = null;
-        this[Schema.STORY_MAP.key] = null;
-
     }
 
-    // TODO: static data memory cache system
-    async ready() {
-        this[Schema.STORY_LIST.key] = StoryDao.mappingList(await this[Schema.STORY_DAO.key].findAll());
-        this[Schema.STORY_MAP.key] = _.keyBy(this[Schema.STORY_LIST.key], Story.Schema.STORY_ID.key);
+    async ready() { }
+
+    getStoryList(storyIdList) {
+        Service.Validate.checkEmptyArray(storyIdList);
+        return this.filterStoryList(storyIdList);
     }
 
-    getStoryList(storyList) {
-        Service.Validate.checkEmptyArray(storyList);
-        return this.filterStoryList(storyList);
-    }
-
-    filterStoryList(storyList) {
+    filterStoryList(storyIdList) {
         const noExistStory = [];
         const existStory = [];
 
-        for(const story of storyList) {
-            const storyData = this[Schema.STORY_MAP.key][story];
+        for(const storyId of storyIdList) {
+            const storyData = StoryCache.get(storyId);
             if(!storyData) {
-                noExistStory.push(story);
+                noExistStory.push(storyId);
             }
             existStory.push(storyData);
         }
@@ -53,4 +35,3 @@ class StoryService extends Service {
 }
 
 module.exports = StoryService;
-module.exports.Schema = Schema;

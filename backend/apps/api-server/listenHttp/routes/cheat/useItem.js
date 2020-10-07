@@ -1,7 +1,4 @@
 const ReqCheatUseItem = require('@ss/models/controller/ReqCheatUseItem');
-
-const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
-const ItemDao = require('@ss/daoMongo/ItemDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
 const InventoryService = require('@ss/service/InventoryService');
@@ -13,11 +10,9 @@ module.exports = async (ctx, next) => {
     const reqCheatUseItem = new ReqCheatUseItem(ctx.request.body);
     ReqCheatUseItem.validModel(reqCheatUseItem);
     
-    const itemDao = new ItemDao(ctx.$dbMongo);
     const inventoryDao = new InventoryDao(ctx.$dbMongo);
-    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
 
-    const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
+    const inventoryService = new InventoryService(inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);
 
     await inventoryService.processUse(reqCheatUseItem.getInventoryList(), InventoryService.USE_ACTION.CHEAT);

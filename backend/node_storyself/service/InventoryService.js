@@ -4,7 +4,6 @@ const ValidType = ValidateUtil.ValidType;
 const helper = require('../helper');
 const Service = require('../service/Service');
 
-const Item = require('../models/mongo/Item');
 const User = require('../models/mongo/User');
 const Inventory = require('../models/mongo/Inventory');
 
@@ -12,15 +11,13 @@ const InventoryPutObject = require('../models/service/InventoryPutObject');
 const InventoryUseObject = require('../models/service/InventoryUseObject');
 
 const InventoryDao = require('../daoMongo/InventoryDao');
-const ItemDao = require('../daoMongo/ItemDao');
-const ItemCategoryDao = require('../daoMongo/ItemCategoryDao');
 
 const InventoryChangeInsert = require('../models/service/InventoryChangeInsert');
 const InventoryChangeUpdate = require('../models/service/InventoryChangeUpdate');
 const InventoryChangeDelete = require('../models/service/InventoryChangeDelete');
 
 const SSError = require('../error');
-const _ = require('lodash');
+const ItemCache = require('@ss/dbCache/ItemCache');
 
 const PUT_ACTION = {
     CEHAT: 'cheat',             // cheat
@@ -34,19 +31,15 @@ const USE_ACTION = {
 }
 
 const Schema = {
-    ITEM_CATEGORY_DAO: { key: 'itemCategoryDao', required: true, type: ValidType.OBJECT, validObject: ItemCategoryDao },
-    ITEM_DAO: { key: 'itemDao', required: true, type: ValidType.OBJECT, validObject: ItemDao },
     INVENTORY_DAO: { key: 'inventoryDao', required: true, type: ValidType.OBJECT, validObject: InventoryDao },
     USER_INFO: { key: 'userInfo', required: true, type: ValidType.OBJECT, validObject: User },
     UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
 }
 
 class InventoryService extends Service {
-    constructor(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate) {
+    constructor(inventoryDao, userInfo, updateDate) {
         super();
         // cache system
-        this[Schema.ITEM_CATEGORY_DAO.key] = itemCategoryDao;
-        this[Schema.ITEM_DAO.key] = itemDao;
         this[Schema.INVENTORY_DAO.key] = inventoryDao;
         this[Schema.USER_INFO.key] = userInfo;
         this[Schema.UPDATE_DATE.key] = updateDate;
@@ -54,26 +47,24 @@ class InventoryService extends Service {
 
     async getUserInventoryList() {
         const uid = this.userInfo.uid;
-        return await this.inventoryDao.findMany({uid});
+        return await this.inventoryDao.findMany({ uid });
     }
 
     async checkPutItem(putInventoryList) {
         Service.Validate.checkArrayObject(putInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(putInventoryList);
 
-        const itemList = await this.itemDao.findAll();
-        const itemMap = _.keyBy(itemList, Item.Schema.ITEM_ID.key);
-
         const uid = this.userInfo.getUID();
 
-        const userInventoryListAll = await this.getUserInventoryList(); 
-        const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll, itemMap);
+        const userInventoryListAll = await this.getUserInventoryList();
+        const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll);
 
         const insertList = [];
         const updateList = [];
+        const beforeInvenMap = {};
 
         const createDate = this.updateDate;
-        const beforeInvenMap = {};
+
 
         // 변경전 해당 아이템 그룹들의 총량을 미리 계산?
         for (const putInventory of sortedInventoryList) {
@@ -84,7 +75,7 @@ class InventoryService extends Service {
             Inventory.validModel(putInventory);
 
             const itemId = putInventory.getItemId();
-            const itemData = itemMap[itemId];
+            const itemData = ItemCache.get(itemId);
 
             InventoryService.checkItemData(itemData, itemId);
 
@@ -93,7 +84,7 @@ class InventoryService extends Service {
 
             InventoryService.checkMaxQny(userInventoryList, putInventory, itemData);
             InventoryService.createBeforeInvenInfo(userInventoryList, beforeInvenMap);
-            
+
             const volatileSec = itemData.getVolatileSeconds();
             if (volatileSec) {
                 putInventory.setEndDate(createDate + volatileSec);
@@ -123,13 +114,10 @@ class InventoryService extends Service {
         Service.Validate.checkArrayObject(useInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(useInventoryList);
 
-        const itemList = await this.itemDao.findAll();
-        const itemMap = _.keyBy(itemList, Item.Schema.ITEM_ID.key);
-
         const uid = this.userInfo.getUID();
 
-        const userInventoryListAll = await this.inventoryDao.findMany({ uid });
-        const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll, itemMap);
+        const userInventoryListAll = await this.getUserInventoryList()
+        const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll);
 
         const deleteList = [];
         const updateList = [];
@@ -139,7 +127,7 @@ class InventoryService extends Service {
         for (const useInventory of sortedInventoryList) {
             useInventory.setUpdateDate(updateDate);
             const itemId = useInventory.getItemId();
-            const itemData = itemMap[itemId];
+            const itemData = ItemCache.get(itemId);
 
             InventoryService.checkItemData(itemData, itemId);
             InventoryService.checkItemUseable(itemData, itemId);
@@ -150,7 +138,7 @@ class InventoryService extends Service {
 
             // 순서 주의
             InventoryService.createBeforeInvenInfo(userInventoryList, beforeInvenMap);
-            InventoryService.calculateUse(userInventoryList, useInventory, itemMap, deleteList, updateList);
+            InventoryService.calculateUse(userInventoryList, useInventory, deleteList, updateList);
         }
 
         return new InventoryUseObject({ deleteList, updateList, beforeInvenMap });
@@ -164,7 +152,7 @@ class InventoryService extends Service {
         InventoryPutObject.validModel(putObject);
         await this.insertItemList(putObject.getInsertList());
         await this.updateItemList(putObject.getUpdateList());
-        
+
         const uid = this[Schema.USER_INFO.key].getUID();
         const updateDate = this[Schema.UPDATE_DATE.key];
 
@@ -178,7 +166,7 @@ class InventoryService extends Service {
     logPutItem(uid, logDate, putObject) {
         const changeList = this.getPutInventoryChangeList(putObject);
         const changeLogList = this.createChangeLogList(uid, logDate, changeList);
-        helper.fluent.sendLog('inventory', changeLogList);
+        helper.fluent.sendInvenLog(changeLogList);
     }
 
     /**
@@ -188,13 +176,13 @@ class InventoryService extends Service {
     logUseItem(uid, logDate, useObject) {
         const changeList = this.getUseInventoryChangeList(useObject);
         const changeLogList = this.createChangeLogList(uid, logDate, changeList);
-        helper.fluent.sendLog('inventory', changeLogList);
+        helper.fluent.sendInvenLog(changeLogList);
     }
 
     createChangeLogList(uid, logDate, changeList) {
         return changeList.map((change) => change.getInvenLog(uid, logDate));
     }
-    
+
     /**
      * 
      * @param {InventoryPutObject} putObject 
@@ -206,7 +194,7 @@ class InventoryService extends Service {
 
         // 신규 추가된 아이템
         const afterInvenMap = {};
-        
+
         // item별로 처리
         this.makeAfterMap(afterInvenMap, insertList);
         this.makeAfterMap(afterInvenMap, updateList);
@@ -216,13 +204,13 @@ class InventoryService extends Service {
         const afterList = Object.values(afterInvenMap);
 
         const changeList = []
-        
+
         // 이전 리스트
         for (const beforeInven of beforeList) {
             const itemId = beforeInven.getItemId();
             const afterInven = afterInvenMap[itemId];
 
-            if(afterInven.getItemQny() == beforeInven.getItemQny()) {
+            if (afterInven.getItemQny() == beforeInven.getItemQny()) {
                 continue;
             }
 
@@ -249,26 +237,29 @@ class InventoryService extends Service {
 
         // 신규 추가된 아이템
         const afterInvenMap = {};
-        
+
         // item별로 처리
-        this.makeAfterMap(afterInvenMap, deleteList);
         this.makeAfterMap(afterInvenMap, updateList);
         this.makeAfterMapWithMap(afterInvenMap, beforeInvenMap);
 
         const beforeList = Object.values(beforeInvenMap);
-
         const changeList = []
-        
+
         // 이전 리스트
         for (const beforeInven of beforeList) {
             const itemId = beforeInven.getItemId();
             const afterInven = afterInvenMap[itemId];
 
-            if(afterInven.getItemQny() == beforeInven.getItemQny()) {
+            if (afterInven.getItemQny() == beforeInven.getItemQny()) {
                 continue;
             }
 
             const changeMap = new InventoryChangeUpdate({ beforeInven, afterInven });
+            changeList.push(changeMap);
+        }
+
+        for (const deleteInven of deleteList) {
+            const changeMap = new InventoryChangeDelete({ deleteInven });
             changeList.push(changeMap);
         }
 
@@ -278,7 +269,7 @@ class InventoryService extends Service {
     makeAfterMap(afterInvenMap, invenList) {
         for (const inventory of invenList) {
             const itemId = inventory.getItemId();
-            if(!afterInvenMap[itemId]) {
+            if (!afterInvenMap[itemId]) {
                 afterInvenMap[itemId] = inventory;
             }
             else {
@@ -293,13 +284,13 @@ class InventoryService extends Service {
         for (const beforeInven of beforeList) {
             const itemId = beforeInven.getItemId();
 
-            if(!afterInvenMap[itemId]) {
+            if (!afterInvenMap[itemId]) {
                 afterInvenMap[itemId] = beforeInven;
             }
         }
     }
 
-    
+
 
     async useItem(useObject) {
         InventoryUseObject.validModel(useObject);
@@ -337,7 +328,7 @@ class InventoryService extends Service {
             await this.inventoryDao.updateOne({ _id }, copyInventory)
         }
     }
-    
+
     async processExchange(useInventoryList, putInventoryList) {
         const putObject = await this.checkPutItem(putInventoryList);
         const useObject = await this.checkUseItem(useInventoryList);
@@ -349,7 +340,7 @@ class InventoryService extends Service {
     async processPut(putInventoryList) {
         const putObject = await this.checkPutItem(putInventoryList);
         await this.putItem(putObject);
-        
+
     }
 
     async processUse(useInventoryList) {
@@ -386,7 +377,7 @@ class InventoryService extends Service {
     static checkUserQny(userInventoryList, useInventory, itemData) {
         const userQny = userInventoryList.reduce((acc, item) => acc += item.getItemQny(), 0);
         const useQny = useInventory.getItemQny();
-        
+
         if (userQny < useQny) {
             throw new SSError.Service(
                 SSError.Service.Code.useItemNotEnoughItem,
@@ -394,11 +385,11 @@ class InventoryService extends Service {
         }
     }
 
-    static arrangeInventory(inventoryList, itemMap) {
+    static arrangeInventory(inventoryList) {
         const arrangedMap = {};
         for (const inventory of inventoryList) {
             const itemId = inventory.getItemId();
-            const itemData = itemMap[itemId];
+            const itemData = ItemCache.get(itemId);
             const groupId = itemData.getGroupId();
 
             let itemList = arrangedMap[groupId];
@@ -433,14 +424,14 @@ class InventoryService extends Service {
         }
     }
 
-    static calculateUse(userInventoryList, useInventory, itemMap, deleteList, updateList) {
+    static calculateUse(userInventoryList, useInventory, deleteList, updateList) {
         const userVolatileList = [];
         const userNonVolatileList = [];
 
         let totalQny = 0;
         for (const userInventory of userInventoryList || []) {
             const itemId = userInventory.getItemId();
-            const itemData = itemMap[itemId];
+            const itemData = ItemCache.get(itemId);
             InventoryService.checkItemData(itemData, itemId);
 
             itemData.getVolatileSeconds() ?
@@ -512,11 +503,11 @@ class InventoryService extends Service {
     // using object id create map info once
     static createBeforeInvenInfo(userInventoryList, beforeInvenMap) {
         if (!userInventoryList) { return; }
-        
+
         for (const inventory of userInventoryList) {
             const itemId = inventory.getItemId();
-            
-            if(!beforeInvenMap[itemId]) {
+
+            if (!beforeInvenMap[itemId]) {
                 beforeInvenMap[itemId] = new Inventory(inventory);
             }
             else {

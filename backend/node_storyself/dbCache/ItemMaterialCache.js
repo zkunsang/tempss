@@ -19,7 +19,7 @@ class ItemMaterialCacheModel {
     parseItemMaterialListByItemId() {
         this.itemMaterialListByItemId = ArrayUtil.getMapArrayByKey(
             this.itemMaterialList,
-            ItemMaterial.Schema.ITEM_ID);
+            ItemMaterial.Schema.ITEM_ID.key);
     }
 
     getListByItemId(itemId) {

@@ -1,28 +1,36 @@
 const ReqCheatPurchase = require('@ss/models/controller/ReqCheatPurchase');
 
-const ProductDao = require('@ss/daoMongo/ProductDao');
-const ProductRewardDao = require('@ss/daoMongo/ProductRewardDao');
-const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
-const ItemDao = require('@ss/daoMongo/ItemDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
 const InventoryService = require('@ss/service/InventoryService');
+
+const ProductLog = require('@ss/models/apilog/ProductLog');
+
+const ProductCache = require('@ss/dbCache/ProductCache');
+const ProductRewardCache = require('@ss/dbCache/ProductRewardCache');
+const helper = require('@ss/helper');
 
 function makeInventoryList(productRewardList) {
     return productRewardList.map((item) => item.makeInventoryObject());
 }
 
+function createProductLog(userInfo, productInfo, purchaseDate) {
+    const uid = userInfo.uid;
+    const productId = productInfo.productId;
+    const cost = productInfo.cost;
+
+    return new ProductLog({ uid, productId, cost, purchaseDate })
+}
+
 module.exports = async (ctx, next) => {
-    const updateDate = ctx.$date;
+    const purchaseDate = ctx.$date;
     const userInfo = ctx.$userInfo;
     
     const reqCheatPurchase = new ReqCheatPurchase(ctx.request.body);
     ReqCheatPurchase.validModel(reqCheatPurchase);
     
     const productId = reqCheatPurchase.getProductId();
-    const productDao = new ProductDao(ctx.$dbMongo);
-
-    const productInfo = await productDao.findOne({ productId });
+    const productInfo = ProductCache.get(productId);
 
     if (!productInfo) {
         ctx.status = 400;
@@ -30,17 +38,16 @@ module.exports = async (ctx, next) => {
         return;
     }
 
-    const productRewardDao = new ProductRewardDao(ctx.$dbMongo);
     const inventoryDao = new InventoryDao(ctx.$dbMongo);
-    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
-    const itemDao = new ItemDao(ctx.$dbMongo);
 
-    const productRewardList = await productRewardDao.findMany({productId});
-
-    const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
+    const productRewardList = ProductRewardCache.get(productId);
+    
+    const inventoryService = new InventoryService(inventoryDao, userInfo, purchaseDate);
 
     const inventoryList = makeInventoryList(productRewardList);
     await inventoryService.processPut(inventoryList);
+    
+    helper.fluent.sendProductLog(createProductLog(userInfo, productInfo, purchaseDate));
     
     const userInventoryList = await inventoryService.getUserInventoryList();
     InventoryService.removeObjectIdList(userInventoryList);

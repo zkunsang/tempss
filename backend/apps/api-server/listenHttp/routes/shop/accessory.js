@@ -1,13 +1,8 @@
 const ReqShopAccessory = require('@ss/models/controller/ReqShopAccessory');
 
-const ItemDao = require('@ss/daoMongo/ItemDao');
-const StoryDao = require('@ss/daoMongo/StoryDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
-const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
-const ItemMaterialDao = require('@ss/daoMongo/ItemMaterialDao');
 
 const ItemService = require('@ss/service/ItemService');
-const StoryService = require('@ss/service/StoryService');
 const InventoryService = require('@ss/service/InventoryService');
 
 module.exports = async (ctx, next) => {
@@ -17,19 +12,8 @@ module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;
     const userInfo = ctx.$userInfo;
 
-    const itemDao = new ItemDao(ctx.$dbMongo);
-    const storyDao = new StoryDao(ctx.$dbMongo);
-    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
     const inventoryDao = new InventoryDao(ctx.$dbMongo);
-    const itemMaterialDao = new ItemMaterialDao(ctx.$dbMongo);
-    
     const itemService = new ItemService();
-    const storyService = new StoryService(storyDao)
-
-    await storyService.ready();
-
-    ItemService.validModel(itemService);
-    StoryService.validModel(storyService);
     
     const itemId = reqShopAccessory.getItemId();
     itemService.getItemList([itemId]);
@@ -39,7 +23,7 @@ module.exports = async (ctx, next) => {
     const { putInventoryList, useInventoryList } 
         = itemService.getExchangeInventoryInfo([itemInventory]);
 
-    const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
+    const inventoryService = new InventoryService(inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);
 
     await inventoryService.processExchange(useInventoryList, putInventoryList);

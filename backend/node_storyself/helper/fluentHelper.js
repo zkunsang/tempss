@@ -39,6 +39,18 @@ class FluentHelper {
             console.error('not supported log')
         }
     }
+
+    sendProductLog(productLog) {
+        this.sendLog('product', productLog);
+    }
+
+    sendInvenLog(invenLog) {
+        this.sendLog('inventory', invenLog);
+    }
+
+    sendNetworkLog(networkLog) {
+        this.sendLog('network', networkLog);
+    }
 }
 
 module.exports = new FluentHelper();

@@ -21,7 +21,7 @@ class ItemCacheModel {
     }
 
     parseItemByItemId() {
-        this.itemMapByItemId = _.keyBy(this.itemList, Item.Schema.ITEM_ID);
+        this.itemMapByItemId = _.keyBy(this.itemList, Item.Schema.ITEM_ID.key);
     }
 
     parseItemByGroupId() {
@@ -70,6 +70,10 @@ class ItemCache {
     
     getList() {
         return this.currentCacheModel.getList();
+    }
+
+    getMap(I) {
+        return this.currentCacheModel.getMap();
     }
 }
 

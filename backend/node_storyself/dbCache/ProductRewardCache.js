@@ -3,12 +3,12 @@ const dbMongo = require('../dbMongo');
 const ProductRewardDao = require('../daoMongo/ProductRewardDao');
 const ProductReward = require('../models/mongo/ProductReward');
 
-const _ = require('lodash');
+const ArrayUtil = require('@ss/util/ArrayUtil');
 
 class ProductRewardCacheModel {
     constructor() {
         this.productRewardList = null;
-        this.productGroupMap = null;
+        this.productRewardMap = null;
     }
 
     async loadData(productRewardDao) {
@@ -18,11 +18,11 @@ class ProductRewardCacheModel {
     }
 
     parseProductReward() {
-        this.productGroupMap = _.keyBy(this.productGroupList, ProductReward.Schema.PRODUCT_ID);
+        this.productRewardMap = ArrayUtil.getMapArrayByKey(this.productRewardList, ProductReward.Schema.PRODUCT_ID.key);
     }
 
-    get(groupId) {
-        return this.productGroupMap[groupId];
+    get(productId) {
+        return this.productRewardMap[productId];
     }
 
     getList() {
@@ -49,8 +49,8 @@ class ProductRewardCache {
         this.currentCacheModel = this.cacheManager[version];
     }
 
-    get(groupId) {
-        return this.currentCacheModel.get(groupId);
+    get(productId) {
+        return this.currentCacheModel.get(productId);
     }
     
     getList() {

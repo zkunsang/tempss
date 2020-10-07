@@ -8,7 +8,6 @@ module.exports = async (ctx, next) => {
     const reqStoryUpdate = new ReqResourceUpdate(ctx.request.body);
     ReqResourceUpdate.validModel(reqStoryUpdate);
 
-
     const insertList = ResourceDao.mappingList(reqStoryUpdate.getInsertList());
     const updateList = ResourceDao.mappingList(reqStoryUpdate.getUpdateList());
 

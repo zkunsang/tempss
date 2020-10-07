@@ -17,7 +17,7 @@ class StoryCacheModel {
     }
 
     parseProductByItemId() {
-        this.storyMap = _.keyBy(this.storyList, Story.Schema.STORY_ID);
+        this.storyMap = _.keyBy(this.storyList, Story.Schema.STORY_ID.key);
     }
 
     get(storyId) {
@@ -26,6 +26,10 @@ class StoryCacheModel {
 
     getList() {
         return this.storyList;
+    }
+
+    getMap() {
+        return this.storyMap;
     }
 }
 
@@ -54,6 +58,10 @@ class StoryCache {
     
     getList() {
         return this.currentCacheModel.getList();
+    }
+
+    getMap() {
+        return this.currentCacheModel.getMap();
     }
 }
 

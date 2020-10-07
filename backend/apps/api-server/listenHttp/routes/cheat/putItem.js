@@ -1,7 +1,5 @@
 const ReqCheatPutItem = require('@ss/models/controller/ReqCheatPutItem');
 
-const ItemCategoryDao = require('@ss/daoMongo/ItemCategoryDao');
-const ItemDao = require('@ss/daoMongo/ItemDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
 
 const InventoryService = require('@ss/service/InventoryService');
@@ -14,11 +12,9 @@ module.exports = async (ctx, next) => {
     const reqCheatPutItem = new ReqCheatPutItem(ctx.request.body);
     ReqCheatPutItem.validModel(reqCheatPutItem);
     
-    const itemDao = new ItemDao(ctx.$dbMongo);
     const inventoryDao = new InventoryDao(ctx.$dbMongo);
-    const itemCategoryDao = new ItemCategoryDao(ctx.$dbMongo);
 
-    const inventoryService = new InventoryService(itemCategoryDao, itemDao, inventoryDao, userInfo, updateDate);
+    const inventoryService = new InventoryService(inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);
 
     await inventoryService.processPut(reqCheatPutItem.getInventoryList(), InventoryService.PUT_ACTION.CHEAT);

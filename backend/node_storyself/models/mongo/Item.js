@@ -4,8 +4,6 @@ const ValidateUtil = require('../../util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 const CommonBoolean = ValidateUtil.CommonBoolean;
 
-// TODO: get itemCategory list dynamically
-
 const Schema = {
     ITEM_ID: { key: 'itemId', required: true, type: ValidType.STRING },
     ITEM_CATEGORY: { key: 'itemCategory', required: true, type: ValidType.STRING,  },
@@ -37,6 +35,10 @@ class Item extends Model {
 
     getItemId() {
         return this[Schema.ITEM_ID.key];
+    }
+
+    getItemCategory() {
+        return this[Schema.ITEM_CATEGORY.key];
     }
 
     getGroupId() {

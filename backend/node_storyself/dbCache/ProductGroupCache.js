@@ -8,7 +8,7 @@ const _ = require('lodash');
 class ProductGroupCacheModel {
     constructor() {
         this.productGroupList = null;
-        this.productGroupMapByGroupId = null;
+        this.productGroupMap = null;
     }
 
     async loadData(productGroupDao) {
@@ -18,11 +18,11 @@ class ProductGroupCacheModel {
     }
 
     parseProductByItemId() {
-        this.productGroupMapByGroupId = _.keyBy(this.productGroupList, ProductGroup.Schema.GROUP_ID);
+        this.productGroupMap = _.keyBy(this.productGroupList, ProductGroup.Schema.GROUP_ID.key);
     }
 
     get(groupId) {
-        return this.productGroupMapByGroupId[groupId];
+        return this.productGroupMap[groupId];
     }
 
     getList() {

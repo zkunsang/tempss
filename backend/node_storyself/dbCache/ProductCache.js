@@ -7,21 +7,21 @@ const _ = require('lodash');
 class ProductCacheModel {
     constructor() {
         this.productList = null;
-        this.productMapByProductId = null;
+        this.productMap = null;
     }
 
     async loadData(productDao) {
         this.productList = await productDao.findAll();
 
-        this.parseProductByItemId();
+        this.parseProductMap();
     }
 
-    parseProductByItemId() {
-        this.productMapByProductId = _.keyBy(this.productList, Product.Schema.ITEM_ID);
+    parseProductMap() {
+        this.productMap = _.keyBy(this.productList, Product.Schema.PRODUCT_ID.key);
     }
 
     get(productId) {
-        return this.productMapByProductId[productId];
+        return this.productMap[productId];
     }
 
     getList() {

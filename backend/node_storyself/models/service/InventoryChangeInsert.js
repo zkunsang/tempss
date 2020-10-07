@@ -1,5 +1,7 @@
 const Model = require('../../models');
 const InvenLog = require('../apilog/InvenLog');
+const ItemCache = require('../../dbCache/ItemCache')
+
 
 const ValidateUtil = require('../../util/ValidateUtil');
 const ValidType = ValidateUtil.ValidType;
@@ -18,11 +20,14 @@ class InventoryChangeInsert extends Model {
         const insertInven = this[Schema.INSERT_INVEN.key];
         
         const itemId = insertInven.getItemId();
-        
+
+        const itemData = ItemCache.get(itemId);
+        const itemCategory = itemData.getItemCategory();
         const beforeQny = 0;
         const afterQny = insertInven.getItemQny();
+        const diffQny = afterQny - beforeQny;
 
-        return new InvenLog({uid, itemId, beforeQny, afterQny, logDate});
+        return new InvenLog({uid, itemId, itemCategory, diffQny, beforeQny, afterQny, logDate});
     }
 }
 

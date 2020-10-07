@@ -10,15 +10,17 @@ const Schema = {
     ITEM_CATEGORY: { key: 'itemCategory', required: true, type: ValidType.STRING },
     BEFORE_QNY: { key: 'beforeQny', required: true, type: ValidType.NUMBER },
     AFTER_QNY: { key: 'afterQny', required: true, type: ValidType.NUMBER },
+    DIFF_QNY: {key: 'diffQny', required: true, type: ValidType.NUMBER },
     LOG_DATE: { key: 'logDate', required: true, type: ValidType.UNIX_TIMESTAMP },
 }
 
 class InvenLog extends Model {
-    constructor({ uid, itemId, itemCategory, beforeQny, afterQny, logDate }) {
+    constructor({ uid, itemId, itemCategory, diffQny, beforeQny, afterQny, logDate }) {
         super();
         this[Schema.UID.key] = uid;
         this[Schema.ITEM_ID.key] = itemId;
         this[Schema.ITEM_CATEGORY.key] = itemCategory;
+        this[Schema.DIFF_QNY.key] = diffQny;
         this[Schema.BEFORE_QNY.key] = beforeQny;
         this[Schema.AFTER_QNY.key] = afterQny;
         this[Schema.LOG_DATE.key] = moment(logDate).format();
