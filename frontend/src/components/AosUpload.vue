@@ -198,7 +198,6 @@ export default {
       this.crcConflictList = [];
       this.resourceList = [];
       this.$nextTick(async () => {
-        console.log('getList called - ', this.isNew);
         if(this.isNew) return;
 
         const result = await this.GET_AOS_RESOURCE(this.storyId);

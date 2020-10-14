@@ -14,7 +14,7 @@
       <template v-slot:top>
         <v-alert v-if="isLive" type="info" dense>데이터 수정 -> 디자인 적용</v-alert>    
           <v-toolbar flat color="white">
-            <v-toolbar-title>아이템 리스트</v-toolbar-title>
+            <v-toolbar-title>상품 리스트</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-btn color="primary" dark class="mb-2" @click="onCreate">New Item</v-btn>
             <v-spacer></v-spacer>
@@ -177,12 +177,12 @@
       
       <v-row>
         <v-col>
-          <v-btn @click="exportProduct">상점 데이터</v-btn>
-          <v-file-input label="상점 데이터 입력" @change="importProdcut"></v-file-input>
+          <v-btn @click="exportCSVProduct">상점 데이터</v-btn>
+          <v-file-input label="상점 데이터 입력" @change="importCSVProdcut"></v-file-input>
         </v-col>
         <v-col>
-          <v-btn @click="exportProductReward">교환 아이템</v-btn>
-          <v-file-input label="교환 아이템 입력" @change="importProductReward"></v-file-input>
+          <v-btn @click="exportCSVProductReward">교환 아이템</v-btn>
+          <v-file-input label="교환 아이템 입력" @change="importCSVProductReward"></v-file-input>
           <v-alert v-if="errorFile" type="error">{{errorFile}}</v-alert>
         </v-col>
       </v-row>
@@ -202,7 +202,8 @@ const no_image = require(`../assets/no_image.jpg`);
 import config from '../../src/config/config';
 
 var crc = require('crc');
-const {s3Upload, exportExcel, importExcel} = require("../util/fileutil");
+const { importCSV, exportCSV } = require("../util/fileutil");
+const { updateDataTable } = require("../util/dataTableUtil");
 
 export default {
   name: 'productList',
@@ -264,7 +265,9 @@ export default {
       'CREATE_PRODUCT',
       'UPDATE_PRODUCT',
       'UPDATE_MANY_PRODUCT',
-      'UPDATE_MANY_PRODUCT_REWARD'
+      'UPDATE_MANY_PRODUCT_REWARD',
+      'GET_TABLE_VERSION',
+      'UPDATE_TABLE_VERSION'
     ]),
     volatileChange(item) {
     },
@@ -272,7 +275,6 @@ export default {
       this.productEdit.volatileSeconds = 0;
     },
     addReward() {
-      console.log(this.addRewardItem);
       this.rewardItemList.push(this.addRewardItem);
       this.addRewardItem = {}
     },
@@ -282,15 +284,11 @@ export default {
     },
     async getProductList() {
       const productResult = await this.LIST_PRODUCT();
-
-      console.log(productResult)
       
       this.itemList = productResult.itemList || [];
       this.productList = productResult.productList || [];
       this.productGroupList = productResult.productGroupList || [];
       this.productRewardList = productResult.productRewardList || [];
-
-      
 
       this.productArrangedMap = {};
       for(const item of this.productRewardList) {
@@ -306,7 +304,6 @@ export default {
     },
     async deleteProduct(product) {
       if(!confirm('해당 상품을 삭제 하시겠습니까?')) return;
-      console.log(product);
       await this.DELETE_PRODUCT(product);
       await this.getProductList();
     },
@@ -373,23 +370,37 @@ export default {
       }
       return isPossible;
     },
-    importProdcut(file) {
-      importExcel(file, async (jsonObject) => {
-        await this.UPDATE_MANY_PRODUCT({ productList: jsonObject });
+    importCSVProdcut(file) {
+      importCSV(file, 'productId', async (productList) => {
+        const tableId = 'product'
+        await updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_MANY_PRODUCT,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          { productList } 
+        )
         await this.getProductList();
       }) 
     },
-    importProductReward(file) {
-      importExcel(file, async (jsonObject) => {
-        await this.UPDATE_MANY_PRODUCT_REWARD({ productRewardList: jsonObject });
+    importCSVProductReward(file) {
+      importCSV(file, 'productId', async (productRewardList) => {
+        const tableId = 'productReward'
+        await updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_MANY_PRODUCT_REWARD,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          { productRewardList } 
+        )
         await this.getProductList();
       }) 
     },
-    exportProduct() {
-      exportExcel(this.productList, 'product', 'product.xlsx');
+    exportCSVProduct() {
+      exportCSV(this.productList, 'product.csv');
     },
-    exportProductReward() {
-      exportExcel(this.productRewardList, 'productReward', 'productReward.xlsx');
+    exportCSVProductReward() {
+      exportCSV(this.productRewardList, 'productReward.csv');
     },
   }
 };

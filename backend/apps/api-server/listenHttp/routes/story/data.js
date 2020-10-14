@@ -1,23 +1,15 @@
-const ItemMaterialCache = require('@ss/dbCache/ItemMaterialCache');
-const ItemCache = require('@ss/dbCache/ItemCache');
-const ProductCache = require('@ss/dbCache/ProductCache');
-const ProductGroupCache = require('@ss/dbCache/ProductGroupCache');
-const ProductRewardCache = require('@ss/dbCache/ProductRewardCache');
-const ResourceCache = require('@ss/dbCache/ResourceCache');
-const StoryCache = require('@ss/dbCache/StoryCache');
+const ss = require('@ss');
+const apiConfig = ss.configs.apiServer;
+
+const DataTableCache = require('@ss/dbCache/DataTableCache');
 
 module.exports = async (ctx, next) => {
     // 데이터 버젼 테이블만 내려 받는 형식으로 변경
-    const itemList = ItemCache.getList();
-    const itemMaterialList = ItemMaterialCache.getList();
-    const productList = ProductCache.getList();
-    const productGroupList = ProductGroupCache.getList();
-    const productRewardList = ProductRewardCache.getList();
-    const resourceList = ResourceCache.getList();
-    const storyList = StoryCache.getList();
+    const dataTableList = DataTableCache.getList();
+    const s3Url = apiConfig.cdnUrl;
 
     ctx.status = 200;
-    ctx.body.data = { itemList, itemMaterialList, productList, productGroupList, productRewardList, resourceList, storyList };
+    ctx.body.data = { dataTableList, s3Url };
     await next();
 }
 

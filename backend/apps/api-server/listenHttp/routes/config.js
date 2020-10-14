@@ -1,5 +1,3 @@
-
-
 const ss = require('@ss');
 const apiConfig = ss.configs.apiServer;
 

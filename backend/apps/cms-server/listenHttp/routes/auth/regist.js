@@ -16,6 +16,15 @@ module.exports = async (ctx, next) => {
     admin.setStatus(AdminStatus.PENDING);
     admin.setCreateDate(createDate);
 
+    const adminId = admin.getAdminId();
+    const adminInfo = await adminDao.findOne({adminId});
+
+    if(adminInfo) {
+        ctx.status = 400;
+        ctx.body.data = { err_message: 'already exist user' };
+        return await next();
+    }
+
     await adminDao.insertOne(admin);
     ctx.status = 200;
     ctx.body.data = {};

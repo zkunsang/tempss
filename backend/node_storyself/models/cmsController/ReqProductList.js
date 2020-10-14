@@ -7,8 +7,6 @@ class ReqProductList extends Model {
         super();
         
     }
-
-    
 }
 
 module.exports = ReqProductList;

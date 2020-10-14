@@ -9,7 +9,7 @@ class GoogleAuthHelper {
     }
 
     async ready() {
-        const { host, port } = ss.configs.dbRedisGoogleAuth;
+        const { host, port } = ss.configs.dbRedisGA;
         this.redis = new ioredis({ host, port });
         this.accessToken = await this.redis.get(googleAuthChannel);
         

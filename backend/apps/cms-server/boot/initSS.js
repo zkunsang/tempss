@@ -2,7 +2,7 @@ const ss = require('@ss');
 const mongo = require('@ss/dbMongo');
 const helper = require('@ss/helper');
 const wrapper = require('@ss/wrapper');
-const dbRedis = require('@ss/dbRedis');
+const dbRedis = require('@ss/dbRedisSS');
 
 module.exports = async () => {
     await ss.configs.ready();

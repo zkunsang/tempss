@@ -61,9 +61,13 @@ export default {
       'LOGIN'
     ]),
     async onLogin() {
-      await this.LOGIN({adminId: this.adminId, password: this.password});
-      await this.$router.push('story');
-      
+      try {
+        const loginResult = await this.LOGIN({adminId: this.adminId, password: this.password});
+        await this.$router.push(this.$route.query.rPath || 'story');  
+      }
+      catch(err) {
+        this.error = err;
+      }
     },
     onSignin() {
       this.$router.push('sign-in');

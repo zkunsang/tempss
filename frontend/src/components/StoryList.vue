@@ -31,7 +31,6 @@ import {mapActions, mapState} from 'vuex'
 import {eventBus} from '../util/eventBus';
 
 var crc = require('crc');
-const {s3Upload} = require("../util/fileutil");
 
 const no_image = require(`../assets/no_image.jpg`);
 export default {
@@ -56,7 +55,6 @@ export default {
     this.GET_STORY_LIST()
       .then((body) => {
         this.storyList = body;
-        console.log(this.storyList);
         // this.patchInfo = body.patchInfo;
         this.patchInfo = 'patchInfo';
       });

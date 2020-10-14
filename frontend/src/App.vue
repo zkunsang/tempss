@@ -99,6 +99,7 @@ export default {
       { path: '/itemCategory', title: '아이템 카테고리', icon: 'mdi-view-dashboard' },
       { path: '/shop', title: '상품 관리', icon: 'mdi-view-dashboard' },
       { path: '/shopGroup', title: '상품 그룹 관리', icon: 'mdi-view-dashboard' },
+      { path: '/dataTable', title: '데이터 테이블', icon: 'mdi-view-dashboard' },
       { path: '/patchtemp', title: '패치 관리', icon: 'mdi-view-dashboard' },
       { path: '/category', title: '카테고리 관리', icon: 'mdi-view-dashboard' },
       { path: '/coupon', title: '쿠폰 관리', icon: 'mdi-view-dashboard' },

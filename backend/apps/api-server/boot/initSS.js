@@ -3,7 +3,7 @@ const ss = require('@ss');
 const dbMongo = require('@ss/dbMongo');
 const helper = require('@ss/helper');
 const wrapper = require('@ss/wrapper');
-const dbRedis = require('@ss/dbRedis');
+const dbRedis = require('@ss/dbRedisSS');
 const cache = require('@ss/dbCache');
 
 module.exports = async () => {

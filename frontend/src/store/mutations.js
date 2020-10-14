@@ -20,7 +20,6 @@ const mutations = {
         setAuthInHeader(null);
     },
     SET_THEME(state, color) {
-        console.log('SET_THEME', color);
         state.bodyColor = color || '#ffffff';
         state.navbarColor = color ? 'rgba(0,0,0,.15)' : '#026aa7';
     },

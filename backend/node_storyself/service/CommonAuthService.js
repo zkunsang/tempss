@@ -1,5 +1,5 @@
 const dbMongo = require('../dbMongo');
-const dbRedis = require('../dbRedis');
+const dbRedis = require('../dbRedisSS');
 
 const ReqSession = require('../models/cmsController/ReqSession');
 const SessionDao = require('../daoRedis/SessionDao');

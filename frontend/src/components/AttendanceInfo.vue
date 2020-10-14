@@ -142,7 +142,6 @@ import _ from 'lodash'
 const no_image = require(`../assets/no_image.jpg`);
 import config from '../../src/config/config';
 var crc = require('crc');
-const {s3Upload} = require("../util/fileutil");
 
 const attendance_file_name = `ATTENDANCE.xlsx`;
 const attendance_item_file_name = `ATTENDANCE_ITEM.xlsx`;
@@ -276,7 +275,6 @@ export default {
 
 
       this.itemEditList = this.attendance_item_arranged_map[item.reward_index];
-      console.log(this.itemEditList);
       if(!this.itemEditList) this.itemEditList = [];
       
       this.dialog = true

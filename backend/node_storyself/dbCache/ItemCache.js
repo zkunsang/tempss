@@ -72,7 +72,7 @@ class ItemCache {
         return this.currentCacheModel.getList();
     }
 
-    getMap(I) {
+    getMap() {
         return this.currentCacheModel.getMap();
     }
 }

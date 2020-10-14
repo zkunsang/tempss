@@ -26,4 +26,6 @@ module.exports.Code = {
     onlyTestFunction: { code: 20012, name: 'onlyTestFunction', message: 'only test function' },
     deleteOneLength: { code: 20013, name: 'deleteOneLength', message: 'delete length error' },
     deleteManyLength: { code: 20014, name: 'deleteManyLength', message: 'delete many length error' },
+    notAllowModel: { code: 20015, name: 'notAllowModel', message: 'not allow model' },
+    
 }

@@ -1,4 +1,4 @@
-import config from '../config/config'
+const s3Config = require(`../config/${process.env.NODE_ENV}/s3.json`)
 
 const state = {
     isAddBoard: false,
@@ -10,7 +10,7 @@ const state = {
     isShowBoardSettings: false,
     sessionId: null,
     adminId: null,
-    CDN_URL: config.getCndUrl
+    CDN_URL: s3Config.s3Url
 };
 
 export default state;

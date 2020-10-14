@@ -10,8 +10,7 @@ import ItemList from '../components/ItemList.vue'
 import ItemCategory from '../components/ItemCategory.vue'
 import Shop from '../components/Shop.vue'
 import ShopGroup from '../components/ShopGroup.vue'
-
-
+import DataTable from '../components/DataTable.vue'
 
 import Home from '../components/Home.vue'
 
@@ -30,11 +29,12 @@ Vue.component('downloadExcel', JsonExcel);
 
 const requireAuth = async (to, from, next) => {
     const loginPath = `/login?rPath=${encodeURIComponent(to.path)}`;
+    
     const { sessionId, adminId } = localStorage;
     
     await store.commit('LOGIN', { sessionId, adminId } || {});
     
-    store.getters.isAuth ? next() : next(loginPath);
+    store.getters.isAuth ? await next() : await next(loginPath);
 }
 
 const router = new VueRouter({
@@ -43,7 +43,8 @@ const router = new VueRouter({
         {
             path: '/',
             component: Home,
-            beforeEnter: requireAuth
+            beforeEnter: requireAuth,
+            redirect: '/story'
         },
         {
             path: '/login',
@@ -81,6 +82,11 @@ const router = new VueRouter({
         {
             path: '/shopGroup',
             component: ShopGroup,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/dataTable',
+            component: DataTable,
             beforeEnter: requireAuth
         },
         {

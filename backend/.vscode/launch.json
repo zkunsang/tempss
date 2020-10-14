@@ -63,6 +63,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "[ks]api",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "apiKS"
+            },
+            "program": "${workspaceFolder}\\apps\\api-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "[local]CMS",
             "skipFiles": [
                 "<node_internals>/**"

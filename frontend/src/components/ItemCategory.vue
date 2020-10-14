@@ -48,7 +48,7 @@
             </v-dialog>
           </v-toolbar>
         </template>
-        <template v-slot:item.action="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-icon small class="mr-2" @click="onEdit(item)"> edit </v-icon>
           <v-icon small @click="onDelete(item)"> delete </v-icon>
         </template>
@@ -59,8 +59,8 @@
       
       <v-row>
         <v-col>
-          <v-btn @click="exportItem">카테고리 데이터</v-btn>
-          <v-file-input label="카테고리 데이터 입력" @change="importItem"></v-file-input>
+          <v-btn @click="exportCSVCategory">카테고리 데이터</v-btn>
+          <v-file-input label="카테고리 데이터 입력" @change="importCSVCategory"></v-file-input>
         </v-col>
       </v-row>
     
@@ -77,7 +77,8 @@ import _ from 'lodash'
 
 import config from '../../src/config/config';
 var crc = require('crc');
-const {s3Upload, exportExcel, importExcel} = require("../util/fileutil");
+const { importCSV, exportCSV } = require('../util/fileutil');
+const { updateDataTable } = require('../util/dataTableUtil');
 
 export default {
   name: 'categoryList',
@@ -115,11 +116,12 @@ export default {
       'CREATE_CATEGORY',
       'UPDATE_CATEGORY',
       'DELETE_CATEGORY',
-      'UPDATE_MANY_CATEGORY'
+      'UPDATE_MANY_CATEGORY',
+      'GET_TABLE_VERSION',
+      'UPDATE_TABLE_VERSION'
     ]),
     async getCategoryList() {
       const result = await this.LIST_CATEGORY();
-      console.log(result.categoryList);
       this.categoryList = result.categoryList || [];
     },
     async onDelete(item) {
@@ -150,17 +152,24 @@ export default {
       await this.getCategoryList();
       this.close();
     },
-    importItem(file) {
-      importExcel(file, async (jsonObject) => {
-        console.log(jsonObject);
-        await this.UPDATE_MANY_CATEGORY({ categoryList: jsonObject });
-        await this.getCategoryList();
-      }) 
+    exportCSVCategory() {
+      exportCSV(this.categoryList, 'itemCategory.csv');
     },
-    exportItem() {
-      exportExcel(this.categoryList, 'category', 'category.xlsx');
-    },
+    importCSVCategory(file) {
+      importCSV(file, 'itemCategory', async (categoryList) => {
+        const tableId = 'itemCategory';
 
+        await updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_MANY_CATEGORY,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          { categoryList }
+        );
+
+        await this.getCategoryList();
+      })
+    },
   }
 };
 </script>

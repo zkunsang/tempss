@@ -1,5 +1,5 @@
 const dbMongo = require('@ss/dbMongo');
-const dbRedis = require('@ss/dbRedis');
+const dbRedis = require('@ss/dbRedisSS');
 
 const helper = require('@ss/helper');
 

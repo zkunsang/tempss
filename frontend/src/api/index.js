@@ -1,14 +1,14 @@
 import axios from 'axios'
 import router from '../router'
 import store from '../store'
-import config from '../config/config'
+const apiConfig = require(`../config/${process.env.NODE_ENV}/api.json`);
 
 const UNAUTHORIZED = 401;
 const onUnauthorized = () => {
   store.commit('LOGOUT')
   router.push(`/login?rPath=${encodeURIComponent(location.pathname)}`);
 }
-const DOMAIN = config.getBackendUrl;
+const DOMAIN = apiConfig.backendUrl;
 
 const request = (method, url, data) => {
   const { sessionId } = localStorage;
@@ -22,8 +22,10 @@ const request = (method, url, data) => {
       return result.data.data;
     })
     .catch(result => {
+
       let status = result.response.status;
-      const { err_message, err_code } = result.response.data
+      const responseBody = result.response.data;
+      const { err_message, err_code } = responseBody.data
       if (status === UNAUTHORIZED) {
         onUnauthorized()
       }
@@ -37,7 +39,6 @@ export const setAuthInHeader = sessionId => {
 
 export const auth = {
   login(adminId, password) {
-    console.log(adminId, password)
     return request('post', '/auth/login', { adminId, password })
   },
   regist(adminId, password, confirmPassword) {
@@ -148,15 +149,14 @@ export const category = {
   }
 }
 
-
-export const banner = {
-  fetch_banner_list(user_id) {
-    return request('post', '/get_banner_list', { user_id })
+export const dataTable = {
+  update(versionInfo) {
+    return request('post', '/datatable/update', versionInfo);
   },
-  update_banner(user_id, banner_info) {
-    return request('post', '/update_banner', { user_id, banner_info })
+  list() {
+    return request('post', '/datatable/list', {});
   },
-  insert_banner(user_id, banner_info) {
-    return request('post', '/insert_banner', { user_id, banner_info })
-  },
+  get(tableInfo) {
+    return request('post', '/datatable/get', tableInfo);
+  }
 }

@@ -1,4 +1,4 @@
-const dbRedis = require('@ss/dbRedis');
+const dbRedis = require('@ss/dbRedisSS');
 
 const SessionDao = require('@ss/daoRedis/SessionDao');
 const ReqAuthLogout = require('@ss/models/controller/ReqAuthLogout');

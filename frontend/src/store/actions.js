@@ -44,6 +44,12 @@ const actions = {
     UPDATE_MANY_ITEM(_, item) {
         return api.item.updateMany(item);
     },
+    GET_TABLE_VERSION(_, tableInfo) {
+        return api.dataTable.get(tableInfo);
+    },
+    UPDATE_TABLE_VERSION(_, versionInfo) {
+        return api.dataTable.update(versionInfo);
+    },
     UPDATE_MANY_ITEM_MATERIAL(_, item) {
         return api.item.updateManyMaterial(item);
     },
@@ -95,6 +101,9 @@ const actions = {
     UPDATE_GROUP_MANY(_, item) {
         return api.productGroup.updateMany(item);
     },
+    LIST_DATA_TABLE(_) {
+        return api.dataTable.list();
+    }
 }
 
 export default actions;

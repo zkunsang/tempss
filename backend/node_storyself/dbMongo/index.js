@@ -11,16 +11,23 @@ class Mongo {
     }
 
     async ready() {
-        const dbMongo = ss.configs.dbMongo;
-        const url = `mongodb://${dbMongo.url}:${dbMongo.port}`;
-
         try {
-            this.userConnect = await MongoClient.connect(url, { useUnifiedTopology: true, ignoreUndefined: true });
-            this.storyConnect = await MongoClient.connect(url, { useUnifiedTopology: true, ignoreUndefined: true });
+            this.userConnect = await this.setUserConnect(ss.configs.dbMongoUser);
+            this.storyConnect = await this.setDataConnect(ss.configs.dbMongoData);
         }
         catch (err) {
             helper.slack.sendMessage(err);
         }
+    }
+
+    async setUserConnect(dbMongo) {
+        const url = `mongodb://${dbMongo.host}:${dbMongo.port}`;
+        return await MongoClient.connect(url, { useUnifiedTopology: true, ignoreUndefined: true });
+    }
+
+    async setDataConnect(dbMongo) {
+        const url = `mongodb://${dbMongo.host}:${dbMongo.port}`;
+        return await MongoClient.connect(url, { useUnifiedTopology: true, ignoreUndefined: true });
     }
 }
 

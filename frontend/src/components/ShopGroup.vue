@@ -85,8 +85,8 @@
       </v-data-table>
       <v-row>
         <v-col>
-          <v-btn @click="exportItem">상점 그룹 데이터</v-btn>
-          <v-file-input label="상점 그룹 데이터 입력" @change="importItem"></v-file-input>
+          <v-btn @click="exportCSVItem">상점 그룹 데이터</v-btn>
+          <v-file-input label="상점 그룹 데이터 입력" @change="importCSVItem"></v-file-input>
         </v-col>
       </v-row>
     </v-layout>
@@ -102,7 +102,8 @@ import _ from 'lodash'
 
 import config from '../../src/config/config';
 var crc = require('crc');
-const {s3Upload, exportExcel, importExcel} = require("../util/fileutil");
+const { exportCSV, importCSV } = require("../util/fileutil");
+const { updateDataTable } = require("../util/dataTableUtil");
 
 export default {
   name: 'productGroupList',
@@ -116,7 +117,7 @@ export default {
       dialog: false,
       headers: [
         { text: '그룹 아이디', value: 'groupId' },
-        { text: '시작 일시', value: 'startdate' },
+        { text: '시작 일시', value: 'startDate' },
         { text: '종료 일시', value: 'endDate' },
         { text: '서버 제한', value: 'serverLimit' },
         { text: '유저 제한', value: 'userLimit' },
@@ -143,11 +144,12 @@ export default {
       'CREATE_GROUP',
       'UPDATE_GROUP',
       'DELETE_GROUP',
-      'UPDATE_GROUP_MANY'
+      'UPDATE_GROUP_MANY',
+      'GET_TABLE_VERSION',
+      'UPDATE_TABLE_VERSION'
     ]),
     async getGroupList() {
       const result = await this.LIST_GROUP();
-      console.log(result);
       this.productGroupList = result.productGroupList || [];
     },
     async onDelete(item) {
@@ -180,15 +182,22 @@ export default {
       await this.getGroupList();
       this.close();
     },
-    importItem(file) {
-      importExcel(file, async (jsonObject) => {
-        console.log(jsonObject);
-        await this.UPDATE_GROUP_MANY({ productGroupList: jsonObject });
+    importCSVItem(file) {
+      importCSV(file, 'groupId', async (productGroupList) => {
+        const tableId = 'productGroup'
+        updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_GROUP_MANY,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          { productGroupList }
+        )
+        
         await this.getGroupList();
       }) 
     },
-    exportItem() {
-      exportExcel(this.productGroupList, 'category', 'category.xlsx');
+    exportCSVItem() {
+      exportCSV(this.productGroupList, 'productGroup.csv');
     },
 
   }

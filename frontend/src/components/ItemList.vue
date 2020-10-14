@@ -12,7 +12,7 @@
         class="elevation-1"
       >
       <template v-slot:top>
-        <v-alert v-if="isLive" type="info" dense>데이터 수정 -> 디자인 적용</v-alert>    
+        <v-alert v-if="isLive" type="info" dense>데이터 수정 -> 디자인 적용</v-alert>
           <v-toolbar flat color="white">
             <v-toolbar-title>아이템 리스트</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
@@ -29,9 +29,9 @@
                     <v-col cols="12" sm="6">
                       <v-row>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field 
-                            :disabled="!insert" 
-                            v-model="itemEdit.itemId" 
+                          <v-text-field
+                            :disabled="!insert"
+                            v-model="itemEdit.itemId"
                             label="아이템 아이디"
                             @change="itemIdChange"
                             ref="itemId"
@@ -48,8 +48,8 @@
                             ></v-select>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field 
-                          v-model="itemEdit.groupId" 
+                          <v-text-field
+                          v-model="itemEdit.groupId"
                           label="그룹 아이디"
                           ref="groupId"
                         ></v-text-field>
@@ -76,17 +76,17 @@
                             ></v-select>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field 
-                            type="number" 
-                            v-model="itemEdit.maxQny" 
+                          <v-text-field
+                            type="number"
+                            v-model="itemEdit.maxQny"
                             label="최대 개수"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
-                          <v-text-field 
-                            :disabled="!!itemEdit.overlap" 
-                            type="number" 
-                            v-model="itemEdit.volatileSeconds" 
+                          <v-text-field
+                            :disabled="!!itemEdit.overlap"
+                            type="number"
+                            v-model="itemEdit.volatileSeconds"
                             label="소멸 시간"
                             @change="volatileChange"
                           ></v-text-field>
@@ -95,7 +95,7 @@
                           <v-text-field type="number" v-model="itemEdit.priority" label="우선 순위"></v-text-field>
                         </v-col>
                       </v-row>
-                    </v-col>  
+                    </v-col>
                     <v-col cols="12" sm="6">
                       <v-container>
                         <v-row>
@@ -110,9 +110,9 @@
                             ></v-select>
                           </v-col>
                           <v-col cols="12" sm="4">
-                            <v-text-field 
+                            <v-text-field
                               type="number"
-                              v-model="addMaterialItem.materialQny" 
+                              v-model="addMaterialItem.materialQny"
                               label="재료 개수"
                               ></v-text-field>
                           </v-col>
@@ -131,7 +131,7 @@
                   </v-row>
                 </v-container>
               </v-card-text>
-  
+
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="onClose">Cancel</v-btn>
@@ -155,8 +155,8 @@
           <v-btn color="primary">Reset</v-btn>
         </template>
       </v-data-table>
-      
-      <v-row>
+
+      <!-- <v-row>
         <v-col>
           <v-btn @click="exportItem">아이템 데이터</v-btn>
           <v-file-input label="아이템 입력" @change="importItem"></v-file-input>
@@ -166,8 +166,19 @@
           <v-file-input label="교환 아이템 입력" @change="importExchangeItem"></v-file-input>
           <v-alert v-if="errorFile" type="error">{{errorFile}}</v-alert>
         </v-col>
+
+      </v-row> -->
+      <v-row>
+        <v-col>
+          <v-btn @click="exportCSVItem">아이템 데이터(csv)</v-btn>
+          <v-file-input accept=".csv" label="아이템 데이터(csv)" @change="importCSVItem"></v-file-input>
+        </v-col>
+        <v-col>
+          <v-btn @click="exportCSVItemExchange">아이템 교환 데이터(csv)</v-btn>
+          <v-file-input accept=".csv" label="아이템 교환 데이터(csv)" @change="importCSVItemExchange"></v-file-input>
+        </v-col>
       </v-row>
-    
+
     </v-layout>
   </v-container>
 </template>
@@ -183,7 +194,8 @@ const no_image = require(`../assets/no_image.jpg`);
 import config from '../../src/config/config';
 
 var crc = require('crc');
-const {s3Upload, exportExcel, importExcel} = require("../util/fileutil");
+const { importCSV, exportCSV } = require('../util/fileutil');
+const { updateDataTable } = require('../util/dataTableUtil');
 
 export default {
   name: 'itemList',
@@ -215,7 +227,7 @@ export default {
         { text: '사용우선순위', value: 'priority' },
         { text: 'Actions', value: 'action', sortable: false },
       ],
-      
+
     }
   },
   created() {
@@ -238,7 +250,9 @@ export default {
       'CREATE_ITEM',
       'UPDATE_ITEM',
       'UPDATE_MANY_ITEM',
-      'UPDATE_MANY_ITEM_MATERIAL'
+      'UPDATE_MANY_ITEM_MATERIAL',
+      'UPDATE_TABLE_VERSION',
+      'GET_TABLE_VERSION'
     ]),
     volatileChange(item) {
     },
@@ -249,7 +263,6 @@ export default {
       this.itemEdit.groupId = itemId;
     },
     addMaterial() {
-      console.log(this.addMaterialItem);
       this.materialItemList.push(this.addMaterialItem);
       this.addMaterialItem = {}
     },
@@ -260,7 +273,7 @@ export default {
     async getItemList() {
       const itemResult = await this.LIST_ITEM();
       const categoryResult = await this.LIST_CATEGORY();
-      
+
       this.itemList = itemResult.itemList;
       this.itemMaterialList = itemResult.itemMaterialList;
       this.categoryList = categoryResult.categoryList;
@@ -329,10 +342,10 @@ export default {
       }
     },
     async onSave () {
-      
+
       if( !this.checkNull(this.itemEdit, [
         { key:'itemId', text: '아이템 아이디' },
-        { key:'groupId', text: '그룹 아이디' } 
+        { key:'groupId', text: '그룹 아이디' }
       ])) return;
 
       this.addItemId(this.itemEdit.itemId, this.materialItemList);
@@ -359,24 +372,62 @@ export default {
       }
       return isPossible;
     },
-    importItem(file) {
-      importExcel(file, async (jsonObject) => {
-        await this.UPDATE_MANY_ITEM({ itemList: jsonObject });
+
+    importCSVItem(file) {
+      importCSV(file, 'itemId', async (itemList) => {
+        const tableId = 'item';
+
+        await updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_MANY_ITEM,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          {itemList}
+        );
+
         await this.getItemList();
-      }) 
+      })
     },
-    importExchangeItem(file) {
-      importExcel(file, async (jsonObject) => {
-        await this.UPDATE_MANY_ITEM_MATERIAL({ materialList: jsonObject });
+    importCSVItemExchange(file) {
+      importCSV(file, 'itemId', async (materialList) => {
+        const tableId = 'itemExchange';
+
+        await updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_MANY_ITEM_MATERIAL,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          {materialList}
+        );
+
         await this.getItemList();
-      }) 
+      })
     },
-    exportItem() {
-      exportExcel(this.itemList, 'item', 'item.xlsx');
+    exportCSVItem() {
+      exportCSV(this.itemList, 'item.csv');
     },
-    exportExchangeItem() {
-      exportExcel(this.itemMaterialList, 'item', 'itemMaterial.xlsx');
+    exportCSVItemExchange() {
+      exportCSV(this.itemMaterialList, 'itemExchange.csv');
     },
+
+    // exportItem() {
+    //   exportExcel(this.itemList, 'item', 'item.xlsx');
+    // },
+    // exportExchangeItem() {
+    //   exportExcel(this.itemMaterialList, 'item', 'itemExchange.xlsx');
+    // },
+    // importItem(file) {
+    //   importExcel(file, async (jsonObject) => {
+    //     await this.UPDATE_MANY_ITEM({ itemList: jsonObject });
+    //     await this.getItemList();
+    //   })
+    // },
+    // importExchangeItem(file) {
+    //   importExcel(file, async (jsonObject) => {
+    //     await this.UPDATE_MANY_ITEM_MATERIAL({ materialList: jsonObject });
+    //     await this.getItemList();
+    //   })
+    // },
   }
 };
 </script>

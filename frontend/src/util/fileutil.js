@@ -1,25 +1,25 @@
 const crc = require('crc');
 const AWS = require('aws-sdk');
 const saveAs = require('file-saver');
+const { unparse, parse } = require('papaparse');
 const XLSX = require('xlsx');
 
-const { s3_info } = require(location.host.match(/^manage-storykr.qpyou.cn/g) ? '../config/s3_qa.json' : '../config/s3_dev.json');
-const s3_source = new AWS.S3(s3_info);
+const { s3Info } = require(`../config/${process.env.NODE_ENV}/s3.json`);
+const s3Source = new AWS.S3(s3Info);
 
 const bucketRegion = 'ap-northeast-2';
 AWS.config.update({ region: bucketRegion });
 
-async function get_crc(input_file) {
-    return crc.crc32(input_file);
+async function getCRC(inputFile) {
+    const data = await inputFile.arrayBuffer();
+    return crc.crc32(data).toString(16);
 }
 
-async function s3Upload(input_file, key) {
-    console.log('s3_info: ', s3_info);
-
-    const param = { Bucket: s3_info.bucket, Key: key, Body: input_file };
+async function s3Upload(inputFile, key) {
+    const param = { Bucket: s3Info.bucket, Key: key, Body: inputFile };
 
     const s3UploadPromise = new Promise(function (resolve, reject) {
-        s3_source.upload(param, function (err, data) {
+        s3Source.upload(param, function (err, data) {
             if (err) {
                 reject(err);
                 throw err;
@@ -77,11 +77,57 @@ function importExcel(file, fn) {
     reader.readAsBinaryString(file);
 }
 
+function exportCSV(list, fileName) {
+    saveAs(createCSVBlob(list), fileName);
+}
+
+function createCSVFile(list, fileName) {
+    return new File([createCSVBlob(list)], fileName);
+}
+
+function createCSVBlob(list) {
+    const fileContents = unparse(list);
+    return new Blob([fileContents], { type: "text/plain;charset=utf-8" })
+}
+
+function importCSV(file, notNullColumns, fn) {
+    if(!file) return;
+    const reader = new FileReader();
+
+    reader.readAsText(file);
+
+    reader.onload = async (e) => {
+        const options = {
+            dynamicTyping: true,
+            delimiter: ',',
+            skipEmptyLines: true,
+            header: true,
+        };
+        
+        const data = parse(e.target.result, options);
+        
+        await fn(removeEmptyRow(data.data, notNullColumns))
+    }
+
+    function removeEmptyRow(data, notNullColumn) {
+        const retList = [];
+        for(const row of data) {
+            if(row[notNullColumn]) retList.push(row)
+        }
+
+        return retList;
+    }
+}
+
 module.exports = {
     s3Upload,
     readFileAsync,
     exportTxt,
     exportPurgeTxt,
     exportExcel,
-    importExcel
+    importExcel,
+    exportCSV,
+    importCSV,
+    createCSVFile,
+    getCRC
 };
