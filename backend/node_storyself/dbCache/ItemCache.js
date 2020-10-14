@@ -2,9 +2,12 @@ const dbMongo = require('../dbMongo');
 const ItemDao = require('../daoMongo/ItemDao');
 
 const Item = require('../models/mongo/Item');
-const ArrayUtil = require('../util/ArrayUtil');
+const Cache =require('./Cache');
 
+const ArrayUtil = require('../util/ArrayUtil');
 const _ = require('lodash');
+
+const tableId = 'item';
 
 class ItemCacheModel {
     constructor() {
@@ -41,23 +44,15 @@ class ItemCacheModel {
     }
 }
 
-class ItemCache {
+class ItemCache extends Cache {
     constructor() {    
-        this.itemDao = null;
-        this.cacheManager = {};
-        this.version = 1;
-        this.currentCacheModel = null;
+        super();
+        this.cacheModel = ItemCacheModel;
+        this.tableId = tableId;
     }   
     
     async ready() {
-        this.itemDao = new ItemDao(dbMongo);
-    }
-
-    async loadData(version) {
-        this.cacheManager[version] = new ItemCacheModel()
-        await this.cacheManager[version].loadData(this.itemDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+        this.dao = new ItemDao(dbMongo);
     }
 
     get(itemId) {

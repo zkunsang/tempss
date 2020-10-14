@@ -9,6 +9,8 @@
     </v-overlay>
     <v-container>
     <v-btn color="primary" dark class="mb-2" @click.prevent="createStory">신규 스토리 등록</v-btn>
+    <v-btn color="primary" dark class="mb-2" @click.prevent="exportCSVStory">스토리 데이터 출력</v-btn>
+    <v-file-input accept=".csv" label="스토리 데이터(csv)" @change="importCSVStory"></v-file-input>
     <v-dialog v-model="dialog">
       <TemplateStoryVue></TemplateStoryVue>
     </v-dialog>
@@ -31,6 +33,8 @@ import {mapActions, mapState} from 'vuex'
 import {eventBus} from '../util/eventBus';
 
 var crc = require('crc');
+const { importCSV, exportCSV } = require('../util/fileutil');
+const { updateDataTable } = require('../util/dataTableUtil');
 
 const no_image = require(`../assets/no_image.jpg`);
 export default {
@@ -51,18 +55,23 @@ export default {
         CDN_URL: 'CDN_URL'
     }),
   },
-  created() {
-    this.GET_STORY_LIST()
-      .then((body) => {
-        this.storyList = body;
-        // this.patchInfo = body.patchInfo;
-        this.patchInfo = 'patchInfo';
-      });
+  async created() {
+    await this.getStoryList();
   },
+  
   methods: {
     ...mapActions([
-      'GET_STORY_LIST'
+      'GET_STORY_LIST',
+      'UPDATE_MANY_STORY',
+      'GET_TABLE_VERSION',
+      'UPDATE_TABLE_VERSION'
     ]),
+    async getStoryList() {
+      const body = await this.GET_STORY_LIST()
+      
+      this.storyList = body;
+      this.patchInfo = 'patchInfo';
+    },
     getSrcUrl(storyData) {
       return storyData.thumbnail ? `${this.CDN_URL}${storyData.storyId}/thumbnail/${storyData.thumbnailVersion}/${storyData.thumbnail}` :no_image;
     },
@@ -77,6 +86,24 @@ export default {
       this.storyData = {
         status: 0,
       }
+    },
+    exportCSVStory() {
+      exportCSV(this.storyList, 'story.csv');
+    },
+    importCSVStory(file) {
+      importCSV(file, 'storyId', async (storyList) => {
+        const tableId = 'story';
+
+        await updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_MANY_STORY,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          { storyList }
+        );
+
+        await this.getStoryList();
+      })
     },
   }
 };

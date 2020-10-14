@@ -372,7 +372,6 @@ export default {
       }
       return isPossible;
     },
-
     importCSVItem(file) {
       importCSV(file, 'itemId', async (itemList) => {
         const tableId = 'item';

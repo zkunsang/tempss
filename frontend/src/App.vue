@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color='red' tile dark clipped-left primary v-if='isQa'>
+    <v-app-bar app v-bind:color="appBarColor" tile dark clipped-left primary>
       <div class='d-flex align-center'>
         <v-img
           alt='Vuetify Logo'
@@ -9,33 +9,7 @@
           src='https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png'
           transition='scale-transition'
           width='40'
-        />주의! QA 서버
-      </div>
-      <v-spacer></v-spacer>
-    </v-app-bar>
-    <v-app-bar app color='red' tile dark clipped-left primary v-else-if="isLive">
-      <div class='d-flex align-center'>
-        <v-img
-          alt='Vuetify Logo'
-          class='shrink mr-2'
-          contain
-          src='https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png'
-          transition='scale-transition'
-          width='40'
-        />주의! 라이브 서버 CMS
-      </div>
-      <v-spacer></v-spacer>
-    </v-app-bar>
-    <v-app-bar app color='primary' tile dark clipped-left primary v-else>
-      <div class='d-flex align-center'>
-        <v-img
-          alt='Vuetify Logo'
-          class='shrink mr-2'
-          contain
-          src='https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png'
-          transition='scale-transition'
-          width='40'
-        />개발 서버 CMS
+        />{{appBarTitle}}
       </div>
       <v-spacer></v-spacer>
     </v-app-bar>
@@ -71,27 +45,22 @@
 
 <script>
 import { mapState } from 'vuex';
-// import HelloWorld from './components/HelloWorld';
-
-// prism-qa-cms.day7games.com
-import config from '../src/config/config'
 
 export default {
   name: 'App',
-
+  created: () => {
+    console.log('hello')
+  },
   components: {
     //HelloWorld,
   },
   computed: {
-    ...mapState({ adminId: 'adminId' }),
-    isQa() {
-      return config.isQa;
-    },
-    isLive() {
-      return config.isLive;
-    },
+    ...mapState({ 
+      adminId: 'adminId',
+      appBarColor: 'appBarColor',
+      appBarTitle: 'appBarTitle'
+    }),
   },
-
   data: () => ({
     items: [
       { path: '/story', title: '스토리 관리', icon: 'mdi-view-dashboard' },
@@ -100,10 +69,12 @@ export default {
       { path: '/shop', title: '상품 관리', icon: 'mdi-view-dashboard' },
       { path: '/shopGroup', title: '상품 그룹 관리', icon: 'mdi-view-dashboard' },
       { path: '/dataTable', title: '데이터 테이블', icon: 'mdi-view-dashboard' },
+      { path: '/resource', title: '리소스 테이블', icon: 'mdi-view-dashboard' },
       { path: '/patchtemp', title: '패치 관리', icon: 'mdi-view-dashboard' },
       { path: '/category', title: '카테고리 관리', icon: 'mdi-view-dashboard' },
       { path: '/coupon', title: '쿠폰 관리', icon: 'mdi-view-dashboard' },
-    ]
+    ],
+    color: 'blue',
   })
 };
 </script>

@@ -8,13 +8,9 @@ module.exports = class Config {
 
     ready() {
         let msg = 'configs: [' + this.configPath + '] ';
-        // 1.config list를 불러옴
-        // 2.config list를 세팅함
-        
         try {
             const configInfo = require(`@cf/${this.configPath}/configList.json`);
             this.setConfig(configInfo);
-            // Object.keys(configInfo).map((item) => this.setConfig(configInfo[item]));
         } catch (e) {
             throw msg + e.message;
         }

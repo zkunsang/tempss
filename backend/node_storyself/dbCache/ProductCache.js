@@ -2,7 +2,10 @@ const dbMongo = require('../dbMongo');
 const ProductDao = require('../daoMongo/ProductDao');
 
 const Product = require('../models/mongo/Product');
+const Cache = require('./Cache');
 const _ = require('lodash');
+
+const tableId = 'product'
 
 class ProductCacheModel {
     constructor() {
@@ -29,23 +32,15 @@ class ProductCacheModel {
     }
 }
 
-class ProductCache {
+class ProductCache extends Cache{
     constructor() {    
-        this.productDao = null;
-        this.cacheManager = {};
-        this.version = 1;
-        this.currentCacheModel = null;
+        super();
+        this.cacheModel = ProductCacheModel;
+        this.tableId = tableId;
     }   
     
     async ready() {
-        this.productDao = new ProductDao(dbMongo);
-    }
-
-    async loadData(version) {
-        this.cacheManager[version] = new ProductCacheModel()
-        await this.cacheManager[version].loadData(this.productDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+        this.dao = new ProductDao(dbMongo);
     }
 
     get(productId) {

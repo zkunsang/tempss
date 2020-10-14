@@ -87,7 +87,8 @@ function createCSVFile(list, fileName) {
 
 function createCSVBlob(list) {
     const fileContents = unparse(list);
-    return new Blob([fileContents], { type: "text/plain;charset=utf-8" })
+    console.log(fileContents);
+    return new Blob(["\uFEFF" + fileContents], { type: "text/csv;charset=utf-8" })
 }
 
 function importCSV(file, notNullColumns, fn) {

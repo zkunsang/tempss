@@ -17,17 +17,24 @@ const actions = {
     UPDATE_STORY(_, story) {
         return api.story.update(story);
     },
+    UPDATE_MANY_STORY(_, storyList) {
+        return api.story.updateMany(storyList);
+    },
     GET_STORY_LIST(_) {
         return api.story.list();
     },
     GET_STORY_INFO(_, storyId) {
         return api.story.info(storyId);
     },
-    GET_AOS_RESOURCE(_, storyId) {
+    LIST_AOS_STORY_RESOURCE(_, storyId) {
         return api.resource.list(storyId);
     },
+    LIST_AOS_RESOURCE(_) {
+        return api.resource.list();
+    },
     UPDATE_AOS_RESOURCE(_, resourceList) {
-        return api.resource.update(resourceList);
+        console.log(resourceList);
+        return api.resource.updateMany(resourceList);
     },
     LIST_ITEM(_) {
         return api.item.list();
@@ -103,7 +110,8 @@ const actions = {
     },
     LIST_DATA_TABLE(_) {
         return api.dataTable.list();
-    }
+    },
+    
 }
 
 export default actions;

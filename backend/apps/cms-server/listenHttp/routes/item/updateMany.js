@@ -2,7 +2,6 @@ const ReqItemUpdateMany = require('@ss/models/cmsController/ReqItemUpdateMany');
 const ItemDao = require('@ss/daoMongo/ItemDao');
 
 async function insertItemList(itemDao, itemList, updateDate) {
-    
     const insertItemList = ItemDao.mappingList(itemList);
     for(const item of insertItemList) {
         item.setUpdateDate(updateDate);

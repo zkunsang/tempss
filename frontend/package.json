@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "cmsLocal": "env NODE_ENV=cmsLocal vue-cli-service serve --mode cmsLocal ",
+    "cmsLocal": "env NODE_ENV=cmsLocal vue-cli-service serve",
+    "cmsDev": "env NODE_ENV=cmsDev vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },

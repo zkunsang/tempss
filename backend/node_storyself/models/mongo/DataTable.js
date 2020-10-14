@@ -44,6 +44,10 @@ class DataTable extends Model {
     getResourceId() {
         return this[Schema.RESOURCE_ID.key];
     }
+
+    getVersion() {
+        return this[Schema.VERSION.key];
+    }
 }
 
 module.exports = DataTable;

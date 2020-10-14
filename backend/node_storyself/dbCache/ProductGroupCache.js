@@ -2,8 +2,11 @@ const dbMongo = require('../dbMongo');
 
 const ProductGroupDao = require('../daoMongo/ProductGroupDao');
 const ProductGroup = require('../models/mongo/ProductGroup');
+const Cache = require('./Cache');
 
 const _ = require('lodash');
+
+const tableId = 'productGroup';
 
 class ProductGroupCacheModel {
     constructor() {
@@ -30,23 +33,15 @@ class ProductGroupCacheModel {
     }
 }
 
-class ProductGroupCache {
+class ProductGroupCache extends Cache{
     constructor() {    
-        this.productGroupDao = null;
-        this.cacheManager = {};
-        this.version = 1;
-        this.currentCacheModel = null;
+        super();
+        this.cacheModel = ProductGroupCacheModel;
+        this.tableId = tableId;
     }   
     
     async ready() {
-        this.productGroupDao = new ProductGroupDao(dbMongo);
-    }
-
-    async loadData(version) {
-        this.cacheManager[version] = new ProductGroupCacheModel();
-        await this.cacheManager[version].loadData(this.productGroupDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+        this.dao = new ProductGroupDao(dbMongo);
     }
 
     get(groupId) {

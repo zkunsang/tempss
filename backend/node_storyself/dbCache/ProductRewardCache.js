@@ -3,8 +3,11 @@ const dbMongo = require('../dbMongo');
 const ProductRewardDao = require('../daoMongo/ProductRewardDao');
 const ProductReward = require('../models/mongo/ProductReward');
 
+const Cache = require('./Cache');
+
 const ArrayUtil = require('@ss/util/ArrayUtil');
 
+const tableId = 'productReward';
 class ProductRewardCacheModel {
     constructor() {
         this.productRewardList = null;
@@ -30,23 +33,15 @@ class ProductRewardCacheModel {
     }
 }
 
-class ProductRewardCache {
+class ProductRewardCache extends Cache {
     constructor() {    
-        this.productRewardDao = null;
-        this.cacheManager = {};
-        this.version = 1;
-        this.currentCacheModel = null;
+        super();
+        this.cacheModel = ProductRewardCacheModel;
+        this.tableId = tableId;
     }   
     
     async ready() {
-        this.productRewardDao = new ProductRewardDao(dbMongo);
-    }
-
-    async loadData(version) {
-        this.cacheManager[version] = new ProductRewardCacheModel();
-        await this.cacheManager[version].loadData(this.productRewardDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+        this.dao = new ProductRewardDao(dbMongo);
     }
 
     get(productId) {

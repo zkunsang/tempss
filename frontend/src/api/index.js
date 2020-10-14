@@ -53,22 +53,27 @@ export const story = {
   update(story) {
     return request('post', '/story/update', story);
   },
+  updateMany(storyList) {
+    return request('post', '/story/updateMany', storyList);
+  },
   list() {
     return request('post', '/story/list');
   },
   info(storyId) {
     return request('post', '/story/info', { storyId });
   },
-
 }
 
 export const resource = {
   list(storyId) {
-    return request('post', '/resource/list', { storyId });
+    return request('post', '/resource/list', storyId ? { storyId } : null);
   },
-  update(resoureList) {
-    return request('post', '/resource/update', resoureList);
+  update(resourceList) {
+    return request('post', '/resource/update', resourceList);
   },
+  updateMany(resourceList) {
+    return request('post', '/resource/updateMany', resourceList);
+  }
 }
 
 export const item = {

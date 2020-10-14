@@ -160,7 +160,7 @@ export default {
   },
   methods: {
     ...mapActions([
-      'GET_AOS_RESOURCE',
+      'LIST_AOS_STORY_RESOURCE',
       'UPDATE_AOS_RESOURCE'
     ]),
     async s3Uploads(list) {
@@ -200,7 +200,7 @@ export default {
       this.$nextTick(async () => {
         if(this.isNew) return;
 
-        const result = await this.GET_AOS_RESOURCE(this.storyId);
+        const result = await this.LIST_AOS_STORY_RESOURCE(this.storyId);
         this.resourceList = result;
         this.arrangedResourceObject =  _.keyBy(this.resourceList, "resourceId");
         this.arrangedResourceObjectCrc32 = _.keyBy(this.resourceList, "crc32");

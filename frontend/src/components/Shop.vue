@@ -178,11 +178,11 @@
       <v-row>
         <v-col>
           <v-btn @click="exportCSVProduct">상점 데이터</v-btn>
-          <v-file-input label="상점 데이터 입력" @change="importCSVProdcut"></v-file-input>
+          <v-file-input accept=".csv" label="상점 데이터 입력" @change="importCSVProdcut"></v-file-input>
         </v-col>
         <v-col>
           <v-btn @click="exportCSVProductReward">교환 아이템</v-btn>
-          <v-file-input label="교환 아이템 입력" @change="importCSVProductReward"></v-file-input>
+          <v-file-input accept=".csv" label="교환 아이템 입력" @change="importCSVProductReward"></v-file-input>
           <v-alert v-if="errorFile" type="error">{{errorFile}}</v-alert>
         </v-col>
       </v-row>

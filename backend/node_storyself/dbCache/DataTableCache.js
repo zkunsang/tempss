@@ -18,7 +18,7 @@ class DataTableCacheModel {
     }
 
     parseDataTable() {
-        this.dataTableMap = _.keyBy(this.dataTableList, DataTable.Schema.TABLE_ID);
+        this.dataTableMap = _.keyBy(this.dataTableList, DataTable.Schema.TABLE_ID.key);
     }
 
     get(tableId) {
@@ -42,11 +42,18 @@ class DataTableCache {
         this.dataTableDao = new DataTableDao(dbMongo);
     }
 
-    async loadData(version) {
-        this.cacheManager[version] = new DataTableCacheModel()
-        await this.cacheManager[version].loadData(this.dataTableDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+    async loadData() {
+        // TODO: 동일 버젼 올라왔을때 처리
+        // if(version == this.version) {
+        //     console.error('same version load')
+        //     return;
+        // }
+
+        //일단 loadData가 들어오면 무조건 로드
+        this.version++;
+        this.cacheManager[this.version] = new DataTableCacheModel()
+        await this.cacheManager[this.version].loadData(this.dataTableDao);
+        this.currentCacheModel = this.cacheManager[this.version];
     }
 
     get(itemId) {
@@ -63,6 +70,10 @@ class DataTableCache {
 
     getMap() {
         return this.currentCacheModel.getMap();
+    }
+
+    getCacheModel() {
+        return this.currentCacheModel;
     }
 }
 

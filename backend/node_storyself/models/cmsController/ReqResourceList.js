@@ -4,7 +4,7 @@ const ValidateUtil = require('../../util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 
 const Schema = {
-    STORY_ID: { key: 'storyId', required: true, type: ValidType.STRING },
+    STORY_ID: { key: 'storyId', required: false, type: ValidType.STRING },
 }
 
 class ReqResourceList extends Model{

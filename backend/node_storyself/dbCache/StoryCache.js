@@ -2,7 +2,10 @@ const dbMongo = require('../dbMongo');
 const StoryDao = require('../daoMongo/StoryDao');
 
 const Story = require('../models/mongo/Story');
+const Cache = require('./Cache');
 const _ = require('lodash');
+
+const tableId = 'story';
 
 class StoryCacheModel {
     constructor() {
@@ -33,23 +36,15 @@ class StoryCacheModel {
     }
 }
 
-class StoryCache {
+class StoryCache extends Cache {
     constructor() {    
-        this.storyDao = null;
-        this.cacheManager = {};
-        this.version = 1;
-        this.currentCacheModel = null;
+        super();
+        this.cacheModel = StoryCacheModel;
+        this.tableId = tableId;
     }   
     
     async ready() {
-        this.storyDao = new StoryDao(dbMongo);
-    }
-
-    async loadData(version) {
-        this.cacheManager[version] = new StoryCacheModel()
-        await this.cacheManager[version].loadData(this.storyDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+        this.dao = new StoryDao(dbMongo);
     }
 
     get(storyId) {

@@ -1,18 +1,16 @@
-const slackHelper = require('./slackHelper');
-const fluentHelper = require('./fluentHelper');
-const googleAuthHelper = require('./googleAuthHelper');
+const SlackHelper = require('./SlackHelper');
+const FluentdHelper = require('./FluentdHelper');
 
 class Helper {
     constructor() {
-        this.slack = slackHelper;
-        this.fluent = fluentHelper; 
-        this.googleAuth = googleAuthHelper; 
+        this.slack = SlackHelper;
+        this.fluent = FluentdHelper; 
     }
 
     async ready() {
         await this.slack.ready();
         await this.fluent.ready();
-        await this.googleAuth.ready();
+        
     }
 };
 

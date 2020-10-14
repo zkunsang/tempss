@@ -11,6 +11,7 @@ import ItemCategory from '../components/ItemCategory.vue'
 import Shop from '../components/Shop.vue'
 import ShopGroup from '../components/ShopGroup.vue'
 import DataTable from '../components/DataTable.vue'
+import ResourceList from '../components/ResourceList.vue'
 
 import Home from '../components/Home.vue'
 
@@ -92,6 +93,11 @@ const router = new VueRouter({
         {
             path: '/patch',
             component: StoryList,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/resource',
+            component: ResourceList,
             beforeEnter: requireAuth
         },
         {

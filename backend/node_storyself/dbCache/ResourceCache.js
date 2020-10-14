@@ -1,5 +1,8 @@
 const dbMongo = require('../dbMongo');
 const ResourceDao = require('../daoMongo/ResourceDao');
+const Cache = require('./Cache');
+
+const tableId = 'resource';
 
 class ResourceCacheModel {
     constructor() {
@@ -15,23 +18,15 @@ class ResourceCacheModel {
     }
 }
 
-class ResourceCache {
+class ResourceCache extends Cache {
     constructor() {    
-        this.resourceDao = null;
-        this.cacheManager = {};
-        this.version = 1;
-        this.currentCacheModel = null;
+        super();
+        this.cacheModel = ResourceCacheModel;
+        this.tableId = tableId;
     }   
     
     async ready() {
-        this.resourceDao = new ResourceDao(dbMongo);
-    }
-
-    async loadData(version) {
-        this.cacheManager[version] = new ResourceCacheModel()
-        await this.cacheManager[version].loadData(this.resourceDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+        this.dao = new ResourceDao(dbMongo);
     }
 
     getList() {

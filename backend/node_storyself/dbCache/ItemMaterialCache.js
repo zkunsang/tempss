@@ -2,8 +2,10 @@ const dbMongo = require('../dbMongo');
 const ItemMaterialDao = require('../daoMongo/ItemMaterialDao');
 
 const ItemMaterial = require('../models/mongo/ItemMaterial');
+const Cache = require('./Cache');
 const ArrayUtil = require('../util/ArrayUtil');
 
+const tableId = 'itemExchange';
 class ItemMaterialCacheModel {
     constructor() {
         this.itemMaterialList = null;
@@ -31,23 +33,15 @@ class ItemMaterialCacheModel {
     }
 }
 
-class ItemMaterialCache {
+class ItemMaterialCache extends Cache {
     constructor() {
-        this.itemMaterialDao = null;
-        this.cacheManager = {};
-        this.version = 1;
-        this.currentCacheModel = null;
+        super();
+        this.cacheModel = ItemMaterialCacheModel;
+        this.tableId = tableId;
     }
 
     async ready() {
-        this.itemMaterialDao = new ItemMaterialDao(dbMongo);
-    }
-
-    async loadData(version) {
-        this.cacheManager[version] = new ItemMaterialCacheModel();
-        await this.cacheManager[version].loadData(this.itemMaterialDao);
-        this.version = version;
-        this.currentCacheModel = this.cacheManager[version];
+        this.dao = new ItemMaterialDao(dbMongo);
     }
 
     getListByItemId(itemId) {
