@@ -1,5 +1,6 @@
 const ss = require('@ss');
-const UserDao =  require('@ss/daoMongo/UserDao')
+const UserDao =  require('@ss/daoMongo/UserDao');
+const DataTableCache = require('@ss/dbCache/DataTableCache');
 const ReqUserPolicy = require('@ss/models/controller/ReqUserPolicy');
 
 module.exports = async (ctx, next) => {
@@ -8,15 +9,15 @@ module.exports = async (ctx, next) => {
 
     const userInfo = ctx.$userInfo;
 
-    const policyVersion = ss.configs.apiServer.policyVersion;
+    const policyVersion = DataTableCache.get('policy');;
     const updatePolicyVersion = reqUserPolicy.getPolicyVersion();
-    if (policyVersion !== updatePolicyVersion) {
+    if (policyVersion.version !== updatePolicyVersion) {
         // TODO: different version
         throw new Error({ errMessage: 'wrong policyVersion' });
     }
 
     const userDao = new UserDao(ctx.$dbMongo);
-    await userDao.update({ uid: userInfo.getUID() }, { policyVersion: policyVersion });
+    await userDao.updateOne({ uid: userInfo.getUID() }, { policyVersion: policyVersion.version });
 
     ctx.status = 200;
     ctx.body.data = {};

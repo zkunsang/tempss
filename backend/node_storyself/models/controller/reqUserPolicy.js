@@ -4,7 +4,7 @@ const ValidateUtil = require('../../util/ValidateUtil')
 const ValidType = ValidateUtil.ValidType;
 
 const Schema = {
-    POLICY_VERSION: { key: 'policyVersion', required: true, type: ValidType.NUMBER }
+    POLICY_VERSION: { key: 'policyVersion', required: true, type: ValidType.STRING }
 }
 
 class ReqUserPolicy extends Model {

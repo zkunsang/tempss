@@ -30,8 +30,9 @@ module.exports = async (ctx, next) => {
 
     let userInfo = await userDao.findOne({ uid });
 
+    let policyVersion = userInfo ? userInfo.policyVersion : "0";
     const sessionId = shortid.generate();
-
+    
     if (userInfo) {
         const oldSessionId = userInfo.getSessionId();
         userInfo.setSessionId(sessionId);
@@ -45,6 +46,7 @@ module.exports = async (ctx, next) => {
         userInfo.setSessionId(sessionId);
         userInfo.setLastLoginDate(loginDate);
         userInfo.setCreateDate(loginDate);
+
         await userDao.insertOne(userInfo);
     }    
     
@@ -61,7 +63,8 @@ module.exports = async (ctx, next) => {
     ctx.status = 200;
     ctx.body.data = { 
         sessionId,
-        inventoryList: userInventoryList
+        inventoryList: userInventoryList,
+        policyVersion
     };
 
     helper.fluent.sendLog('login', new LoginLog(reqAuthLogin, { ip: ctx.ip, loginDate }));
