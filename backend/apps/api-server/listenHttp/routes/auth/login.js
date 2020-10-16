@@ -53,6 +53,9 @@ module.exports = async (ctx, next) => {
     const inventoryService = new InventoryService(inventoryDao, userInfo, loginDate);
     
     const userInventoryList = await inventoryService.getUserInventoryList();
+
+    await processUserLoginInventory(inventoryService, userInventoryList);
+    
     InventoryService.removeObjectIdList(userInventoryList);
 
     ctx.status = 200;
@@ -66,7 +69,18 @@ module.exports = async (ctx, next) => {
     await next();
 };
 
+async function processUserLoginInventory(inventoryService, userInventoryList) {
+    // pictureSlot아이템이 존재 하지 않으면 제공
+    await processLoginPictureSlot(inventoryService, userInventoryList);
+}
 
+async function processLoginPictureSlot(inventoryService, userInventoryList) {
+    const pictureSlotLIst = userInventoryList.map((item) => item.itemId == 'pictureSlot');
+    if(pictureSlotLIst.length != 0) { return; }
+
+    const pictureSlot = InventoryService.makeInventoryObject('pictureSlot', 1);
+    await inventoryService.processPut([pictureSlot]);
+}
 /**
  * @swagger
  * resourcePath: /auth

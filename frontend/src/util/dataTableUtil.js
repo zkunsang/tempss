@@ -1,7 +1,7 @@
 const { s3Upload, createCSVFile, getCRC } = require('./fileutil.js');
 
 function parseDataTableVersion(versionInfo) {
-    let version = 0;
+    let version = "1.0";
     if (versionInfo) {
         const strVersion = versionInfo.version.toString();
 
@@ -26,7 +26,7 @@ async function updateDataTable(
 
     const versionInfo = response.versionInfo;
     const version = parseDataTableVersion(versionInfo);
-    // 데이터 테이블 csv
+
     // 1. file 생성
     const file = createCSVFile(Object.values(dataPayload)[0]);
     const fileName = `${tableId}.csv`;

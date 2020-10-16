@@ -18,28 +18,10 @@ module.exports = async (ctx, next) => {
     ReqProductGroupUpdateMany.validModel(reqUpdateMany);
 
     const productGroupDao = new ProductGroupDao(ctx.$dbMongo);
-    const beforeList = await productGroupDao.findAll();
     const groupList = reqUpdateMany.getProductGroupList();
 
     dateStringToUnixTimeStamp(groupList);
-
-    const afterList = ProductGroupDao.mappingList(groupList);
-
-    const { insertList, updateList, deleteList } = ArrayUtil.compareArrayByKey(beforeList,
-        afterList,
-        ProductGroup.Schema.GROUP_ID.key);
-
-    if (deleteList.length > 0) {
-        ctx.status = 200;
-        const deleteGroup =
-            ArrayUtil.getArrayValueByKey(deleteList, ProductGroup.Schema.GROUP_ID.key);
-        ctx.body.data = { message: `delete method not allowed - ${deleteGroup.join(',')}` };
-        await next();
-        return;
-    }
-
-    await updateGroupList(productGroupDao, updateList, updateDate);
-    await insertGroupList(productGroupDao, insertList, updateDate)
+    await insertGroupList(productGroupDao, groupList, updateDate)
 
     ctx.status = 200;
     ctx.body.data = {};
@@ -47,14 +29,7 @@ module.exports = async (ctx, next) => {
 }
 
 async function insertGroupList(productGroupDao, insertList, updateDate) {
+    insertList = ProductGroupDao.mappingList(insertList)
     insertList.map((item) => item.setUpdateDate(updateDate));
     await productGroupDao.insertMany(insertList);
-}
-
-async function updateGroupList(productGroupDao, updateList, updateDate) {
-    for (const updateItem of updateList) {
-        updateItem.setUpdateDate(updateDate);
-        delete updateItem[ProductGroup.Schema.GROUP_ID.key];
-        await productGroupDao.updateOne({ itemCategory: updateItem.getItemCategory() }, updateItem);
-    }
 }

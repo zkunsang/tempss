@@ -185,7 +185,7 @@ export default {
     importCSVItem(file) {
       importCSV(file, 'groupId', async (productGroupList) => {
         const tableId = 'productGroup'
-        updateDataTable(
+        await updateDataTable(
           this.GET_TABLE_VERSION,
           this.UPDATE_GROUP_MANY,
           this.UPDATE_TABLE_VERSION,
