@@ -75,11 +75,13 @@ async function processUserLoginInventory(inventoryService, userInventoryList) {
 }
 
 async function processLoginPictureSlot(inventoryService, userInventoryList) {
-    const pictureSlotLIst = userInventoryList.map((item) => item.itemId == 'pictureSlot');
+    const pictureSlotLIst = userInventoryList.filter((item) => item.itemId == 'pictureSlot');
     if(pictureSlotLIst.length != 0) { return; }
 
     const pictureSlot = InventoryService.makeInventoryObject('pictureSlot', 1);
     await inventoryService.processPut([pictureSlot]);
+
+    userInventoryList.push(pictureSlot);
 }
 /**
  * @swagger
