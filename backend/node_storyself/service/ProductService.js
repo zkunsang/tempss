@@ -1,5 +1,6 @@
 const ValidateUtil = require('../util/ValidateUtil');
 const Receipt = require('../models/mongo/Receipt');
+const dbRedisPB = require('@ss/dbRedisPB');
 const fetch = require('node-fetch');
 const AppStore = ValidateUtil.AppStore;
 const helper = require('../helper');
@@ -37,6 +38,7 @@ class ProductService {
             throw new SSError.Service(SSError.Service.Code.nonValidGoogleReceipt, `${uid} - ${purchaseToken}`);
         }
 
+        // 영수증 샘플
         // acknowledgementState: 1
         // consumptionState: 0
         // developerPayload: '{"developerPayload":"","is_free_trial":false,"has_introductory_price_trial":false,"is_updated":false,"accountId":""}'
@@ -66,7 +68,7 @@ class ProductService {
     }
 
     static getAccessToken() {
-        return helper.googleAuth.getAccessToken();
+        return dbRedisPB.getAccessToken();
     }
 }
 

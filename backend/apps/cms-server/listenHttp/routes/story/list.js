@@ -1,6 +1,7 @@
 const StoryDao = require('@ss/daoMongo/storyDao');
 const ReqStoryList = require('@ss/models/cmsController/ReqStoryList');
 
+
 module.exports = async (ctx, next) => {
     const reqStoryList = new ReqStoryList(ctx.request.body);
     ReqStoryList.validModel(reqStoryList);

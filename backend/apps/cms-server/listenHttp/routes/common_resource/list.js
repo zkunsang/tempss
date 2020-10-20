@@ -1,4 +1,5 @@
-const DataTableDao = require('@ss/daoMongo/DataTableDao');
+const CommonResourceDao = require('@ss/daoMongo/CommonResourceDao');
+
 const DateUtil = require('@ss/util/DateUtil');
 
 function unixTimeStampToDateString(dataTableList) {
@@ -6,13 +7,14 @@ function unixTimeStampToDateString(dataTableList) {
         DateUtil.unixTimeStampToDateString(dataTable, 'updateDate');
     }
 }
-module.exports = async (ctx, next) => {
-    const dataTableDao = new DataTableDao(ctx.$dbMongo);
-    const dataTableList = await dataTableDao.findAll();
 
-    unixTimeStampToDateString(dataTableList);
+module.exports = async (ctx, next) => {
+    const commonResourceDao = new CommonResourceDao(ctx.$dbMongo);
+    const commonResourceList = await commonResourceDao.findAll();
+
+    unixTimeStampToDateString(commonResourceList);
     
     ctx.status = 200;
-    ctx.body.data = { dataTableList };
+    ctx.body.data = commonResourceList || [];
     await next();
 }
