@@ -12,7 +12,7 @@
     <v-btn color="primary" dark class="mb-2" @click.prevent="exportCSVStory">스토리 데이터 출력</v-btn>
     <v-file-input accept=".csv" label="스토리 데이터(csv)" @change="importCSVStory"></v-file-input>
     <v-dialog v-model="dialog">
-      <TemplateStoryVue></TemplateStoryVue>
+      <TemplateStoryVue dialog='dialog'></TemplateStoryVue>
     </v-dialog>
     </v-container>
     <v-card v-for="(story, index) in storyList" :key="index" >
@@ -57,6 +57,12 @@ export default {
   },
   async created() {
     await this.getStoryList();
+    eventBus.$on('createStoryClose', async (needRefresh) => {
+      this.dialog = false;
+      if(needRefresh) {
+        await this.getStoryList();
+      }
+    });
   },
   
   methods: {
@@ -79,10 +85,6 @@ export default {
       this.dialog=true;
       this.saveError='';
 
-      this.$nextTick(() => {
-        eventBus.$emit('createStory', this.storyData, true);
-      })
-      
       this.storyData = {
         status: 0,
       }

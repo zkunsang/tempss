@@ -12,6 +12,7 @@ import Shop from '../components/Shop.vue'
 import ShopGroup from '../components/ShopGroup.vue'
 import DataTable from '../components/DataTable.vue'
 import ResourceList from '../components/ResourceList.vue'
+import CommonResource from '../components/CommonResource.vue'
 
 import Home from '../components/Home.vue'
 
@@ -98,6 +99,11 @@ const router = new VueRouter({
         {
             path: '/resource',
             component: ResourceList,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/commonResource',
+            component: CommonResource,
             beforeEnter: requireAuth
         },
         {

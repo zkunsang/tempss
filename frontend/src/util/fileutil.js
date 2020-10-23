@@ -4,7 +4,7 @@ const saveAs = require('file-saver');
 const { unparse, parse } = require('papaparse');
 const XLSX = require('xlsx');
 
-const { s3Info } = require(`../config/${process.env.NODE_ENV}/s3.json`);
+const { s3Info, s3Url } = require(`../config/${process.env.NODE_ENV}/s3.json`);
 const s3Source = new AWS.S3(s3Info);
 
 const bucketRegion = 'ap-northeast-2';
@@ -13,6 +13,10 @@ AWS.config.update({ region: bucketRegion });
 async function getCRC(inputFile) {
     const data = await inputFile.arrayBuffer();
     return crc.crc32(data).toString(16);
+}
+
+function getS3Url() {
+    return s3Url;
 }
 
 async function s3Upload(inputFile, key) {
@@ -92,7 +96,7 @@ function createCSVBlob(list) {
 }
 
 function importCSV(file, notNullColumns, fn) {
-    if(!file) return;
+    if (!file) return;
     const reader = new FileReader();
 
     reader.readAsText(file);
@@ -104,20 +108,61 @@ function importCSV(file, notNullColumns, fn) {
             skipEmptyLines: true,
             header: true,
         };
-        
+
         const data = parse(e.target.result, options);
-        
+
         await fn(removeEmptyRow(data.data, notNullColumns))
     }
 
     function removeEmptyRow(data, notNullColumn) {
         const retList = [];
-        for(const row of data) {
-            if(row[notNullColumn]) retList.push(row)
+        for (const row of data) {
+            if (row[notNullColumn]) retList.push(row)
         }
 
         return retList;
     }
+}
+
+async function onFileDelimiter( resourceList, fileList ) {
+    const ARO = _.keyBy(resourceList, "resourceId");
+    const AROC32 = _.keyBy(resourceList, "crc32");
+
+    let insertList = [];
+    let updateList = [];
+    let conflictList = [];
+
+    for (var i in fileList) {
+        let fileObject = {};
+
+        let file = fileList[i];
+        fileObject.file = file;
+        fileObject.size = file.size;
+        fileObject.resourceId = file.name;
+
+        let file_buffer = await readFileAsync(file);
+        fileObject.crc32 = crc.crc32(file_buffer).toString(16);
+
+        const crcFile = AROC32[fileObject.crc32];
+        if (crcFile) {
+            fileObject.vicon = "mdi-emoticon-confused"
+            conflictList.push(fileObject)
+            continue;
+        }
+
+        const updateFile = ARO[fileObject.resourceId];
+
+        if (updateFile) {
+            fileObject.version = updateFile.version + 1
+            updateList.push(fileObject);
+            continue;
+        }
+
+        fileObject.version = 1;
+        insertList.push(fileObject)
+    }
+
+    return { insertList, updateList, conflictList };
 }
 
 module.exports = {
@@ -130,5 +175,7 @@ module.exports = {
     exportCSV,
     importCSV,
     createCSVFile,
-    getCRC
+    getCRC,
+    onFileDelimiter,
+    getS3Url
 };

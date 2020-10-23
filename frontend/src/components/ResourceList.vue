@@ -14,7 +14,7 @@
       <template v-slot:top>
         <v-alert v-if="isLive" type="info" dense>데이터 수정 -> 디자인 적용</v-alert>
           <v-toolbar flat color="white">
-            <v-toolbar-title>리소스 리스트</v-toolbar-title>
+            <v-toolbar-title>리소스 리스트(aos)</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
           </v-toolbar>
@@ -92,7 +92,7 @@ export default {
   methods: {
     ...mapActions([
       'LIST_AOS_RESOURCE',
-      'UPDATE_AOS_RESOURCE',
+      'UPDATE_AOS_RESOURCE_MANY',
       'UPDATE_TABLE_VERSION',
       'GET_TABLE_VERSION'
     ]),
@@ -106,7 +106,7 @@ export default {
 
         await updateDataTable(
           this.GET_TABLE_VERSION,
-          this.UPDATE_AOS_RESOURCE,
+          this.UPDATE_AOS_RESOURCE_MANY,
           this.UPDATE_TABLE_VERSION,
           tableId,
           { resourceList }

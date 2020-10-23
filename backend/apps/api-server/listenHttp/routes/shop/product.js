@@ -23,7 +23,7 @@ function makeInventoryList(productRewardList) {
 function createProductLog(userInfo, productInfo, purchaseDate) {
     const uid = userInfo.uid;
     const productId = productInfo.productId;
-    const cost = productInfo.cost;
+    const cost = productInfo.costKr;
 
     return new ProductLog({ uid, productId, cost, purchaseDate });
 }

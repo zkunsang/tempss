@@ -1,9 +1,5 @@
 <template>
   <v-container>
-    <v-layout
-      text-center
-      wrap
-    >
     <v-overlay :value="uploading">
       <v-progress-circular
         v-if="this.insertList.length"
@@ -27,9 +23,6 @@
         업데이트 {{ updateProgress }}
       </v-progress-circular>
     </v-overlay>
-    <v-container>
-      <v-file-input multiple label="File input" @change="onFileUpload"></v-file-input>
-    </v-container>
     <v-container v-if="updateList.length">
       업데이트 리스트
       <v-chip v-for="item in updateList" :key="item.resourceId" color="blue">
@@ -56,119 +49,102 @@
     <v-container v-if="updateList.length || insertList.length">
       <v-btn @click="uploadFile">업로드</v-btn>
     </v-container>
-      
+    <v-layout
+      text-center
+      wrap
+    >
       <v-data-table
+        dense
         :headers="headers"
         :items="resourceList"
-        :search="search"
-        sort-by="updateDate"
+        sort-by="resourceId"
         class="elevation-1"
       >
-        <template v-slot:[`item.resourceId`]="{ item }">
-          <a :href="`${getDownloadUrl(item)}`">{{item.resourceId}}</a>
-        </template>
-        
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Aos</v-toolbar-title>
-            <v-divider
-              class="mx-4"
-              inset
-              vertical
-            ></v-divider>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              hide-details
-            ></v-text-field>
+            <v-toolbar-title>공용 리소스</v-toolbar-title>
+            <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
           </v-toolbar>
         </template>
         <template v-slot:no-data>
-          <v-btn color="primary" @click="getList">Reset</v-btn>
+          <v-btn color="primary">Reset</v-btn>
         </template>
-        
-
       </v-data-table>
-      <v-btn color="primary" @click="getList">Reset</v-btn>
+      <v-row>
+        <v-col>
+          <v-file-input multiple label="리소스 데이터" @change="onFileUpload"></v-file-input>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-btn @click="exportCSVResource">리소스 데이터(csv)</v-btn>
+          <v-file-input accept=".csv" label="리소스 데이터(csv)" @change="importCSVResource"></v-file-input>
+        </v-col>
+      </v-row>
+
     </v-layout>
   </v-container>
 </template>
+<script src="xlsx.full.min.js"></script>
+<script src="js/jhxlsx.js"></script>
 
 <script>
-import { mapActions } from 'vuex';
+
+import { mapActions, mapState } from 'vuex';
 import _ from 'lodash'
-const {getS3Url, s3Upload, onFileDelimiter} = require('../util/fileutil');
-const {updateDataTable} = require('../util/dataTableUtil');
+
+const no_image = require(`../assets/no_image.jpg`);
+import config from '../../src/config/config';
 
 var crc = require('crc');
+const { s3Upload, onFileDelimiter, importCSV, exportCSV } = require('../util/fileutil');
+const { updateDataTable } = require('../util/dataTableUtil');
+
+const tableId = 'commonResource';
 
 export default {
-  name: 'AosUpload',
+  name: 'resourceList',
   data() {
     return {
-      search: '',
-      uploading: false,
-      overlay: false,
-      updateProgress: 0,
       insertProgress: 0,
+      updateProgress: 0,
+      uploading: false,
       resourceList: [],
       updateList: [],
       insertList: [],
+      
       conflictList: [],
-      dialog: false,
-      storyId: null,
-      isNew: false,
       headers: [
-        { text: '아이디', value: 'resourceId' },
-        { text: 'version', value: 'version' },
-        { text: 'size', value: 'size' },
+        { text: 'resourceId', value: 'resourceId' },
         { text: 'crc32', value: 'crc32' },
+        { text: 'size', value: 'size' },
+        { text: 'version', value: 'version' },
         { text: 'updateDate', value: 'updateDate' },
-        { text: 'patchVersion', value: 'patchVersion' },
       ],
-      editedItem: {},
     }
   },
   async created() {
-    this.storyId = this.$route.params.storyId;
-    if(this.storyId) {
-      await this.getList();
-    }
-
-    this.isNew = !this.storyId;
+    await this.refreshResourceList();
   },
   computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    },
+    ...mapState({
+        CDN_URL: 'CDN_URL'
+    }),
   },
-  watch: {
-    dialog (val) {
-      val || this.close()
-    },
-  },
+  watch: {},
   methods: {
     ...mapActions([
-      'LIST_AOS_RESOURCE',
-      'LIST_AOS_STORY_RESOURCE',
-      'UPDATE_AOS_RESOURCE',
-      'GET_TABLE_VERSION',
-      'UPDATE_TABLE_VERSION'
+      'LIST_COMMON_RESOURCE',
+      'UPDATE_COMMON_RESOURCE',
+      'UPDATE_COMMON_RESOURCE_MANY',
+      'UPDATE_TABLE_VERSION',
+      'GET_TABLE_VERSION'
     ]),
-    getDownloadUrl(item) {
-      const {storyId, version, resourceId} = item;
-      const url = `${getS3Url()}${storyId}/aos/${version}/${resourceId}`;
-      return url;
-    },
     async s3Uploads(list) {
       for(let i in list) {
         let item = list[i];
 
         item.storyId = this.storyId;
         
-        await s3Upload(item.file, `${this.storyId}/aos/${item.version}/${item.resourceId}`);
+        await s3Upload(item.file, `common_resource/${item.version}/${item.resourceId}`);
         this.updateProgress = parseInt(( parseInt(i) + 1 ) / list.length * 100);
         delete item.file;
       }
@@ -181,45 +157,58 @@ export default {
       await this.s3Uploads(this.updateList);
       await this.s3Uploads(this.insertList);
 
-      await this.UPDATE_AOS_RESOURCE({
+      await this.UPDATE_COMMON_RESOURCE({
         insertList: this.insertList, 
         updateList: this.updateList, 
         storyId: this.storyId
       });
 
       this.uploading = false;
-
-      const tableId = 'resource';
-
       await this.getList();
-      const totalResourceList = await this.allResourceList();
-      
       await updateDataTable(
         this.GET_TABLE_VERSION,
         null,
         this.UPDATE_TABLE_VERSION,
         tableId,
-        { resourceList: totalResourceList }
+        { resourceList: this.resourceList }
       )
     },
     async getList() {
       this.updateList = [];
       this.insertList = [];
       this.conflictList = [];
-
       this.resourceList = [];
-      if(this.isNew) return;
-      this.resourceList = await this.LIST_AOS_STORY_RESOURCE(this.storyId);
+
+      await this.refreshResourceList();
     },
-    async allResourceList() {
-      return await this.LIST_AOS_RESOURCE();
+    async refreshResourceList() {
+      this.resourceList = await this.LIST_COMMON_RESOURCE();
     },
     async onFileUpload(fileList) {
-      const { insertList, updateList, conflictList } = await onFileDelimiter(this.resourceList, fileList);
+      const { insertList, updateList, conflictList } 
+        = await onFileDelimiter(this.resourceList, fileList);
+
       this.insertList = insertList;
       this.updateList = updateList;
       this.conflictList = conflictList;
     },
+    importCSVResource(file) {
+      importCSV(file, 'resourceId', async (resourceList) => {
+        await updateDataTable(
+          this.GET_TABLE_VERSION,
+          this.UPDATE_COMMON_RESOURCE_MANY,
+          this.UPDATE_TABLE_VERSION,
+          tableId,
+          { resourceList }
+        );
+
+        await this.refreshResourceList();
+      })
+    },
+    exportCSVResource() {
+      exportCSV(this.resourceList, 'commonResource.csv');
+    },
   }
+  
 };
 </script>

@@ -32,8 +32,19 @@ const actions = {
     LIST_AOS_RESOURCE(_) {
         return api.resource.list();
     },
+    LIST_COMMON_RESOURCE(_) {
+        return api.commonResource.list();
+    },
+    UPDATE_COMMON_RESOURCE(_, resourceList) {
+        return api.commonResource.update(resourceList);
+    },
+    UPDATE_COMMON_RESOURCE_MANY(_, resourceList) {
+        return api.commonResource.updateMany(resourceList);
+    },
     UPDATE_AOS_RESOURCE(_, resourceList) {
-        console.log(resourceList);
+        return api.resource.update(resourceList);
+    },
+    UPDATE_AOS_RESOURCE_MANY(_, resourceList) {
         return api.resource.updateMany(resourceList);
     },
     LIST_ITEM(_) {

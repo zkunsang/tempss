@@ -33,7 +33,7 @@ async function updateDataTable(
     const afterCRC32 = await getCRC(file);
 
     // 2. data update
-    await fnUpdateTable(dataPayload);
+    if(fnUpdateTable) await fnUpdateTable(dataPayload);
 
     // 3. s3upload
     await s3Upload(file, `data/${version}/${fileName}`);

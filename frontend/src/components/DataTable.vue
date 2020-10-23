@@ -39,7 +39,6 @@ import _ from 'lodash'
 import config from '../../src/config/config';
 var crc = require('crc');
 const { exportCSV, importCSV } = require("../util/fileutil");
-const { updateDataTable } = require("../util/dataTableUtil");
 
 export default {
   name: 'dataTable',

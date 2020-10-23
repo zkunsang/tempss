@@ -58,9 +58,9 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="4">
                           <v-text-field 
-                            v-model.number="productEdit.cost" 
+                            v-model.number="productEdit.costKr" 
                             label="비용(krw)"
-                            ref="cost"
+                            ref="costKr"
                             type="number"
                           ></v-text-field>
                         </v-col>
@@ -234,7 +234,7 @@ export default {
         { text: '아이디', value: 'productId' },
         { text: '그룹 아이디', value: 'groupId' },
         { text: '상품 타입', value: 'productType' },
-        { text: '가격(krw)', value: 'cost' },
+        { text: '가격(krw)', value: 'costKr' },
         { text: '구글 키', value: 'google' },
         { text: '애플 키', value: 'apple' },
         { text: '시작 시간', value: 'startDate' },
@@ -312,7 +312,7 @@ export default {
         productId: '',
         groupId: '',
         productType: 'normal',
-        cost: 0,
+        costKr: 0,
         google: '',
         apple: '',
         startDate: null,

@@ -14,7 +14,8 @@ class ProductDao extends Dao {
         return [
             Product.Schema.PRODUCT_ID.key,
             Product.Schema.PRODUCT_TYPE.key,
-            Product.Schema.COST.key,
+            Product.Schema.COST_KR.key,
+            Product.Schema.COST_KR_ORIGIN.key,
             Product.Schema.GOOGLE.key,
             Product.Schema.UPDATE_DATE.key,
             Product.Schema.TAG_COLOR.key,
@@ -33,7 +34,8 @@ class ProductDao extends Dao {
         return [
             Product.Schema.GROUP_ID.key,
             Product.Schema.PRODUCT_TYPE.key,
-            Product.Schema.COST.key,
+            Product.Schema.COST_KR.key,
+            Product.Schema.COST_KR_ORIGIN.key,
             Product.Schema.GOOGLE.key,
             Product.Schema.APPLE.key,
             Product.Schema.START_DATE.key,

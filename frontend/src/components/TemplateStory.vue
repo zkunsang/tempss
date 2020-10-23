@@ -71,13 +71,13 @@
         </v-card>
         <v-divider/>
         </v-col>
-        <v-col  cols=6>
+        <v-col  cols=6 >
         <v-card>
             <v-row>
             <v-col>
                 리소스
             </v-col>
-            <v-col>
+            <v-col >
               <AosUploadVue></AosUploadVue>
             </v-col>
             </v-row>
@@ -88,7 +88,7 @@
     </v-container>
     <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+        <v-btn color="blue darken-1" text @click="onClose">Close</v-btn>
         <v-btn color="blue darken-1" text @click="onSave">Save</v-btn>
     </v-card-actions>
     </v-card>
@@ -189,6 +189,11 @@ export default {
         this.thumbImg = URL.createObjectURL(thumbFile);
       });
     },
+    onClose(needRefresh = false) {
+      this.isNew ? 
+        eventBus.$emit('createStoryClose', needRefresh): 
+        this.$router.push('/story');
+    },
     async onSave() {
       if( !this.storyData.storyId ) {
         this.$nextTick(() => this.$refs.inputTitle.focus())
@@ -222,7 +227,7 @@ export default {
         await s3Upload(this.textFile, `${this.storyData.storyId}/textFile/${this.storyData.textFileVersion}/${this.storyData.textFile}`);
       }
 
-      this.dialog = false
+      this.onClose(true);
     }
   }
 };

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { update } from 'lodash';
 import router from '../router'
 import store from '../store'
 const apiConfig = require(`../config/${process.env.NODE_ENV}/api.json`);
@@ -74,6 +75,15 @@ export const resource = {
   updateMany(resourceList) {
     return request('post', '/resource/updateMany', resourceList);
   }
+}
+
+export const commonResource = {
+  list() {
+    return request('post', '/common_resource/list', null);
+  },
+  update(resourceList) {
+    return request('post', '/common_resource/update', resourceList);
+  },
 }
 
 export const item = {
