@@ -78,13 +78,25 @@ async function processUserLoginInventory(inventoryService, userInventoryList) {
 }
 
 async function processLoginPictureSlot(inventoryService, userInventoryList) {
-    const pictureSlotLIst = userInventoryList.filter((item) => item.itemId == 'pictureSlot');
-    if(pictureSlotLIst.length != 0) { return; }
+    const pictureSlotList = userInventoryList.filter((item) => item.itemId == 'pictureSlot');
+    const itemList = [];
+    if(pictureSlotList.length == 0) { 
+        const pictureSlot = InventoryService.makeInventoryObject('pictureSlot', 1);
+        itemList.push(pictureSlot);
+    }
 
-    const pictureSlot = InventoryService.makeInventoryObject('pictureSlot', 1);
-    await inventoryService.processPut([pictureSlot]);
+    const honeySlotList = userInventoryList.filter((item) => item.itemId == 'honey');
 
-    userInventoryList.push(pictureSlot);
+    // TODO: test
+    if(honeySlotList.length == 0) { 
+        const honey = InventoryService.makeInventoryObject('honey', 5000);
+        itemList.push(honey);
+    }
+
+    await inventoryService.processPut(itemList);
+    for(const item of itemList) {
+        userInventoryList.push(item);
+    }
 }
 /**
  * @swagger
