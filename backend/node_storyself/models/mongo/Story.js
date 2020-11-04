@@ -15,10 +15,11 @@ const Schema = {
     TEXTFILE: { key: 'textFile', required: true, type: ValidType.STRING },
     TEXTFILE_CRC32: { key: 'textFileCrc32', required: true, type: ValidType.STRING },
     TEXTFILE_VERSION: { key: 'textFileVersion', required: true, type: ValidType.NUMBER },
+    FACE_TAG: { key: 'faceTag', required: true, type: ValidType.STRING },
 }
 
 class Story extends Model {
-    constructor({ storyId, status, version, thumbnail, thumbnailCrc32, thumbnailVersion, textFile, textFileVersion, textFileCrc32 }) {
+    constructor({ storyId, status, version, thumbnail, thumbnailCrc32, thumbnailVersion, textFile, textFileVersion, textFileCrc32, faceTag }) {
         super();
 
         this[Schema.STORY_ID.key] = ValidateUtil.setNullUndefined(storyId);
@@ -32,6 +33,9 @@ class Story extends Model {
         this[Schema.TEXTFILE.key] = ValidateUtil.setNullUndefined(textFile);
         this[Schema.TEXTFILE_CRC32.key] = ValidateUtil.setNullUndefined(textFileCrc32);
         this[Schema.TEXTFILE_VERSION.key] = ValidateUtil.setNullUndefined(textFileVersion);
+
+        this[Schema.FACE_TAG.key] = ValidateUtil.setNullUndefined(faceTag);
+        
     }
 
     setVersion(version) {
@@ -76,6 +80,10 @@ class Story extends Model {
 
     getTextFileCrc32() {
         return this[Schema.TEXTFILE_CRC32.key];
+    }
+
+    getFaceTag() {
+        return this[Schema.FACE_TAG.key];
     }
 }
 

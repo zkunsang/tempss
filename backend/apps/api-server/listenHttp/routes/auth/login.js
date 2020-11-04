@@ -10,12 +10,15 @@ const SessionDao = require('@ss/daoRedis/SessionDao');
 const InventoryService =require('@ss/service/InventoryService');
 
 const User = require('@ss/models/mongo/User');
+const Item = require('@ss/models/mongo/Item');
+
 const UserStatus = require('@ss/util/ValidateUtil').UserStatus;
 const ReqAuthLogin = require('@ss/models/controller/ReqAuthLogin');
 
 const LoginLog = require('@ss/models/apilog/LoginLog');
 
 const shortid = require('shortid');
+const ArrayUtil = require('@ss/util/ArrayUtil');
 
 module.exports = async (ctx, next) => {
     const loginDate = ctx.$date;
@@ -78,18 +81,26 @@ async function processUserLoginInventory(inventoryService, userInventoryList) {
 }
 
 async function processLoginPictureSlot(inventoryService, userInventoryList) {
-    const pictureSlotList = userInventoryList.filter((item) => item.itemId == 'pictureSlot');
+    const invenMap = ArrayUtil.getMapArrayByKey(userInventoryList, Item.Schema.ITEM_ID.key);
+    
+    const pictureSlotList = invenMap['pictureSlot'];
     const itemList = [];
     if(pictureSlotList.length == 0) { 
         const pictureSlot = InventoryService.makeInventoryObject('pictureSlot', 1);
         itemList.push(pictureSlot);
     }
 
-    const honeySlotList = userInventoryList.filter((item) => item.itemId == 'honey');
+    const honeySlotList = invenMap['honey'];
 
-    // TODO: test
     if(honeySlotList.length == 0) { 
         const honey = InventoryService.makeInventoryObject('honey', 5000);
+        itemList.push(honey);
+    }
+
+    const goldilocksList = invenMap['Goldilocks'];
+
+    if(goldilocksList.length == 0) { 
+        const honey = InventoryService.makeInventoryObject('Goldilocks', 1);
         itemList.push(honey);
     }
 

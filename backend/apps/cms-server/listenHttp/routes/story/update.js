@@ -49,6 +49,7 @@ function checkChange(newStoryData, oldStoryData) {
     if (newStoryData.getTextFile() !== oldStoryData.getTextFile()) checkCount++;
     if (newStoryData.getTextFileCrc32() !== oldStoryData.getTextFileCrc32()) checkCount++;
     if (newStoryData.getTextFileVersion() !== oldStoryData.getTextFileVersion()) checkCount++;
+    if (newStoryData.getFaceTag() !== oldStoryData.getFaceTag()) checkCount++;
 
     if (checkCount === 0) {
         throw new Error('no change');
