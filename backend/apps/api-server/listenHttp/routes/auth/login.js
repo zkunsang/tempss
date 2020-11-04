@@ -85,23 +85,23 @@ async function processLoginPictureSlot(inventoryService, userInventoryList) {
     
     const pictureSlotList = invenMap['pictureSlot'];
     const itemList = [];
-    if(pictureSlotList && pictureSlotList.length == 0) { 
+    if(pictureSlotList) { 
         const pictureSlot = InventoryService.makeInventoryObject('pictureSlot', 1);
         itemList.push(pictureSlot);
     }
 
     const honeySlotList = invenMap['honey'];
 
-    if(honeySlotList && honeySlotList.length == 0) { 
+    if(honeySlotList) { 
         const honey = InventoryService.makeInventoryObject('honey', 5000);
         itemList.push(honey);
     }
 
     const goldilocksList = invenMap['Goldilocks'];
 
-    if(goldilocksList && goldilocksList.length == 0) { 
-        const honey = InventoryService.makeInventoryObject('Goldilocks', 1);
-        itemList.push(honey);
+    if(goldilocksList) { 
+        const goldi = InventoryService.makeInventoryObject('Goldilocks', 1);
+        itemList.push(goldi);
     }
 
     if(itemList.length == 0) return;
