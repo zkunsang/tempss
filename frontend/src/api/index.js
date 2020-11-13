@@ -14,6 +14,7 @@ const DOMAIN = apiConfig.backendUrl;
 const request = (method, url, data) => {
   const { sessionId } = localStorage;
   data = Object.assign(data || {}, { sessionId });
+
   return axios({
     method,
     url: DOMAIN + url,
@@ -23,9 +24,9 @@ const request = (method, url, data) => {
       return result.data.data;
     })
     .catch(result => {
-
       let status = result.response.status;
       const responseBody = result.response.data;
+      
       const { err_message, err_code } = responseBody.data
       if (status === UNAUTHORIZED) {
         onUnauthorized()
@@ -173,5 +174,14 @@ export const dataTable = {
   },
   get(tableInfo) {
     return request('post', '/datatable/get', tableInfo);
+  }
+}
+
+export const user = {
+  list(item) {
+    return request('post', '/user/list', item);
+  },
+  inventory(item) {
+    return request('post', '/user/inventory', item);
   }
 }

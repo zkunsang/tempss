@@ -21,15 +21,28 @@
         <v-card>
             <v-row>
             <v-col>
-                스토리 코드
+              스토리 코드
             </v-col>
             <v-col>
-                <v-text-field
-                v-model="storyData.storyId"
-                placeholder="스토리 코드"
-                ref="inputTitle"
-                :disabled="!isNew"
-                ></v-text-field>
+              <v-text-field
+              v-model="storyData.storyId"
+              placeholder="스토리 코드"
+              ref="inputTitle"
+              :disabled="!isNew"
+              ></v-text-field>
+            </v-col>
+            </v-row>
+            <v-divider/>
+            <v-row>
+            <v-col>
+              페이스 태그
+            </v-col>
+            <v-col>
+              <v-text-field
+              v-model="storyData.faceTag"
+              placeholder="페이스 태그"
+              ref="faceTag"
+              ></v-text-field>
             </v-col>
             </v-row>
         </v-card>
@@ -216,7 +229,7 @@ export default {
         this.storyData.textFileCrc32 = this.textFile.crc;
         this.storyData.textFileVersion = (this.originStoryData.textFileVersion || 0) + 1;
       }
-
+      
       const result = await saveFunc(this.storyData);
 
       if( this.thumbFile ) {

@@ -13,6 +13,7 @@ import ShopGroup from '../components/ShopGroup.vue'
 import DataTable from '../components/DataTable.vue'
 import ResourceList from '../components/ResourceList.vue'
 import CommonResource from '../components/CommonResource.vue'
+import UserList  from '../components/UserList.vue';
 
 import Home from '../components/Home.vue'
 
@@ -31,17 +32,50 @@ Vue.component('downloadExcel', JsonExcel);
 
 const requireAuth = async (to, from, next) => {
     const loginPath = `/login?rPath=${encodeURIComponent(to.path)}`;
-    
+
     const { sessionId, adminId } = localStorage;
-    
+
     await store.commit('LOGIN', { sessionId, adminId } || {});
-    
+
     store.getters.isAuth ? await next() : await next(loginPath);
 }
 
 const router = new VueRouter({
     mode: 'history',
-    routes: [
+    routes: getRouteList()
+});
+
+function getRouteList() {
+    const service = process.env.NODE_ENV;
+    return service.startsWith("cms") ? getCmsRoutes(): getUmsRoutes()
+}
+
+function getUmsRoutes() {
+    return [
+        {
+            path: '/',
+            component: Home,
+            beforeEnter: requireAuth,
+            redirect: '/userlist'
+        },
+        {
+            path: '/login',
+            component: Login
+        },
+        {
+            path: '/sign-in',
+            component: SignIn
+        },
+        {
+            path: '/userlist',
+            beforeEnter: requireAuth,
+            component: UserList
+        },
+    ]
+}
+
+function getCmsRoutes() {
+    return [
         {
             path: '/',
             component: Home,
@@ -117,6 +151,6 @@ const router = new VueRouter({
             beforeEnter: requireAuth,
         }
     ]
-});
+}
 
 export default router;

@@ -11,7 +11,11 @@ const state = {
     CDN_URL: s3Config.s3Url,
     backendUrl: apiConfig.backendUrl,
     appBarColor: themeConfig.appBarColor,
-    appBarTitle: themeConfig.appBarTitle
+    appBarTitle: themeConfig.appBarTitle,
+    
+    ITEM_LIST: [],
+    ITEM_CATEGORY_LIST: [],
+    ITEM_CATEGORY_MAP: []
 };
 
 export default state;

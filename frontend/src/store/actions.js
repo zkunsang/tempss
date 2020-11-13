@@ -122,7 +122,14 @@ const actions = {
     LIST_DATA_TABLE(_) {
         return api.dataTable.list();
     },
-    
+
+    // UMS
+    GET_USER_LIST(_, item) {
+        return api.user.list(item);
+    },
+    GET_USER_INVENTORY(_, userInfo){
+        return api.user.inventory(userInfo);
+    },
 }
 
 export default actions;

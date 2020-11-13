@@ -48,6 +48,7 @@
     "coverage": "nyc --reporter html --reporter text npm test",
     "cmsLocal": "env NODE_ENV=cmsLocal pm2 start apps/cms-server/app.js",
     "cmsDev": "env NODE_ENV=cmsDev pm2 start apps/cms-server/app.js",
+    "umsLocal": "env NODE_ENV=umsLocal pm2 start apps/ums-server/app.js",
     "apiLocal": "env NODE_ENV=apiLocal pm2 start apps/api-server/app.js",
     "apiks": "env NODE_ENV=apiKS pm2 start apps/api-server/app.js",
     "apiDev": "env NODE_ENV=apiDev pm2 start apps/api-server/app.js  -i max"

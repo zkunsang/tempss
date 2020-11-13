@@ -6,6 +6,8 @@
     "serve": "vue-cli-service serve",
     "cmsLocal": "env NODE_ENV=cmsLocal vue-cli-service serve",
     "cmsDev": "env NODE_ENV=cmsDev vue-cli-service serve",
+    "umsLocal": "env NODE_ENV=umsLocal vue-cli-service serve",
+    "umsDev": "env NODE_ENV=umsDev vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },

@@ -10,6 +10,10 @@ class DateUtil {
     }
 
     unixTimeStampToDateString(object, columnName) {
+        const length = object[columnName].toString().length;
+        if(length > 10) 
+            object[columnName] = object[columnName] / 1000;
+        
         object[columnName] = moment.unix(object[columnName]).format(defaultDateFormat);
     }
 }

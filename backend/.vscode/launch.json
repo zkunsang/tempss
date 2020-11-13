@@ -83,6 +83,18 @@
                 "NODE_ENV": "cmsLocal"
             },
             "program": "${workspaceFolder}\\apps\\cms-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[local]UMS",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "umsLocal"
+            },
+            "program": "${workspaceFolder}\\apps\\ums-server\\app.js"
         }
     ]
 }

@@ -1,0 +1,9 @@
+{
+    "s3Info": {
+        "accessKeyId": "AKIAU6NXKEDQFXAFTYTZ",
+        "secretAccessKey": "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",
+        "region": "ap-northeast-2",
+        "bucket": "local-story.storyself.com"
+    },
+    "s3Url": "http://local-story.storyself.com/"
+}

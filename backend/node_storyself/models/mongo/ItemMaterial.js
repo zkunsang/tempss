@@ -24,6 +24,7 @@ class ItemMaterial extends Model {
     }
 
     makeInventoryObject() {
+        
         let inventoryObj = {}
         inventoryObj[Inventory.Schema.ITEM_ID.key] = this[Schema.MATERIAL_ID.key];
         inventoryObj[Inventory.Schema.ITEM_QNY.key] = this[Schema.MATERIAL_QNY.key];
