@@ -52,6 +52,7 @@ async function authCheck(ctx, next, AdminDaoModel, SessionDaoModel) {
 
         ctx.$dbMongo = dbMongo;
         ctx.$dbRedis = dbRedis;
+        ctx.$adminInfo = adminInfo;
 
         await next();
 

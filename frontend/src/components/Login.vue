@@ -63,11 +63,8 @@ export default {
     ]),
     async onLogin() {
       try {
-        console.log(this.adminId, this.password);
         const loginResult = await this.LOGIN({adminId: this.adminId, password: this.password});
-        const initData = await this.LIST_ITEM();
-        
-        this.$store.commit('SET_ITEM_DATA_LIST', initData);
+        const itemList = await this.LIST_ITEM();
         await this.$router.push(this.$route.query.rPath || 'story');  
       }
       catch(err) {

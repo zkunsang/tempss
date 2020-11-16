@@ -103,7 +103,6 @@ export default {
 
     async refreshData() {
       const itemList = await this.LIST_ITEM();
-      this.$store.commit("SET_ITEM_DATA_LIST", itemList);
     }
   }
 

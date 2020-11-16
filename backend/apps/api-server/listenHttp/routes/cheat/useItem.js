@@ -15,7 +15,7 @@ module.exports = async (ctx, next) => {
     const inventoryService = new InventoryService(inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);
 
-    await inventoryService.processUse(reqCheatUseItem.getInventoryList(), InventoryService.USE_ACTION.CHEAT);
+    await inventoryService.processUse(InventoryService.USE_ACTION.CHEAT, reqCheatUseItem.getInventoryList(), );
 
     ctx.status = 200;
     ctx.body.data = {};

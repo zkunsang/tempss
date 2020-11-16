@@ -9,18 +9,23 @@ const ValidType = ValidateUtil.ValidType;
 const Schema = {
     BEFORE_INVEN: { key: 'beforeInven', required: true, type: ValidType.OBJECT },
     AFTER_INVEN: { key: 'afterInven', required: true, type: ValidType.OBJECT },
+    ACTION: { key: 'action', required: true, type: ValidType.ARRAY },
+    ADMIN_INFO: { key: 'adminInfo', required: false, type: ValidType.OBJECT }
 }
 
 class InventoryChangeUpdate extends Model {
-    constructor({ beforeInven, afterInven }) {
+    constructor({ beforeInven, afterInven, action, adminInfo }) {
         super();
         this[Schema.BEFORE_INVEN.key] = beforeInven;
         this[Schema.AFTER_INVEN.key] = afterInven;
+        this[Schema.ACTION.key] = action;
+        this[Schema.ADMIN_INFO.key] = adminInfo;
     }
 
     getInvenLog(uid, logDate) {
         const beforeInven = this[Schema.BEFORE_INVEN.key];
         const afterInven = this[Schema.AFTER_INVEN.key];
+        const action = this[Schema.ACTION.key];
 
         const itemId = beforeInven.getItemId();
         
@@ -35,7 +40,14 @@ class InventoryChangeUpdate extends Model {
         const afterQny = afterInven.getItemQny();
         const diffQny = afterQny - beforeQny;
 
-        return new InvenLog({uid, itemId, itemCategory, diffQny, beforeQny, afterQny, logDate});
+        const invenLog = { uid, itemId, itemCategory, diffQny, beforeQny, afterQny, logDate, action };
+        if(this.adminInfo) {
+            const { adminId, editKey } = this.adminInfo;
+            invenLog.adminId = adminId;
+            invenLog.editKey = editKey;
+        }
+        
+        return new InvenLog(invenLog);
     }
 }
 

@@ -45,7 +45,9 @@ module.exports = async (ctx, next) => {
     const inventoryService = new InventoryService(inventoryDao, userInfo, purchaseDate);
 
     const inventoryList = makeInventoryList(productRewardList);
-    await inventoryService.processPut(inventoryList);
+    await inventoryService.processPut(
+        InventoryService.PUT_ACTION.CHEAT, 
+        inventoryList);
     
     helper.fluent.sendProductLog(createProductLog(userInfo, productInfo, purchaseDate));
     

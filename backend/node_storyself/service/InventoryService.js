@@ -20,15 +20,28 @@ const SSError = require('../error');
 const ItemCache = require('@ss/dbCache/ItemCache');
 
 const PUT_ACTION = {
-    CEHAT: 'cheat',             // cheat
-    PURCHASE: 'purchase',       // 상품 현금 구매
-    STORY_BUY: 'storybuy',      // 스토리 구매
-}
+    PURCHASE: {
+        CASH: [1000, 1]
+    },
+    ADMIN: [1001, 1],
+    CHEAT: [1002, 1],
+    EXCHANGE: { 
+        STORY: [1003, 1],
+        ACCESSORY: [1003, 2],
+        SLOT: [1003, 3],
+    },
+    USER_INIT: [1004, 1]
+};
 
 const USE_ACTION = {
-    CEHAT: 'cheat',             // cheat
-    STORY_BUY: 'storybuy'       // 스토리 구매
-}
+    ADMIN: [2001, 1],
+    CHEAT: [2002, 1],
+    EXCHANGE: { 
+        STORY: [2003, 1],
+        ACCESSORY: [2003, 2],
+        SLOT: [2003, 3],
+    }
+};
 
 const Schema = {
     INVENTORY_DAO: { key: 'inventoryDao', required: true, type: ValidType.OBJECT, validObject: InventoryDao },
@@ -50,7 +63,7 @@ class InventoryService extends Service {
         return await this.inventoryDao.findMany({ uid });
     }
 
-    async checkPutItem(putInventoryList) {
+    async checkPutItem(putInventoryList, action, adminInfo) {
         Service.Validate.checkArrayObject(putInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(putInventoryList);
 
@@ -107,14 +120,15 @@ class InventoryService extends Service {
             updateList.push(userInventory);
         }
 
-        return new InventoryPutObject({ insertList, updateList, beforeInvenMap });
+        return new InventoryPutObject({ insertList, updateList, beforeInvenMap, action, adminInfo });
     }
 
-    async checkUseItem(useInventoryList) {
+    async checkUseItem(useInventoryList, action, adminInfo) {
         Service.Validate.checkArrayObject(useInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(useInventoryList);
 
-        const uid = this.userInfo.getUID();
+        // uid 사용 X objectId로 처리
+        // const uid = this.userInfo.getUID();
 
         const userInventoryListAll = await this.getUserInventoryList()
         const userInventoryMap = InventoryService.arrangeInventory(userInventoryListAll);
@@ -130,7 +144,7 @@ class InventoryService extends Service {
             const itemData = ItemCache.get(itemId);
 
             InventoryService.checkItemData(itemData, itemId);
-            InventoryService.checkItemUseable(itemData, itemId);
+            InventoryService.checkItemUseable(itemData, itemId, action);
 
             const groupId = itemData.getGroupId();
 
@@ -141,7 +155,7 @@ class InventoryService extends Service {
             InventoryService.calculateUse(userInventoryList, useInventory, deleteList, updateList);
         }
 
-        return new InventoryUseObject({ deleteList, updateList, beforeInvenMap });
+        return new InventoryUseObject({ deleteList, updateList, beforeInvenMap, action, adminInfo });
     }
 
     /**
@@ -191,6 +205,8 @@ class InventoryService extends Service {
         const beforeInvenMap = putObject.getBeforeInvenMap();
         const updateList = putObject.getUpdateList();
         const insertList = putObject.getInsertList()
+        const action = putObject.getAction();
+        const adminInfo = putObject.getAdminInfo();
 
         // 신규 추가된 아이템
         const afterInvenMap = {};
@@ -214,12 +230,12 @@ class InventoryService extends Service {
                 continue;
             }
 
-            const changeMap = new InventoryChangeUpdate({ beforeInven, afterInven });
+            const changeMap = new InventoryChangeUpdate({ beforeInven, afterInven, action, adminInfo });
             changeList.push(changeMap);
         }
 
         for (const insertInven of insertList) {
-            const changeMap = new InventoryChangeInsert({ insertInven });
+            const changeMap = new InventoryChangeInsert({ insertInven, action, adminInfo });
             changeList.push(changeMap);
         }
 
@@ -234,6 +250,8 @@ class InventoryService extends Service {
         const beforeInvenMap = useObject.getBeforeInvenMap();
         const updateList = useObject.getUpdateList();
         const deleteList = useObject.getDeleteList()
+        const action = useObject.getAction();
+        const adminInfo = useObject.getAdminInfo();
 
         // 신규 추가된 아이템
         const afterInvenMap = {};
@@ -254,12 +272,18 @@ class InventoryService extends Service {
                 continue;
             }
 
-            const changeMap = new InventoryChangeUpdate({ beforeInven, afterInven });
+            const changeMap = new InventoryChangeUpdate( 
+                adminInfo ? 
+                { beforeInven, afterInven, action, adminInfo } : 
+                { beforeInven, afterInven, action });
             changeList.push(changeMap);
         }
 
         for (const deleteInven of deleteList) {
-            const changeMap = new InventoryChangeDelete({ deleteInven });
+            const changeMap = new InventoryChangeDelete(
+                adminInfo ? 
+                { deleteInven, action, adminInfo } :
+                { deleteInven, action });
             changeList.push(changeMap);
         }
 
@@ -329,22 +353,21 @@ class InventoryService extends Service {
         }
     }
 
-    async processExchange(useInventoryList, putInventoryList) {
-        const putObject = await this.checkPutItem(putInventoryList);
-        const useObject = await this.checkUseItem(useInventoryList);
+    async processExchange(useAction, useInventoryList, putAction, putInventoryList, adminInfo) {
+        const putObject = await this.checkPutItem(putInventoryList, putAction, adminInfo);
+        const useObject = await this.checkUseItem(useInventoryList, useAction, adminInfo);
 
         await this.useItem(useObject);
         await this.putItem(putObject);
     }
 
-    async processPut(putInventoryList) {
-        const putObject = await this.checkPutItem(putInventoryList);
+    async processPut(action, putInventoryList, adminInfo) {
+        const putObject = await this.checkPutItem(putInventoryList, action, adminInfo);
         await this.putItem(putObject);
-
     }
 
-    async processUse(useInventoryList) {
-        const useObject = await this.checkUseItem(useInventoryList);
+    async processUse(action, useInventoryList, adminInfo) {
+        const useObject = await this.checkUseItem(useInventoryList, action, adminInfo);
         await this.useItem(useObject);
     }
 
@@ -410,7 +433,9 @@ class InventoryService extends Service {
         }
     }
 
-    static checkItemUseable(itemData, itemId) {
+    static checkItemUseable(itemData, itemId, action) {
+        if(action[0] == USE_ACTION.ADMIN[0]) return;
+
         if (!itemData.getUseable()) {
             throw new SSError.Service(SSError.Service.Code.useItemNoUseableItem, `${itemId} - not useable`);
         }
@@ -480,6 +505,10 @@ class InventoryService extends Service {
 
     static makeInventoryObject(itemId, itemQny) {
         return new Inventory({ itemId, itemQny });
+    }
+
+    static makeInventoryList(itemList) {
+        return itemList.map((item) => new Inventory({ itemId: item.itemId, itemQny: item.itemQny }))
     }
 
 

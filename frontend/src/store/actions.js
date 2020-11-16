@@ -47,8 +47,11 @@ const actions = {
     UPDATE_AOS_RESOURCE_MANY(_, resourceList) {
         return api.resource.updateMany(resourceList);
     },
-    LIST_ITEM(_) {
-        return api.item.list();
+    LIST_ITEM({ commit }) {
+        return api.item.list().then((itemList) => {
+            console.log(itemList);
+            commit('SET_ITEM_DATA_LIST', itemList);
+        });
     },
     DELETE_ITEM(_, item) {
         return api.item.delete(item);
@@ -127,9 +130,12 @@ const actions = {
     GET_USER_LIST(_, item) {
         return api.user.list(item);
     },
-    GET_USER_INVENTORY(_, userInfo){
+    GET_USER_INVENTORY(_, userInfo) {
         return api.user.inventory(userInfo);
     },
+    USER_EDIT(_, item) {
+        return api.user.edit(item);
+    }
 }
 
 export default actions;

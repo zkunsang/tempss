@@ -24,8 +24,6 @@ module.exports = async (ctx, next) => {
 
     ctx.status = 200;
     ctx.body.data = { inventoryList };
-
-    console.log(inventoryList);
-
+    
     await next();
 };

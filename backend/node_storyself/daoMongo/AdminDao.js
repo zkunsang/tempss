@@ -4,7 +4,7 @@ const Dao = require('./Dao');
 class AdminDao extends Dao {
     constructor(connection) {
         super();
-        this.db = connection.storyConnect.db('story');
+        this.db = connection.storyConnect.db('cms');
         this.collection = this.db.collection('admin');
     }
 

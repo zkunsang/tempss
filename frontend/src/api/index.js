@@ -183,5 +183,10 @@ export const user = {
   },
   inventory(item) {
     return request('post', '/user/inventory', item);
+  },
+  edit(item) {
+    console.log(item);
+    return request('post', '/user/edit', item)
   }
+  
 }

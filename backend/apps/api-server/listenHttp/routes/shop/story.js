@@ -35,7 +35,11 @@ module.exports = async (ctx, next) => {
     const inventoryService = new InventoryService(inventoryDao, userInfo, updateDate);
     InventoryService.validModel(inventoryService);
 
-    await inventoryService.processExchange(useInventoryList, putInventoryList);
+    await inventoryService.processExchange(
+        InventoryService.USE_ACTION.EXCHANGE.STORY,
+        useInventoryList, 
+        InventoryService.PUT_ACTION.EXCHANGE.STORY,
+        putInventoryList);
 
     const userInventoryList = await inventoryService.getUserInventoryList();
     InventoryService.removeObjectIdList(userInventoryList);

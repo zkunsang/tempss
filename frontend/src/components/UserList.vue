@@ -156,6 +156,7 @@
                 <v-row>
                   <v-textarea
                     label="변경 사유"
+                    v-model="editedItem.reason"
                   ></v-textarea>
                 </v-row>
               </v-col>
@@ -211,6 +212,8 @@ const { importCSV, exportCSV } = require('../util/fileutil');
 const { updateDataTable } = require('../util/dataTableUtil');
 
 const no_image = require(`../assets/no_image.jpg`);
+const ArrayUtil = require('../util/ArrayUtil');
+
 export default {
   data() {
     return {
@@ -223,6 +226,7 @@ export default {
       addItem: {},
       addError: false,
       selectedRow: null,
+      editUid: "",
       headers: [
         { text: '아이디', value: 'uid' },
         { text: '이메일', value: 'email' },
@@ -259,16 +263,24 @@ export default {
     ...mapActions([
       'GET_USER_LIST',
       'GET_USER_INVENTORY',
+      'USER_EDIT'
     ]),
     async getUserList() {
-      const body = await this.GET_USER_LIST()
+      const body = await this.GET_USER_LIST();
+      console.log(this.ITEM_LIST);
+      if(!this.ITEM_LIST) {
+        await this.LIST_ITEM();
+      }
+
       this.userList = body.userList;
     },
     async editItem(item) {
       this.dialog = true;
       this.editedItem = item;
-      const uid = item.uid;
+      this.editUid = item.uid;
 
+      const uid = item.uid;
+      
       this.newItemList = [];
       const body = await this.GET_USER_INVENTORY({uid});
       
@@ -298,30 +310,37 @@ export default {
     deleteItem(item) {
       this.newItemList = this.newItemList.filter((i) => i !== item);
     },
-    onSave() {
+    async onSave() {
       // 변경 아이템 확인
-      const alteredList = this.itemList.filter(item => item.originalCount !== item.itemQny);
+      let itemList = this.itemList.filter(item => item.originalCount !== item.itemQny);
 
       // input, delete아이템 분리
-      const inputList = [];
-      const deleteList = [];
-      for(const item of alteredList) {
-        if(item.itemQny - item.originalCount > 0) inputList.push(item)
-        else deleteList.push(item);
-      }
+      itemList = itemList.map(item => {return {itemId: item.itemId, itemQny: item.itemQny - item.originalCount}});
       
-      const inputItemMap = ArrayUtil.getMapArrayByKey(itemList, 'itemId');
-      const deleteItemMap = ArrayUtil.getMapArrayByKey(deleteList, 'itemId');
       for(const item of this.newItemList) {
-        if(item.itemQny > 0) {
-          console.log("hello");
-        }
-        else {
-          console.log("hello!");
-        }
+        itemList.push(item);
       }
-      
-      // 같은 아이템 합치기
+
+      const inputItemMap = ArrayUtil.getMapArrayByKey(itemList, 'itemId');
+      const itemKeyList = Object.keys(inputItemMap);
+
+      const newItemList = [];
+      for(const itemId of itemKeyList) {
+        const specificItemList = inputItemMap[itemId];
+
+        const newItem = { itemId, itemQny: 0};
+        
+        for(const item of specificItemList) {
+          newItem.itemQny += parseInt(item.itemQny);
+        }
+
+        newItemList.push(newItem);
+      }
+      const uid = this.editUid;
+      const inventory = newItemList;
+      const reason = this.editedItem.reason;
+      const userInfo = { uid, inventory, reason };
+      await this.USER_EDIT(userInfo);
     }
   }
 };

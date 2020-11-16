@@ -106,7 +106,10 @@ async function processLoginPictureSlot(inventoryService, userInventoryList) {
 
     if(itemList.length == 0) return;
     
-    await inventoryService.processPut(itemList);
+    await inventoryService.processPut(
+        InventoryService.PUT_ACTION.USER_INIT, 
+        itemList);
+
     for(const item of itemList) {
         userInventoryList.push(item);
     }
