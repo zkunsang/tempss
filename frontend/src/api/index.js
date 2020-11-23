@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { update } from 'lodash';
 import router from '../router'
 import store from '../store'
 const apiConfig = require(`../config/${process.env.NODE_ENV}/api.json`);
@@ -75,6 +74,9 @@ export const resource = {
   },
   updateMany(resourceList) {
     return request('post', '/resource/updateMany', resourceList);
+  },
+  delete(resoruceInfo) {
+    return request('post', '/resource/delete', resoruceInfo);
   }
 }
 
@@ -185,8 +187,28 @@ export const user = {
     return request('post', '/user/inventory', item);
   },
   edit(item) {
-    console.log(item);
     return request('post', '/user/edit', item)
   }
   
+}
+
+export const ip = {
+  list() {
+    return request('post', '/ip/list');
+  },
+  create(item) {
+    return request('post', '/ip/create', item);
+  },
+  edit(item) {
+    return request('post', '/ip/edit', item);
+  },
+}
+
+export const serverStatus = {
+  list() {
+    return request('post', '/serverStatus/list');
+  },
+  create(item) {
+    return request('post', '/serverStatus/create', item);
+  }
 }

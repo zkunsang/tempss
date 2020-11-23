@@ -235,7 +235,9 @@ export default {
   },
   computed: {
     ...mapState({
-        CDN_URL: 'CDN_URL'
+        CDN_URL: 'CDN_URL',
+        ITEM_LIST: 'ITEM_LIST',
+        ITEM_MATERIAL_LIST: 'ITEM_MATERIAL_LIST'
     }),
     isLive(){
       return config.isLive;
@@ -271,11 +273,11 @@ export default {
       this.materialItemList.splice(index, 1)
     },
     async getItemList() {
-      const itemResult = await this.LIST_ITEM();
+      await this.LIST_ITEM();
       const categoryResult = await this.LIST_CATEGORY();
 
-      this.itemList = itemResult.itemList;
-      this.itemMaterialList = itemResult.itemMaterialList;
+      this.itemList = this.ITEM_LIST;
+      this.itemMaterialList = this.ITEM_MATERIAL_LIST;
       this.categoryList = categoryResult.categoryList;
 
       this.itemArrangedMap = {};

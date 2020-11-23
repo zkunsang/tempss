@@ -28,11 +28,13 @@ const mutations = {
     SET_ITEM_DATA_LIST(state, itemData) {
         const itemCategoryList = itemData.itemCategoryList;
         const itemList = itemData.itemList;
+        const itemMaterialList = itemData.itemMaterialList;
         const itemCategoryMap = ArrayUtil.getMapArrayByKey(itemList, 'itemCategory');
         
         state.ITEM_LIST = itemList;
         state.ITEM_CATEGORY_LIST = itemCategoryList;
         state.ITEM_CATEGORY_MAP = itemCategoryMap;
+        state.ITEM_MATERIAL_LIST = itemMaterialList;
     }
 }
 

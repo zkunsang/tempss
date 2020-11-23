@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import VCalendar from 'v-calendar'
 
 import Login from '../components/Login.vue'
 import SignIn from '../components/SignIn.vue'
@@ -14,6 +15,8 @@ import DataTable from '../components/DataTable.vue'
 import ResourceList from '../components/ResourceList.vue'
 import CommonResource from '../components/CommonResource.vue'
 import UserList  from '../components/UserList.vue';
+import IpList  from '../components/IpList.vue';
+import ServerStatus  from '../components/ServerStatus.vue';
 
 import Home from '../components/Home.vue'
 
@@ -21,13 +24,11 @@ import NotFound from '../components/NotFound.vue'
 
 import store from '../store';
 
-import DatetimePicker from 'vuetify-datetime-picker'
-import 'vuetify-datetime-picker/src/stylus/main.styl'
 import JsonExcel from 'vue-json-excel';
-
 Vue.use(VueRouter);
-Vue.use(DatetimePicker);
-
+Vue.use(VCalendar, {
+    componentPrefix: 'vc'
+});
 Vue.component('downloadExcel', JsonExcel);
 
 const requireAuth = async (to, from, next) => {
@@ -70,6 +71,16 @@ function getUmsRoutes() {
             path: '/userlist',
             beforeEnter: requireAuth,
             component: UserList
+        },
+        {
+            path: '/iplist',
+            beforeEnter: requireAuth,
+            component: IpList
+        },
+        {
+            path: '/server',
+            beforeEnter: requireAuth,
+            component: ServerStatus
         },
     ]
 }

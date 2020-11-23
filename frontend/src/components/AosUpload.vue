@@ -67,6 +67,9 @@
         <template v-slot:[`item.resourceId`]="{ item }">
           <a :href="`${getDownloadUrl(item)}`">{{item.resourceId}}</a>
         </template>
+        <template v-slot:[`item.patchVersion`] = "{ item }">
+          <v-icon small class="mr-2" @click="onDelete(item)"> delete </v-icon>
+        </template>
         
         <template v-slot:top>
           <v-toolbar flat color="white">
@@ -155,7 +158,8 @@ export default {
       'LIST_AOS_STORY_RESOURCE',
       'UPDATE_AOS_RESOURCE',
       'GET_TABLE_VERSION',
-      'UPDATE_TABLE_VERSION'
+      'UPDATE_TABLE_VERSION',
+      'DELETE_AOS_RESOURCE'
     ]),
     getDownloadUrl(item) {
       const {storyId, version, resourceId} = item;
@@ -220,6 +224,13 @@ export default {
       this.updateList = updateList;
       this.conflictList = conflictList;
     },
+    async onDelete(item) {
+      const storyId = this.storyId;
+      const resourceId = item.resourceId;
+      
+      await this.DELETE_AOS_RESOURCE({ storyId, resourceId });
+      await this.getList();
+    }
   }
 };
 </script>

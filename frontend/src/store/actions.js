@@ -47,9 +47,11 @@ const actions = {
     UPDATE_AOS_RESOURCE_MANY(_, resourceList) {
         return api.resource.updateMany(resourceList);
     },
+    DELETE_AOS_RESOURCE(_, deleteInfo) {
+        return api.resource.delete(deleteInfo);
+    },
     LIST_ITEM({ commit }) {
         return api.item.list().then((itemList) => {
-            console.log(itemList);
             commit('SET_ITEM_DATA_LIST', itemList);
         });
     },
@@ -135,6 +137,23 @@ const actions = {
     },
     USER_EDIT(_, item) {
         return api.user.edit(item);
+    },
+
+    LIST_IP(_) {
+        return api.ip.list();
+    },
+    INSERT_IP(_, item) {
+        return api.ip.create(item);
+    },
+    EDIT_IP(_, item) {
+        return api.ip.edit(item);
+    },
+
+    GET_SERVER_STATUS(_) {
+        return api.serverStatus.list();
+    },
+    INSERT_SERVER_STATUS(_, serverStatus) {
+        return api.serverStatus.create(serverStatus);
     }
 }
 

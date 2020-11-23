@@ -15,7 +15,8 @@ const state = {
     
     ITEM_LIST: [],
     ITEM_CATEGORY_LIST: [],
-    ITEM_CATEGORY_MAP: []
+    ITEM_CATEGORY_MAP: [],
+    ITEM_MATERIAL_LIST: []
 };
 
 export default state;

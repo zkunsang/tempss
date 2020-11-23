@@ -77,6 +77,8 @@ function getCmsList() {
 function getUmsList() {
   return [
     { path: '/userlist', title: '유저 관리', icon: 'mdi-view-dashboard' },
+    { path: '/iplist', title: '아이피 관리', icon: 'mdi-view-dashboard' },
+    { path: '/server', title: '서버 관리', icon: 'mdi-view-dashboard' },
   ]
 }
 
