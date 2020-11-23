@@ -4,6 +4,19 @@ const NetworkLog = require('@ss/models/apilog/NetworkLog.js')
 const helper = require('@ss/helper');
 const SSError = require('@ss/error');
 
+const dbRedisPB = require('@ss/dbRedisPB');
+const DateUtil = require('@ss/util/DateUtil');
+
+function checkServerBlock(date) {
+    // serverBlock으로 변경
+    if(dbRedisPB.serverStatus.status == 0) 
+        return false;
+
+    const { startDate, endDate } = dbRedisPB.serverStatus;
+
+    return DateUtil.isBetween(date, startDate, endDate);
+}
+
 module.exports = async (ctx, next) => {
     ctx.$date = moment().valueOf();
 
@@ -12,6 +25,19 @@ module.exports = async (ctx, next) => {
     ctx.body.error = ctx.body.error || {};
     ctx.body.data = ctx.body.data || {};
 
+    
+    if(checkServerBlock(ctx.$date)) {
+        console.log("block")
+        return ;
+        // whitelist 통과
+    }
+
+    console.log("non block");
+
+    // blacklist block
+    
+    // serverStatus 확인
+    // whiteList 확인
     try {
         await next();
     }

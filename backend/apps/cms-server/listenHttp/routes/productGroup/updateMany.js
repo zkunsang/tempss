@@ -5,10 +5,10 @@ const ProductGroup = require('@ss/models/mongo/ProductGroup');
 const ArrayUtil = require('@ss/util/ArrayUtil');
 const DateUtil = require('@ss/util/DateUtil');
 
-function dateStringToUnixTimeStamp(groupList) {
+function dsToUtsObj(groupList) {
     for(const group of groupList) {
-        DateUtil.dateStringToUnixTimeStamp(group, 'startDate');
-        DateUtil.dateStringToUnixTimeStamp(group, 'endDate');
+        DateUtil.dsToUtsObj(group, 'startDate');
+        DateUtil.dsToUtsObj(group, 'endDate');
     }
 }
 
@@ -20,7 +20,7 @@ module.exports = async (ctx, next) => {
     const productGroupDao = new ProductGroupDao(ctx.$dbMongo);
     const groupList = reqUpdateMany.getProductGroupList();
 
-    dateStringToUnixTimeStamp(groupList);
+    dsToUtsObj(groupList);
     await insertGroupList(productGroupDao, groupList, updateDate)
 
     ctx.status = 200;

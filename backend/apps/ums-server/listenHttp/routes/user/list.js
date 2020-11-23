@@ -3,10 +3,10 @@ const UserDao = require('@ss/daoMongo/UserDao');
 const ReqUserList = require('@ss/models/umsController/ReqUserList');
 const DateUtil = require('@ss/util/DateUtil');
 
-function unixTimeStampToDateString(userList) {
+function utsToDsObj(userList) {
     for(const userInfo of userList) {
-        DateUtil.unixTimeStampToDateString(userInfo, 'lastLoginDate');
-        DateUtil.unixTimeStampToDateString(userInfo, 'createDate');
+        DateUtil.utsToDsObj(userInfo, 'lastLoginDate');
+        DateUtil.utsToDsObj(userInfo, 'createDate');
     }
 }
 
@@ -17,7 +17,7 @@ module.exports = async (ctx, next) => {
     const userDao = new UserDao(dbMongo);
     const userList = await userDao.findAll();
 
-    unixTimeStampToDateString(userList);
+    utsToDsObj(userList);
 
     ctx.status = 200;
     ctx.body.data = { userList };

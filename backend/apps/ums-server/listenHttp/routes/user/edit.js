@@ -11,10 +11,10 @@ const InventoryService = require('@ss/service/InventoryService');
 const ReqUserEdit = require('@ss/models/umsController/ReqUserEdit');
 const DateUtil = require('@ss/util/DateUtil');
 
-function unixTimeStampToDateString(inventoryList) {
+function utsToDsObj(inventoryList) {
     for(const inventory of inventoryList) {
-        DateUtil.unixTimeStampToDateString(inventory, 'updateDate');
-        DateUtil.unixTimeStampToDateString(inventory, 'createDate');
+        DateUtil.utsToDsObj(inventory, 'updateDate');
+        DateUtil.utsToDsObj(inventory, 'createDate');
     }
 }
 

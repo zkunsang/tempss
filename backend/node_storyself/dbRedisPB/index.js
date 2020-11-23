@@ -2,17 +2,16 @@ const ioredis = require('ioredis');
 const ss = require('../index.js');
 const dbCache = require('../dbCache');
 
-const googleAuthChannel = "googleAuth"
-const dataTableChannel = "dataTable"
-
 const Channels = {
     googleAuth: "googleAuth",
-    dataTable: "dataTable"
+    dataTable: "dataTable",
+    serverStatus: "serverStatus"
 }
 
 class RedisPubSubHelper {
     constructor() {
         this.accessToken = null;
+        this.serverStatus = null;
     }
 
     async ready() {
@@ -22,23 +21,30 @@ class RedisPubSubHelper {
         this.redis = new ioredis({ host, port });
         if( subList.length == 0 ) return;
 
-        this.accessToken = await this.redis.get(googleAuthChannel);
+        this.accessToken = await this.redis.get(Channels.googleAuth);
+        this.serverStatus = JSON.parse(await this.redis.get(Channels.serverStatus));
         
         this.redis.subscribe(Channels.googleAuth, async () => {
-            console.log(`[${googleAuthChannel}] - subscribe - Start`)
+            console.log(`[${Channels.googleAuth}] - subscribe - Start`)
         })
 
         this.redis.subscribe(Channels.dataTable, async() => {
-            console.log(`[${dataTableChannel}] - subscribe - Start`)
+            console.log(`[${Channels.dataTable}] - subscribe - Start`)
+        })
+
+        this.redis.subscribe(Channels.serverStatus, async() => {
+            console.log(`[${Channels.serverStatus}] - subscribe - Start`)
         })
 
         this.redis.on("message", async (channel, message) => {
-            console.log(`${channel}-${message}`);
             if(channel == Channels.googleAuth) {
                 this.accessToken = message;
             }
             else if(channel == Channels.dataTable) {
                 await dbCache.reloadDataTableCache();
+            }
+            else if(channel == Channels.serverStatus) {
+                this.serverStatus = JSON.parse(message);
             }
         })
     }

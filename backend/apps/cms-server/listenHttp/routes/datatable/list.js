@@ -1,16 +1,16 @@
 const DataTableDao = require('@ss/daoMongo/DataTableDao');
 const DateUtil = require('@ss/util/DateUtil');
 
-function unixTimeStampToDateString(dataTableList) {
+function utsToDsObj(dataTableList) {
     for(const dataTable of dataTableList) {
-        DateUtil.unixTimeStampToDateString(dataTable, 'updateDate');
+        DateUtil.utsToDsObj(dataTable, 'updateDate');
     }
 }
 module.exports = async (ctx, next) => {
     const dataTableDao = new DataTableDao(ctx.$dbMongo);
     const dataTableList = await dataTableDao.findAll();
 
-    unixTimeStampToDateString(dataTableList);
+    utsToDsObj(dataTableList);
     
     ctx.status = 200;
     ctx.body.data = { dataTableList };

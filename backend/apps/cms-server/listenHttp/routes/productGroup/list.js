@@ -5,8 +5,8 @@ const DateUtil = require('@ss/util/DateUtil');
 
 function unixTimestampToDateString(productGroupList) {
     for(const group of productGroupList) {
-        DateUtil.unixTimeStampToDateString(group, 'startDate');
-        DateUtil.unixTimeStampToDateString(group, 'endDate');
+        DateUtil.utsToDsObj(group, 'startDate');
+        DateUtil.utsToDsObj(group, 'endDate');
     }
     
 }

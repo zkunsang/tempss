@@ -5,16 +5,34 @@ const defaultDateFormat = 'YYYY-MM-DD HH:mm:ss';
 class DateUtil {
     constructor() { }
 
-    dateStringToUnixTimeStamp(object, columnName) {
-        object[columnName] = moment(object[columnName], defaultDateFormat).unix();
+    dsToUtsObj(object, columnName, dateFormat = defaultDateFormat) {
+        object[columnName] = moment(object[columnName], dateFormat).unix();
     }
 
-    unixTimeStampToDateString(object, columnName) {
+    utsToDsObj(object, columnName) {
         const length = object[columnName].toString().length;
-        if(length > 10) 
+        if (length > 10)
             object[columnName] = object[columnName] / 1000;
-        
+
         object[columnName] = moment.unix(object[columnName]).format(defaultDateFormat);
+    }
+
+    dsToUts(ds, dateFormat = defaultDateFormat) {
+        return moment(ds, dateFormat).unix();
+    }
+
+    utsToDs(uts) {
+        const length = uts.toString().length;
+        if (length > 10)
+            uts = uts / 1000;
+
+        return moment.unix(uts).format(defaultDateFormat);
+    }
+
+    isBetween(now, startDate, endDate) {
+        return moment.unix(now / 1000).isBetween(
+            moment.unix(startDate),
+            moment.unix(endDate));
     }
 }
 

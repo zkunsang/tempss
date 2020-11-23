@@ -62,7 +62,6 @@ class CacheManager {
         await this.cache[Schema.STORY_CACHE].loadData(dataTableCacheModel);
     }
  
-    // TODO: pubsub 데이터 리로드
     async updateCache(tableName, version) {
         this.cache[tableName].loadData(version);
     }

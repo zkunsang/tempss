@@ -71,6 +71,11 @@ const PurchaseStatus = {
     FAIL: 1
 }
 
+const IpManageType = {
+    BLACK: 'black',
+    WHITE: 'white'
+}
+
 class ValidateUtil {
     constructor() {
         this.validFunc = {};
@@ -227,3 +232,5 @@ module.exports.AdminRole = AdminRole;
 module.exports.AdminStatus = AdminStatus;
 module.exports.CommonBoolean = CommonBoolean;
 module.exports.PurchaseStatus = PurchaseStatus;
+module.exports.IpManageType = IpManageType;
+
