@@ -17,6 +17,7 @@
     "googleapis": "^59.0.0",
     "husky": "^4.2.5",
     "ioredis": "^4.17.3",
+    "ipaddr.js": "^2.0.0",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",

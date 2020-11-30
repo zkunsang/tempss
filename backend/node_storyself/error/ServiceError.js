@@ -31,4 +31,7 @@ module.exports.Code = {
 
     nonValidGoogleReceipt: { code: 33001, name: 'nonValidGoogleReceipt', message: 'nonValidGoogleReceipt' },
     alreadyProcessedReceipt: { code: 33002, name: 'alreadyProcessedReceipt', message: 'alreadyProcessedReceipt' },
+
+    noExistSession: { code: 34001, name: 'noExistSession', message: 'noExistSession' },
+    serviceUnavailable: { code: 34002, name: 'serviceUnavailable', message: 'serviceUnavailable' }
 }

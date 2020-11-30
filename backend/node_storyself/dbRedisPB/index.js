@@ -1,17 +1,20 @@
 const ioredis = require('ioredis');
 const ss = require('../index.js');
 const dbCache = require('../dbCache');
+const ArrayUtil = require('../util/ArrayUtil');
 
 const Channels = {
     googleAuth: "googleAuth",
     dataTable: "dataTable",
-    serverStatus: "serverStatus"
+    serverStatus: "serverStatus",
+    ipList: "ipList"
 }
 
 class RedisPubSubHelper {
     constructor() {
         this.accessToken = null;
         this.serverStatus = null;
+        this.whiteListMap = {};
     }
 
     async ready() {
@@ -36,12 +39,19 @@ class RedisPubSubHelper {
             console.log(`[${Channels.serverStatus}] - subscribe - Start`)
         })
 
+        this.redis.subscribe(Channels.ipList, async() => {
+            console.log(`[${Channels.ipList}] - subscribe - Start`)
+        })
+
         this.redis.on("message", async (channel, message) => {
             if(channel == Channels.googleAuth) {
                 this.accessToken = message;
             }
             else if(channel == Channels.dataTable) {
                 await dbCache.reloadDataTableCache();
+            }
+            else if(channel == Channels.ipList) {
+                await dbCache.reloadIPCache();
             }
             else if(channel == Channels.serverStatus) {
                 this.serverStatus = JSON.parse(message);

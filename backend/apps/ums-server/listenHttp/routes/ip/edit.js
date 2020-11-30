@@ -2,6 +2,8 @@ const DateUtil = require('@ss/util/DateUtil');
 const ReqIPEdit = require('@ss/models/umsController/ReqIPEdit');
 const IP = require('@ss/models/mongo/IP');
 const IPDao = require('@ss/daoMongo/IPDao');
+const dbRedisPB = require('@ss/dbRedisPB');
+const Channels = dbRedisPB.Channels;
 
 module.exports = async (ctx, next) => {
     const reqIpEdit = new ReqIPEdit(ctx.request.body);
@@ -21,6 +23,7 @@ module.exports = async (ctx, next) => {
     memo.push(newMemo);
 
     await ipDao.updateOne({ip}, {memo, updateDate, status});
+    dbRedisPB.publish(Channels.ipList, 'refresh');
     
     ctx.status = 200;
     ctx.body.data = {};

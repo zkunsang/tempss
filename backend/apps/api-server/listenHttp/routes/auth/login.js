@@ -63,12 +63,12 @@ module.exports = async (ctx, next) => {
     
     InventoryService.removeObjectIdList(userInventoryList);
 
-    ctx.status = 200;
-    ctx.body.data = { 
+    ctx.$res.success({ 
         sessionId,
         inventoryList: userInventoryList,
         policyVersion
-    };
+    });
+    
 
     helper.fluent.sendLog('login', new LoginLog(reqAuthLogin, { ip: ctx.ip, loginDate }));
 

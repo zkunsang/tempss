@@ -7,6 +7,8 @@ const SessionDao = require('../daoRedis/SessionDao');
 const User = require('../models/mongo/User');
 const UserDao = require('../daoMongo/UserDao');
 
+const ResContext = require('../context/ResContext');
+
 module.exports = async (ctx, next) => {
     const reqSession = new ReqSession(ctx.request.body);
     ReqSession.validModel(reqSession);
@@ -17,8 +19,7 @@ module.exports = async (ctx, next) => {
     const sessionObj = await sessionDao.get(sessionId)
 
     if(!sessionObj) {
-        ctx.status = 401;
-        ctx.body.data = {message: 'no user exist session'};
+        ctx.$res.unauthorized(ResContext.UNAUTH_TYPE.NO_EXIST_SESSION);
         return;
     }
 

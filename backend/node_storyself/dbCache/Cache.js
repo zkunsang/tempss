@@ -24,6 +24,14 @@ class Cache {
         this.version = version;
         this.currentCacheModel = this.cacheMap[version];
     }
+
+    async loadDataWithoutVersion() {
+        console.log(`[${this.tableId}] reloaded`);
+
+        this.cacheMap[++this.version] = new this.cacheModel();
+        await this.cacheMap[this.version].loadData(this.dao);
+        this.currentCacheModel = this.cacheMap[this.version];
+    }
 }
 
 module.exports = Cache;

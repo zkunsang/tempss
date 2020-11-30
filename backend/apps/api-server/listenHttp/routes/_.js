@@ -7,9 +7,15 @@ const SSError = require('@ss/error');
 const dbRedisPB = require('@ss/dbRedisPB');
 const DateUtil = require('@ss/util/DateUtil');
 
+
+const ReqContext = require('@ss/context/ReqContext');
+const ResContext = require('@ss/context/ResContext');
+
+const IPCache = require('@ss/dbCache/IPCache')
+
 function checkServerBlock(date) {
     // serverBlock으로 변경
-    if(dbRedisPB.serverStatus.status == 0) 
+    if (dbRedisPB.serverStatus.status == 0)
         return false;
 
     const { startDate, endDate } = dbRedisPB.serverStatus;
@@ -17,28 +23,24 @@ function checkServerBlock(date) {
     return DateUtil.isBetween(date, startDate, endDate);
 }
 
+function checkWhiteList(ip) {
+    return IPCache.getWhiteIP(ip);
+}
+
 module.exports = async (ctx, next) => {
-    ctx.$date = moment().valueOf();
-
-    ctx.body = ctx.body || {};
-    ctx.body.common = ctx.body.common || {};
-    ctx.body.error = ctx.body.error || {};
-    ctx.body.data = ctx.body.data || {};
-
-    
-    if(checkServerBlock(ctx.$date)) {
-        console.log("block")
-        return ;
-        // whitelist 통과
-    }
-
-    console.log("non block");
-
-    // blacklist block
-    
-    // serverStatus 확인
-    // whiteList 확인
     try {
+        ctx.$date = moment().valueOf();
+
+        ctx.$req = new ReqContext(ctx);
+        ctx.$res = new ResContext(ctx);
+
+        if (checkServerBlock(ctx.$date)) {
+            if (!checkWhiteList(ctx.$req.clientIp)) {
+                ctx.$res.serviceUnavailable(dbRedisPB.serverStatus.message);
+                return;
+            }
+        }
+
         await next();
     }
     catch (err) {
@@ -61,32 +63,30 @@ module.exports = async (ctx, next) => {
 
             helper.slack.sendMessage(err.makeErrorMessage());
         } else {
+            console.log(ctx.status);
             helper.slack.sendMessage(err.stack);
             uncaughtError(ctx, err);
         }
     }
-    
+
     helper.fluent.sendNetworkLog(new NetworkLog(ctx, ctx.$date, moment().valueOf()));
 };
 
 function uncaughtError(ctx, err) {
-    ctx.status = 500;
-    ctx.body.error = { 
+    ctx.body.error = {
         message: err.message,
         additional: err.additionalMessage
-     };
+    };
 }
 
 function processDaoError(ctx, err) {
-    ctx.status = 500;
-    ctx.body.error = { 
+    ctx.body.error = {
         message: err.message,
         additional: err.additionalMessage
-     };
+    };
 }
 
 function processModelError(ctx, err) {
-    ctx.status = 400;
     ctx.body.error = {
         message: err.message,
         additional: err.additionalMessage
@@ -94,15 +94,14 @@ function processModelError(ctx, err) {
 }
 
 function processServiceError(ctx, err) {
-    ctx.status = 400;
     ctx.body.error = {
+        code: err.code,
         message: err.message,
         additional: err.additionalMessage
     };
 }
 
 function processControllerError(ctx, err) {
-    ctx.status = 400;
     ctx.body.error = {
         message: err.message,
         additional: err.additionalMessage

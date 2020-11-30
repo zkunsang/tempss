@@ -6,6 +6,8 @@ const ProductRewardCache = require('./ProductRewardCache');
 const ResourceCache = require('@ss/dbCache/ResourceCache');
 const StoryCache = require('@ss/dbCache/StoryCache');
 const DataTableCache = require('@ss/dbCache/DataTableCache');
+const IPCache = require('@ss/dbCache/IPCache');
+
 
 const Schema = {
     ITEM_CACHE: 'itemCache',
@@ -15,7 +17,8 @@ const Schema = {
     PRODUCT_REWARD_CACHE: 'productRewardCache',
     RESOURCE_CACHE: 'resourceCache',
     STORY_CACHE: 'storyCache',
-    DATA_TABLE_CACHE: 'dataTableCache'
+    DATA_TABLE_CACHE: 'dataTableCache',
+    IP_CACHE: 'ipCache'
 }
 
 class CacheManager {
@@ -29,6 +32,7 @@ class CacheManager {
         this.cache[Schema.RESOURCE_CACHE] = ResourceCache;
         this.cache[Schema.STORY_CACHE] = StoryCache;
         this.cache[Schema.DATA_TABLE_CACHE] = DataTableCache;
+        this.cache[Schema.IP_CACHE] = IPCache;
     }
 
     async ready() {
@@ -40,8 +44,10 @@ class CacheManager {
         await this.cache[Schema.PRODUCT_REWARD_CACHE].ready();
         await this.cache[Schema.RESOURCE_CACHE].ready();
         await this.cache[Schema.STORY_CACHE].ready();
-
+        await this.cache[Schema.IP_CACHE].ready();
+        
         await this.reloadDataTableCache();
+        await this.reloadIPCache();
     }
 
     // pubsub으로 받음
@@ -60,6 +66,10 @@ class CacheManager {
         await this.cache[Schema.PRODUCT_REWARD_CACHE].loadData(dataTableCacheModel);
         await this.cache[Schema.RESOURCE_CACHE].loadData(dataTableCacheModel);
         await this.cache[Schema.STORY_CACHE].loadData(dataTableCacheModel);
+    }
+
+    async reloadIPCache() {
+        await this.cache[Schema.IP_CACHE].loadDataWithoutVersion();
     }
  
     async updateCache(tableName, version) {

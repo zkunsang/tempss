@@ -2,6 +2,8 @@ const DateUtil = require('@ss/util/DateUtil');
 const ReqIPCreate = require('@ss/models/umsController/ReqIPCreate');
 const IP = require('@ss/models/mongo/IP');
 const IPDao = require('@ss/daoMongo/IPDao');
+const dbRedisPB = require('@ss/dbRedisPB');
+const Channels = dbRedisPB.Channels;
 
 module.exports = async (ctx, next) => {
     const reqIPCreate = new ReqIPCreate(ctx.request.body);
@@ -20,7 +22,9 @@ module.exports = async (ctx, next) => {
 
     const ipDao = new IPDao(ctx.$dbMongo);
     await ipDao.insertOne(ipObject);
-    
+
+    dbRedisPB.publish(Channels.ipList, 'refresh');
+
     ctx.status = 200;
     ctx.body.data = {};
     await next();
