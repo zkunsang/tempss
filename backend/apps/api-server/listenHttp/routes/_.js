@@ -11,7 +11,7 @@ const DateUtil = require('@ss/util/DateUtil');
 const ReqContext = require('@ss/context/ReqContext');
 const ResContext = require('@ss/context/ResContext');
 
-const IPCache = require('@ss/dbCache/IPCache')
+const IPCache = require('@ss/dbCache/IPCache');
 
 function checkServerBlock(date) {
     // serverBlock으로 변경
