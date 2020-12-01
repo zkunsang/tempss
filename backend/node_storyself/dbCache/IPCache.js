@@ -1,5 +1,5 @@
 const dbMongo = require('../dbMongo');
-const IPDao = require('../daoMongo/IpDao');
+const IPDao = require('../daoMongo/IPDao');
 
 const IP = require('../models/mongo/IP');
 
