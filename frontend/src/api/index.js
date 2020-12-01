@@ -179,6 +179,15 @@ export const dataTable = {
   }
 }
 
+export const version = {
+  update(version) {
+    return request('post', '/version/update', version);
+  },
+  list() {
+    return request('post', '/version/list', {});
+  },
+}
+
 export const user = {
   list(item) {
     return request('post', '/user/list', item);

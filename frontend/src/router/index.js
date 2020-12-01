@@ -17,6 +17,7 @@ import CommonResource from '../components/CommonResource.vue'
 import UserList  from '../components/UserList.vue';
 import IpList  from '../components/IpList.vue';
 import ServerStatus  from '../components/ServerStatus.vue';
+import AppVersion  from '../components/AppVersion.vue';
 
 import Home from '../components/Home.vue'
 
@@ -149,6 +150,11 @@ function getCmsRoutes() {
         {
             path: '/commonResource',
             component: CommonResource,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/appVersion',
+            component: AppVersion,
             beforeEnter: requireAuth
         },
         {

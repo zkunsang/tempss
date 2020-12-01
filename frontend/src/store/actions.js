@@ -127,7 +127,13 @@ const actions = {
     LIST_DATA_TABLE(_) {
         return api.dataTable.list();
     },
-
+    GET_VERSION_LIST(_) {
+        return api.version.list();
+    },
+    UPDATE_VERSION(_, item) {
+        return api.version.update(item)
+    },
+    
     // UMS
     GET_USER_LIST(_, item) {
         return api.user.list(item);
@@ -155,6 +161,8 @@ const actions = {
     INSERT_SERVER_STATUS(_, serverStatus) {
         return api.serverStatus.create(serverStatus);
     }
+
+    
 }
 
 export default actions;

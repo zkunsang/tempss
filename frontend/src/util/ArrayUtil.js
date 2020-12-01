@@ -51,6 +51,10 @@ class ArrayUtil {
 
         return mapObject;
     }
+
+    keyBy(array, key) {
+        return _.keyBy(array, key);
+    }
 }
 
 module.exports = new ArrayUtil();
