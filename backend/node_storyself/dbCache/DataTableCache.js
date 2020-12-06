@@ -14,6 +14,10 @@ class DataTableCacheModel {
     async loadData(dataTableDao) {
         this.dataTableList = await dataTableDao.findAll();
 
+        for(const dataTable of this.dataTableList) {
+            delete dataTable[DataTable.Schema.UPDATE_DATE.key];
+        }
+        
         this.parseDataTable();
     }
 

@@ -32,14 +32,14 @@ const actions = {
     LIST_AOS_RESOURCE(_) {
         return api.resource.list();
     },
-    LIST_COMMON_RESOURCE(_) {
-        return api.commonResource.list();
+    LIST_DNN_RESOURCE(_) {
+        return api.dnnResource.list();
     },
-    UPDATE_COMMON_RESOURCE(_, resourceList) {
-        return api.commonResource.update(resourceList);
+    UPDATE_DNN_RESOURCE(_, resourceList) {
+        return api.dnnResource.update(resourceList);
     },
-    UPDATE_COMMON_RESOURCE_MANY(_, resourceList) {
-        return api.commonResource.updateMany(resourceList);
+    UPDATE_DNN_RESOURCE_MANY(_, resourceList) {
+        return api.dnnResource.updateMany(resourceList);
     },
     UPDATE_AOS_RESOURCE(_, resourceList) {
         return api.resource.update(resourceList);
@@ -133,7 +133,22 @@ const actions = {
     UPDATE_VERSION(_, item) {
         return api.version.update(item)
     },
-    
+    LIST_COUPON(_) {
+        return api.coupon.list();
+    },
+    CREATE_COUPON(_, item) {
+        return api.coupon.create(item);
+    },
+    DELETE_COUPON(_, item) {
+        return api.coupon.delete(item);
+    },
+    UPDATE_COUPON(_, item) {
+        return api.coupon.update(item);
+    },
+    LIST_COUPON_CODE(_, item) {
+        return api.couponCode.list(item);
+    },
+
     // UMS
     GET_USER_LIST(_, item) {
         return api.user.list(item);
@@ -154,7 +169,9 @@ const actions = {
     EDIT_IP(_, item) {
         return api.ip.edit(item);
     },
-
+    DELETE_IP(_, item) {
+        return api.ip.delete(item);
+    },
     GET_SERVER_STATUS(_) {
         return api.serverStatus.list();
     },

@@ -66,8 +66,6 @@ module.exports = async (ctx, next) => {
         return;
     }
 
-    await receiptDao.insertOne(receipt);
-
     const inventoryDao = new InventoryDao(ctx.$dbMongo);
     
     const productRewardList = ProductRewardCache.get(productId);
@@ -76,8 +74,10 @@ module.exports = async (ctx, next) => {
 
     const inventoryList = makeInventoryList(productRewardList);
     await inventoryService.processPut(
-        InventoryService.PUT_ACTION.PURCHASE,
+        InventoryService.PUT_ACTION.PURCHASE.CASH,
         inventoryList);
+
+    await receiptDao.insertOne(receipt);
 
     helper.fluent.sendProductLog(createProductLog(userInfo, productInfo, purchaseDate));
     

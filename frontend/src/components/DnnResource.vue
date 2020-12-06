@@ -98,7 +98,7 @@ var crc = require('crc');
 const { s3Upload, onFileDelimiter, importCSV, exportCSV } = require('../util/fileutil');
 const { updateDataTable } = require('../util/dataTableUtil');
 
-const tableId = 'commonResource';
+const tableId = 'dnnResource';
 
 export default {
   name: 'resourceList',
@@ -132,9 +132,9 @@ export default {
   watch: {},
   methods: {
     ...mapActions([
-      'LIST_COMMON_RESOURCE',
-      'UPDATE_COMMON_RESOURCE',
-      'UPDATE_COMMON_RESOURCE_MANY',
+      'LIST_DNN_RESOURCE',
+      'UPDATE_DNN_RESOURCE',
+      'UPDATE_DNN_RESOURCE_MANY',
       'UPDATE_TABLE_VERSION',
       'GET_TABLE_VERSION'
     ]),
@@ -144,7 +144,7 @@ export default {
 
         item.storyId = this.storyId;
         
-        await s3Upload(item.file, `common_resource/${item.version}/${item.resourceId}`);
+        await s3Upload(item.file, `DNN/${item.version}/${item.resourceId}`);
         this.updateProgress = parseInt(( parseInt(i) + 1 ) / list.length * 100);
         delete item.file;
       }
@@ -157,7 +157,7 @@ export default {
       await this.s3Uploads(this.updateList);
       await this.s3Uploads(this.insertList);
 
-      await this.UPDATE_COMMON_RESOURCE({
+      await this.UPDATE_DNN_RESOURCE({
         insertList: this.insertList, 
         updateList: this.updateList, 
         storyId: this.storyId
@@ -182,7 +182,7 @@ export default {
       await this.refreshResourceList();
     },
     async refreshResourceList() {
-      this.resourceList = await this.LIST_COMMON_RESOURCE();
+      this.resourceList = await this.LIST_DNN_RESOURCE();
     },
     async onFileUpload(fileList) {
       const { insertList, updateList, conflictList } 
@@ -196,7 +196,7 @@ export default {
       importCSV(file, 'resourceId', async (resourceList) => {
         await updateDataTable(
           this.GET_TABLE_VERSION,
-          this.UPDATE_COMMON_RESOURCE_MANY,
+          this.UPDATE_DNN_RESOURCE_MANY,
           this.UPDATE_TABLE_VERSION,
           tableId,
           { resourceList }
@@ -206,7 +206,7 @@ export default {
       })
     },
     exportCSVResource() {
-      exportCSV(this.resourceList, 'commonResource.csv');
+      exportCSV(this.resourceList, 'dnnResource.csv');
     },
   }
   

@@ -72,7 +72,8 @@ class Dao {
     async deleteMany(where, expectCount) {
         this.constructor.checkWhere.call(this, where);
         const result = await this.collection.deleteMany(where);
-        this.constructor.checkDeleteCount.call(this, result.deletedCount, expectCount, where);
+        if(expectCount)
+            this.constructor.checkDeleteCount.call(this, result.deletedCount, expectCount, where);
     }
 
     async deleteAll() {

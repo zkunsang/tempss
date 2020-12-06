@@ -267,7 +267,6 @@ export default {
     ]),
     async getUserList() {
       const body = await this.GET_USER_LIST();
-      console.log(this.ITEM_LIST);
       if(!this.ITEM_LIST) {
         await this.LIST_ITEM();
       }

@@ -8,6 +8,7 @@ async function insertResourceList(resourceDao, resourceList, updateDate) {
     const insertResourceList = ResourceDao.mappingList(resourceList);
     for(const resource of insertResourceList) {
         resource.setUpdateDate(updateDate);
+        resource.crc32 = resource.crc32.toString();
     }
 
     await resourceDao.insertMany(insertResourceList);

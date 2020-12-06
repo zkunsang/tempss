@@ -67,7 +67,7 @@ function getCmsList() {
     { path: '/shopGroup', title: '상품 그룹 관리', icon: 'mdi-view-dashboard' },
     { path: '/dataTable', title: '데이터 테이블', icon: 'mdi-view-dashboard' },
     { path: '/resource', title: '리소스 테이블(aos)', icon: 'mdi-view-dashboard' },
-    { path: '/commonResource', title: '공통 리소스', icon: 'mdi-view-dashboard' },
+    { path: '/dnnResource', title: 'dnn 리소스', icon: 'mdi-view-dashboard' },
     { path: '/category', title: '카테고리 관리', icon: 'mdi-view-dashboard' },
     { path: '/coupon', title: '쿠폰 관리', icon: 'mdi-view-dashboard' },
     { path: '/appVersion', title: '앱 버젼 관리', icon: 'mdi-view-dashboard' },

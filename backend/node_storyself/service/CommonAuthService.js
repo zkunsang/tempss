@@ -1,3 +1,5 @@
+const SSError = require('@ss/error');
+
 const dbMongo = require('../dbMongo');
 const dbRedis = require('../dbRedisSS');
 
@@ -19,7 +21,7 @@ module.exports = async (ctx, next) => {
     const sessionObj = await sessionDao.get(sessionId)
 
     if(!sessionObj) {
-        ctx.$res.unauthorized(ResContext.UNAUTH_TYPE.NO_EXIST_SESSION);
+        ctx.$res.unauthorized(SSError.Service.Code.noExistSession);
         return;
     }
 

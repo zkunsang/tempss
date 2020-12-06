@@ -80,12 +80,15 @@ export const resource = {
   }
 }
 
-export const commonResource = {
+export const dnnResource = {
   list() {
-    return request('post', '/common_resource/list', null);
+    return request('post', '/dnn_resource/list', null);
   },
   update(resourceList) {
-    return request('post', '/common_resource/update', resourceList);
+    return request('post', '/dnn_resource/update', resourceList);
+  },
+  updateMany(resourceList) {
+    return request('post', '/dnn_resource/updateMany', resourceList);
   },
 }
 
@@ -188,6 +191,40 @@ export const version = {
   },
 }
 
+export const coupon = {
+  list() {
+    return request('post', '/coupon/list', {});
+  },
+  create(couponInfo) {
+    console.log(couponInfo);
+    return request('post', '/coupon/create', couponInfo);
+  },
+  update(couponInfo) {
+    return request('post', '/coupon/update', couponInfo);
+  },
+  delete(couponInfo) {
+    return request('post', '/coupon/delete', couponInfo);
+  }
+}
+
+export const couponReward = {
+  list(couponInfo) {
+    return request('post', '/couponReward/list', couponInfo);
+  },
+  update(couponInfo, couponRewardList) {
+    return request('post', '/couponReword/update', couponInfo, couponRewardList);
+  }
+}
+
+export const couponCode = {
+  list(couponInfo) {
+    return request('post', '/coupon_code/list', couponInfo);
+  },
+  insertMany(couponInfo) {
+    return request('post', '/coupon_code/insert', couponInfo)
+  }
+}
+
 export const user = {
   list(item) {
     return request('post', '/user/list', item);
@@ -210,6 +247,9 @@ export const ip = {
   },
   edit(item) {
     return request('post', '/ip/edit', item);
+  },
+  delete(item) {
+    return request('post', '/ip/delete', item);
   },
 }
 

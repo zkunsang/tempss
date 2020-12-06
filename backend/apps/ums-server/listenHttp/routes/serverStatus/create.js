@@ -1,6 +1,6 @@
 const DateUtil = require('@ss/util/DateUtil');
 const ReqServerStatusCreate = require('@ss/models/umsController/ReqServerStatusCreate');
-const ServerStatusRedisDao = require('@ss/daoRedis/ServerStatusDao');
+const ServerStatusDao = require('@ss/daoRedis/ServerStatusDao');
 const dbRedisPB = require('@ss/dbRedisPB');
 
 
@@ -11,7 +11,7 @@ module.exports = async (ctx, next) => {
     
     const serverStatus = reqServerStatusCreate;
 
-    const serverStatusRedisDao = new ServerStatusRedisDao(dbRedisPB);
+    const serverStatusRedisDao = new ServerStatusDao(dbRedisPB);
 
     serverStatusRedisDao.publish(serverStatus);
     serverStatusRedisDao.set(serverStatus);

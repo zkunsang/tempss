@@ -30,7 +30,8 @@ const PUT_ACTION = {
         ACCESSORY: [1003, 2],
         SLOT: [1003, 3],
     },
-    USER_INIT: [1004, 1]
+    USER_INIT: [1004, 1],
+    COUPON: [1005, 1]
 };
 
 const USE_ACTION = {
@@ -63,7 +64,7 @@ class InventoryService extends Service {
         return await this.inventoryDao.findMany({ uid });
     }
 
-    async checkPutItem(putInventoryList, action, adminInfo) {
+    async checkPutItem(action, putInventoryList, adminInfo) {
         Service.Validate.checkArrayObject(putInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(putInventoryList);
 
@@ -123,7 +124,7 @@ class InventoryService extends Service {
         return new InventoryPutObject({ insertList, updateList, beforeInvenMap, action, adminInfo });
     }
 
-    async checkUseItem(useInventoryList, action, adminInfo) {
+    async checkUseItem(action, useInventoryList, adminInfo) {
         Service.Validate.checkArrayObject(useInventoryList, Inventory);
         const sortedInventoryList = InventoryService.sortInventoryList(useInventoryList);
 
@@ -354,20 +355,20 @@ class InventoryService extends Service {
     }
 
     async processExchange(useAction, useInventoryList, putAction, putInventoryList, adminInfo) {
-        const putObject = await this.checkPutItem(putInventoryList, putAction, adminInfo);
-        const useObject = await this.checkUseItem(useInventoryList, useAction, adminInfo);
+        const putObject = await this.checkPutItem(putAction, putInventoryList, adminInfo);
+        const useObject = await this.checkUseItem(useAction, useInventoryList, adminInfo);
 
         await this.useItem(useObject);
         await this.putItem(putObject);
     }
 
     async processPut(action, putInventoryList, adminInfo) {
-        const putObject = await this.checkPutItem(putInventoryList, action, adminInfo);
+        const putObject = await this.checkPutItem(action, putInventoryList, adminInfo);
         await this.putItem(putObject);
     }
 
     async processUse(action, useInventoryList, adminInfo) {
-        const useObject = await this.checkUseItem(useInventoryList, action, adminInfo);
+        const useObject = await this.checkUseItem(action, useInventoryList, adminInfo);
         await this.useItem(useObject);
     }
 
@@ -546,7 +547,14 @@ class InventoryService extends Service {
     }
 
     static removeObjectIdList(inventoryList) {
-        return inventoryList.map(InventoryService.removeObjectId)
+        for(const inventory of inventoryList) {
+            delete inventory[Inventory.Schema.OBJECT_ID.key];
+            delete inventory[Inventory.Schema.CREATE_DATE.key];
+            delete inventory[Inventory.Schema.UPDATE_DATE.key];
+            delete inventory[Inventory.Schema.UID.key];
+        }
+
+        return inventoryList;
     }
 
     static removeObjectId(inventory) {

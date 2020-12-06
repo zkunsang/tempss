@@ -1,21 +1,6 @@
 const RuntimeError = require('./RuntimeError');
 
-class ServiceError extends RuntimeError {
-    constructor(errObj, additionalMessage) {
-        super('ServiceError', errObj);
-        this.additionalMessage = additionalMessage;
-    }
-}
-
-/**
- * commonError: 30000
- * inventoryError: 31000
- * itemError: 32000,
- * storyError:
- */
-
-module.exports = ServiceError;
-module.exports.Code = {
+const code = {
     isNull: { code: 30001, name: 'isNull', message: 'not allow null' },
     notArray: { code: 30002, name: 'notArray', message: 'it should be array' },
     emptyArray: { code: 30003, name: 'emptyArray', message: 'not allow empty array' },
@@ -33,5 +18,41 @@ module.exports.Code = {
     alreadyProcessedReceipt: { code: 33002, name: 'alreadyProcessedReceipt', message: 'alreadyProcessedReceipt' },
 
     noExistSession: { code: 34001, name: 'noExistSession', message: 'noExistSession' },
-    serviceUnavailable: { code: 34002, name: 'serviceUnavailable', message: 'serviceUnavailable' }
+    serviceUnavailable: { code: 34002, name: 'serviceUnavailable', message: 'serviceUnavailable' },
+    prepareService: { code: 34003, name: 'prepareService', message: 'prepareService' },    
+
+    couponNoExist: { code: 35001, name: 'couponNoExist', message: 'couponNoExist' },
+    couponAlreadyUsed: { code: 35002, name: 'couponAlreadyUsed', message: 'couponAlreadyUsed' },
+    couponUnavailable: { code: 35003, name: 'couponUnavailable', message: 'couponUnavailable' },
+    couponManyTry: { code: 35004, name: 'couponManyTry', message: 'couponManyTry' },
+    couponAlreadyOccupied: { code: 35005, name: 'couponAlreadyOccupied', message: 'couponAlreadyOccupied' },
 }
+
+class ServiceError extends RuntimeError {
+    constructor(errObj, additionalMessage) {
+        super('ServiceError', errObj);
+        this.additionalMessage = additionalMessage;
+        
+    }
+}
+
+function createErrorCodeMap() {
+    const codeKeyList = Object.keys(code); 
+    codeMap = {};
+
+    for(const codeKey of codeKeyList) {
+        this.codeMap[code[codeKey].code] = code[codeKey];
+    }
+
+    return codeMap;
+}
+/**
+ * commonError: 30000
+ * inventoryError: 31000
+ * itemError: 32000,
+ * storyError:
+ */
+
+module.exports = ServiceError;
+module.exports.Code = code;
+module.exports.CodeMap = createErrorCodeMap();

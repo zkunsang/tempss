@@ -2,10 +2,12 @@ const ss = require('@ss');
 const apiConfig = ss.configs.apiServer;
 
 const DataTableCache = require('@ss/dbCache/DataTableCache');
+const DataTable = require('@ss/models/mongo/DataTable');
 
 module.exports = async (ctx, next) => {
     // 데이터 버젼 테이블만 내려 받는 형식으로 변경
     const dataTableList = DataTableCache.getList();
+
     const s3Url = apiConfig.cdnUrl;
     ctx.$res.success({ dataTableList, s3Url });
     await next();

@@ -22,21 +22,22 @@ class ResContext {
         this.ctx.body.common.serverTime = ctx.$date;
     }
 
-    badRequest() {
+    badRequest(errorCode) {
         // return this.ctx.throw(400);
+        throw new SSError.Service(errorCode);
+        
     }
 
-    serviceUnavailable(message) {
-        throw new SSError.Service(SSError.Service.Code.serviceUnavailable, message);
+    serviceUnavailable(code, message) {
+        throw new SSError.Service(code, message);
     }
 
     internalServerError() {
         // return this.ctx.throw(500);
     }
 
-    unauthorized(type) {
-        if(type == UNAUTH_TYPE.NO_EXIST_SESSION)
-            throw new SSError.Service(SSError.Service.Code.noExistSession);
+    unauthorized(errorCode) {
+        throw new SSError.Service(errorCode);
         // return this.ctx.throw(400);
     }
 

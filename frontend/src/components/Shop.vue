@@ -137,7 +137,7 @@
                           <v-col cols="12" sm="4">
                             <v-btn @click="addReward">추가</v-btn>
                           </v-col>
-                          </v-row>
+                        </v-row>
                         <v-divider></v-divider>
                         <div v-for="(item, index) in rewardItemList" :key="index">
                           {{item.rewardType}}

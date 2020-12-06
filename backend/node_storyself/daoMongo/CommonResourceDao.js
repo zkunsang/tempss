@@ -5,7 +5,7 @@ class CommonResourceDao extends Dao {
     constructor(connection) {
         super();
         this.db = connection.storyConnect.db('story');
-        this.collection = this.db.collection('common_resource');
+        this.collection = this.db.collection('dnn_resource');
     }
 
     static model = CommonResource;

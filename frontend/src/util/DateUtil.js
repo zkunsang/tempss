@@ -18,6 +18,7 @@ class DateUtil {
     }
 
     dsToUts(ds, dateFormat = defaultDateFormat) {
+        console.log(ds);
         return moment(ds, dateFormat).unix();
     }
 

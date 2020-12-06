@@ -70,7 +70,7 @@ module.exports = async (ctx, next) => {
     });
     
 
-    helper.fluent.sendLog('login', new LoginLog(reqAuthLogin, { ip: ctx.ip, loginDate }));
+    helper.fluent.sendLog('login', new LoginLog(reqAuthLogin, { ip: ctx.$res.clientIp, loginDate }));
 
     await next();
 };

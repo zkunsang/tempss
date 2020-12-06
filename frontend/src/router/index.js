@@ -13,11 +13,12 @@ import Shop from '../components/Shop.vue'
 import ShopGroup from '../components/ShopGroup.vue'
 import DataTable from '../components/DataTable.vue'
 import ResourceList from '../components/ResourceList.vue'
-import CommonResource from '../components/CommonResource.vue'
-import UserList  from '../components/UserList.vue';
-import IpList  from '../components/IpList.vue';
-import ServerStatus  from '../components/ServerStatus.vue';
-import AppVersion  from '../components/AppVersion.vue';
+import DnnResource from '../components/DnnResource.vue'
+import Coupon from '../components/Coupon.vue'
+import UserList  from '../components/UserList.vue'
+import IpList  from '../components/IpList.vue'
+import ServerStatus  from '../components/ServerStatus.vue'
+import AppVersion  from '../components/AppVersion.vue'
 
 import Home from '../components/Home.vue'
 
@@ -148,8 +149,13 @@ function getCmsRoutes() {
             beforeEnter: requireAuth
         },
         {
-            path: '/commonResource',
-            component: CommonResource,
+            path: '/dnnResource',
+            component: DnnResource,
+            beforeEnter: requireAuth
+        },
+        {
+            path: '/coupon',
+            component: Coupon,
             beforeEnter: requireAuth
         },
         {

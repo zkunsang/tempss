@@ -36,7 +36,9 @@ module.exports = async (ctx, next) => {
 
         if (checkServerBlock(ctx.$date)) {
             if (!checkWhiteList(ctx.$req.clientIp)) {
-                ctx.$res.serviceUnavailable(dbRedisPB.serverStatus.message);
+                ctx.$res.serviceUnavailable(
+                    SSError.Service.CodeMap[dbRedisPB.serverStatus.code],
+                    dbRedisPB.serverStatus.message);
                 return;
             }
         }

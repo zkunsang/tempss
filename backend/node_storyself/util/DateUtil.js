@@ -34,6 +34,11 @@ class DateUtil {
             moment.unix(startDate),
             moment.unix(endDate));
     }
+
+    getHours() {
+        return moment().hours();
+    }
 }
 
 module.exports = new DateUtil();
+module.exports.DEFAULT_FORMAT = defaultDateFormat;

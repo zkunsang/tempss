@@ -6,6 +6,9 @@ const ProductRewardCache = require('./ProductRewardCache');
 const ResourceCache = require('@ss/dbCache/ResourceCache');
 const StoryCache = require('@ss/dbCache/StoryCache');
 const DataTableCache = require('@ss/dbCache/DataTableCache');
+const CouponCache = require('@ss/dbCache/CouponCache');
+const CouponRewardCache = require('@ss/dbCache/CouponRewardCache');
+
 const IPCache = require('@ss/dbCache/IPCache');
 const ServiceVariableCache = require('@ss/dbCache/ServiceVariableCache');
 
@@ -19,8 +22,12 @@ const Schema = {
     RESOURCE_CACHE: 'resourceCache',
     STORY_CACHE: 'storyCache',
     DATA_TABLE_CACHE: 'dataTableCache',
+    COUPON_CACHE: 'couponCache',
+    COUPON_REWARD_CACHE: 'couponRewardCache',
+
     IP_CACHE: 'ipCache',
     SERVICE_VARIABLE: 'serviceVariable'
+    
 }
 
 class CacheManager {
@@ -33,7 +40,11 @@ class CacheManager {
         this.cache[Schema.PRODUCT_REWARD_CACHE] = ProductRewardCache;
         this.cache[Schema.RESOURCE_CACHE] = ResourceCache;
         this.cache[Schema.STORY_CACHE] = StoryCache;
+        this.cache[Schema.COUPON_CACHE] = CouponCache;
+        this.cache[Schema.COUPON_REWARD_CACHE] = CouponRewardCache;
         this.cache[Schema.DATA_TABLE_CACHE] = DataTableCache;
+        
+
         this.cache[Schema.IP_CACHE] = IPCache;
         this.cache[Schema.SERVICE_VARIABLE] = ServiceVariableCache;
     }
@@ -47,12 +58,16 @@ class CacheManager {
         await this.cache[Schema.PRODUCT_REWARD_CACHE].ready();
         await this.cache[Schema.RESOURCE_CACHE].ready();
         await this.cache[Schema.STORY_CACHE].ready();
+        await this.cache[Schema.COUPON_CACHE].ready();
+        await this.cache[Schema.COUPON_REWARD_CACHE].ready();
+
         await this.cache[Schema.IP_CACHE].ready();
         await this.cache[Schema.SERVICE_VARIABLE].ready();
         
         await this.reloadDataTableCache();
         await this.reloadIPCache();
         await this.reloadServiceVariable();
+        await this.reloadCoupon();
     }
 
     // pubsub으로 받음
@@ -79,6 +94,11 @@ class CacheManager {
 
     async reloadServiceVariable() {
         await this.cache[Schema.SERVICE_VARIABLE].loadDataWithoutVersion();
+    }
+
+    async reloadCoupon() {
+        await this.cache[Schema.COUPON_CACHE].loadDataWithoutVersion();
+        await this.cache[Schema.COUPON_REWARD_CACHE].loadDataWithoutVersion();
     }
  
     async updateCache(tableName, version) {

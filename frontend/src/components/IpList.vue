@@ -28,6 +28,9 @@
         :headers="headers"
         :items="whiteList"
       >
+        <template v-slot:[`item.delete`]="{ item }">
+          <v-icon small @click="onDelete('white', item)"> delete </v-icon>
+        </template>
       </v-data-table>
     </v-container>
     <v-container>
@@ -85,6 +88,7 @@ export default {
         { text: '등록일자', value: 'updateDate' },
         { text: '등록자', value: 'adminId' },
         { text: 'memo', value: 'memo' },
+        { text: 'delete', value: 'delete' },
       ],
     }
   },
@@ -95,12 +99,21 @@ export default {
     ...mapActions([
       'LIST_IP',
       'INSERT_IP',
+      'DELETE_IP',
       'EDIT_IP',
     ]),
     async onInsert(type) {
       this.addWhite.type = type;
       this.addWhite.status = 1;
       await this.INSERT_IP(this.addWhite);
+      await this.getList();
+    },
+    async onDelete(type, item) {
+      const deleteObj = {}
+      deleteObj.type = type;
+      deleteObj.ip = item.ip;
+      
+      await this.DELETE_IP(deleteObj);
       await this.getList();
     },
     async getList() {

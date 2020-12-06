@@ -40,7 +40,11 @@
           
         </v-col>
         <v-col cols=12 md=3>
-          
+          <v-text-field
+            label="서버 에러코드"
+            v-model="serverStatus.code"
+          >
+          </v-text-field>
         </v-col>
         <v-col cols=12 md=3>
           <v-switch 
@@ -130,8 +134,8 @@ export default {
       this.serverStatus.status = this.serverStatus.status ? 1: 0;
       this.serverStatus.startDate = DateUtil.dsToUts(this.serverStatus.start);
       this.serverStatus.endDate = DateUtil.dsToUts(this.serverStatus.end);
-    
-      console.log(this.serverStatus);
+      this.serverStatus.code = parseInt(this.serverStatus.code);
+      
       await this.INSERT_SERVER_STATUS(this.serverStatus);
       this.getStatusInfo();
     },

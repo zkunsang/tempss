@@ -1,10 +1,10 @@
-const ServerStatusRedisDao = require('@ss/daoRedis/ServerStatusDao');
+const ServerStatusDao = require('@ss/daoRedis/ServerStatusDao');
 const dbRedisPB = require('@ss/dbRedisPB');
 
 
 module.exports = async (ctx, next) => {
     // TODO: Mongo list
-    const serverStatusRedisDao = new ServerStatusRedisDao(dbRedisPB);
+    const serverStatusRedisDao = new ServerStatusDao(dbRedisPB);
     // const serverStatusMongoDao = new ServerStatusMongoDao(dbMongo);
 
     const serverStatus = await serverStatusRedisDao.get();

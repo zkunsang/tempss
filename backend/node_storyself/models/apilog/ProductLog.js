@@ -1,6 +1,7 @@
 const Model = require('..')
 
 const ValidateUtil = require('../../util/ValidateUtil')
+const DateUtil = require('../../util/DateUtil');
 const ValidType = ValidateUtil.ValidType;
 
 const moment = require('moment')
@@ -18,7 +19,7 @@ class ProductLog extends Model {
         this[Schema.UID.key] = uid;
         this[Schema.PRODUCT_ID.key] = productId;
         this[Schema.COST.key] = cost;
-        this[Schema.PURCHASE_DATE.key] = moment(purchaseDate).format();
+        this[Schema.PURCHASE_DATE.key] = moment(purchaseDate).format(DateUtil.DEFAULT_FORMAT);
     }
 }
 
