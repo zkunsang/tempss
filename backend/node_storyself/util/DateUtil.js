@@ -10,6 +10,9 @@ class DateUtil {
     }
 
     utsToDsObj(object, columnName) {
+        if(!object[columnName])
+            return;
+            
         const length = object[columnName].toString().length;
         if (length > 10)
             object[columnName] = object[columnName] / 1000;

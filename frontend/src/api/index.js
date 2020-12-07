@@ -220,7 +220,7 @@ export const couponCode = {
   list(couponInfo) {
     return request('post', '/coupon_code/list', couponInfo);
   },
-  insertMany(couponInfo) {
+  insert(couponInfo) {
     return request('post', '/coupon_code/insert', couponInfo)
   }
 }

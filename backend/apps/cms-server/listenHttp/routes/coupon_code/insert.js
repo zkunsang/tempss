@@ -3,6 +3,15 @@ const ReqCouponCodeInsert = require('@ss/models/cmsController/ReqCouponCodeInser
 const CouponCode = require('@ss/models/mongo/CouponCode');
 const CouponCodeDao = require('@ss/daoMongo/CouponCodeDao');
 
+function createCouponCode(couponCodeList) {
+    const retList = [];
+    for(const couponCode of couponCodeList) {
+        retList.push(new CouponCode(couponCode));
+    }
+
+    return retList;
+}
+
 module.exports = async (ctx, next) => {
     const reqCouponCodeInsert = new ReqCouponCodeInsert(ctx.request.body);
     ReqCouponCodeInsert.validModel(reqCouponCodeInsert);
@@ -11,25 +20,13 @@ module.exports = async (ctx, next) => {
     const couponCodeList = reqCouponCodeInsert.getCouponCodeList();
 
     const couponCodeDao = new CouponCodeDao(ctx.$dbMongo);
-    const andQuery = {"$and": [
-        {couponId},
-        {"$ne": {uid: null}}
-    ]}
-    
-    const findList = await couponCodeDao.findMany(andQuery);
-    await couponCodeDao.deleteMany(andQuery);
+    // const andQuery = {"$and": [
+    //     {couponId},
+    //     {"$ne": {uid: null}}
+    // ]}
 
-
-
-    delete couponInfo[Coupon.Schema.COUPON_ID.key];
-
-    await couponDao.updateOne({ couponId }, couponInfo);
-
-    const couponRewardDao = new CouponRewardDao(ctx.$dbMongo);
-
-    await couponRewardDao.deleteMany({ couponId });
-    const insertList = createCouponRewardList(reqCouponCodeInsert.getCouponRewardList(), couponId)
-    await couponRewardDao.insertMany(insertList);
+    await couponCodeDao.deleteAll();
+    await couponCodeDao.insertMany(createCouponCode(couponCodeList));
 
     ctx.status = 200;
     ctx.body.data = {};

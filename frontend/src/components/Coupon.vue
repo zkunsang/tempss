@@ -158,7 +158,6 @@
         </v-col>
         <v-col>
           <v-col>
-            <v-btn @click="exportCSVItem">쿠폰 입력(csv)</v-btn>
             <v-file-input accept=".csv" label="아이템 데이터(csv)" @change="importCSVItem"></v-file-input>
           </v-col>
           <v-data-table
@@ -300,6 +299,7 @@ export default {
       await this.getCouponCodeList(this.selectedCoupon.couponId);
     },
     importCSVItem(file) {
+      console.log(file);
       importCSV(file, 'couponId', async (couponCodeList) => {
         const couponId = this.selectedCoupon.couponId;
         await this.INSERT_COUPON_CODE({couponId, couponCodeList});

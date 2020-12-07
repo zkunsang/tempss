@@ -43,7 +43,7 @@ module.exports = async (ctx, next) => {
     const insertList = createCouponRewardList(reqCouponUpdate.getCouponRewardList(), couponId)
     await couponRewardDao.insertMany(insertList);
 
-    dbRedisPB.publish(Channels.Coupon, "reload!");
+    dbRedisPB.publish(Channels.coupon, "reload!");
 
     ctx.status = 200;
     ctx.body.data = {};

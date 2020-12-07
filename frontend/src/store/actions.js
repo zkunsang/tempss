@@ -148,6 +148,9 @@ const actions = {
     LIST_COUPON_CODE(_, item) {
         return api.couponCode.list(item);
     },
+    INSERT_COUPON_CODE(_, item) {
+        return api.couponCode.insert(item);
+    },
 
     // UMS
     GET_USER_LIST(_, item) {
