@@ -7,6 +7,7 @@ class ReqContext {
         this.date = new Date();
         this.route = ctx.URL.pathname;
         this.method = ctx.method;
+	ctx.request.ip = ctx.request.headers['x-forwarded-for'] || ctx.request.ip;
         
         this.clientIp = this.getClientIp(ctx.request.ip);
         // this.serverIp = ipaddr.process(this.getServerIp()).toNormalizedString();
