@@ -26,6 +26,11 @@ const code = {
     couponUnavailable: { code: 35003, name: 'couponUnavailable', message: 'couponUnavailable' },
     couponManyTry: { code: 35004, name: 'couponManyTry', message: 'couponManyTry' },
     couponAlreadyOccupied: { code: 35005, name: 'couponAlreadyOccupied', message: 'couponAlreadyOccupied' },
+
+    shopReceiptFail: { code: 36001, name: 'shopReceiptFail', message: 'shopReceiptFail' },
+    shopAlreadyPurchased: { code: 36002, name: 'shopAlreadyPurchased', message: 'shopAlreadyPurchased' },
+    shopNoExistProduct: { code: 36003, name: 'shopNoExistProduct', message: 'shopNoExistProduct' },
+    
 }
 
 class ServiceError extends RuntimeError {

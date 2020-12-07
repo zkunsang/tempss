@@ -196,7 +196,6 @@ export const coupon = {
     return request('post', '/coupon/list', {});
   },
   create(couponInfo) {
-    console.log(couponInfo);
     return request('post', '/coupon/create', couponInfo);
   },
   update(couponInfo) {

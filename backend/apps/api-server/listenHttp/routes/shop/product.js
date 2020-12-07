@@ -15,6 +15,7 @@ const PurchaseStatus = ValidateUtil.PurchaseStatus;
 
 const InventoryService = require('@ss/service/InventoryService');
 const helper = require('@ss/helper');
+const SSError = require('@ss/error');
 
 function makeInventoryList(productRewardList) {
     return productRewardList.map((item) => item.makeInventoryObject());
@@ -38,8 +39,7 @@ module.exports = async (ctx, next) => {
     const receipt = await ProductService.validateReceipt(uid, reqShopProduct, purchaseDate);
 
     if (receipt.purchaseState === PurchaseStatus.FAIL) {
-        ctx.status = 400;
-        ctx.body.data = { message: 'receipt failed' };
+        ctx.$res.badRequest(SSError.Service.Code.shopReceiptFail);
         return;
     }
 
@@ -49,10 +49,10 @@ module.exports = async (ctx, next) => {
 
     const receiptHistory = await receiptDao.findOne({ transactionId });
 
-    // 이미 처리된 내역이 있으면
+    // 이미 처리된 내역이 있으면 
     if(receiptHistory) {
-        ctx.status = 400;
-        ctx.body.data = { purchaseState: 1 };
+        ctx.$res.set({purchaseState: 0});
+        ctx.$res.badRequest(SSError.Service.Code.shopAlreadyPurchased);
         return;
     }
 
@@ -61,8 +61,7 @@ module.exports = async (ctx, next) => {
     const productInfo = ProductCache.get(productId);
 
     if (!productInfo) {
-        ctx.status = 400;
-        ctx.body.data = { purchaseState: 1 };
+        ctx.$res.badRequest(SSError.Service.Code.shopNoExistProduct);
         return;
     }
 
@@ -84,11 +83,10 @@ module.exports = async (ctx, next) => {
     const userInventoryList = await inventoryService.getUserInventoryList();
     InventoryService.removeObjectIdList(userInventoryList);
     
-    ctx.status = 200;
-    ctx.body.data = { 
+    ctx.$res.success({ 
         inventoryList: userInventoryList,
         purchaseState: 0
-     };
+     });
 
     await next();
 }

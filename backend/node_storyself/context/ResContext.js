@@ -55,6 +55,10 @@ class ResContext {
         }
     }
 
+    set(data) {
+        this.ctx.body.data = data;
+    }
+
     success(data) {
         this.ctx.body.data = data;
     }
