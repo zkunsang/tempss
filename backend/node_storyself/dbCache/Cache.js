@@ -9,6 +9,10 @@ class Cache {
     }   
 
     async loadData(dataTableCacheModel) {
+        if(!dataTableCacheModel.get(this.tableId)) {
+            console.log(`${this.tableId} not loaded`);
+            return;
+        }
         const version = dataTableCacheModel.get(this.tableId).getVersion();
         
         if(version == this.version) return;

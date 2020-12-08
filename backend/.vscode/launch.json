@@ -27,18 +27,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "[dev]CMS",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "env": {
-                "NODE_ENV": "cmsDev"
-            },
-            "program": "${workspaceFolder}\\apps\\cms-server\\app.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
             "name": "[local]API",
             "skipFiles": [
                 "<node_internals>/**"
@@ -75,6 +63,42 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "[local]UMS",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "umsLocal"
+            },
+            "program": "${workspaceFolder}\\apps\\ums-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[live]UMS",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "umsLive"
+            },
+            "program": "${workspaceFolder}\\apps\\ums-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[live]CMS",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "env": {
+                "NODE_ENV": "cmsLive"
+            },
+            "program": "${workspaceFolder}\\apps\\cms-server\\app.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "[local]CMS",
             "skipFiles": [
                 "<node_internals>/**"
@@ -87,14 +111,14 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "[local]UMS",
+            "name": "[dev]CMS",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "env": {
-                "NODE_ENV": "umsLocal"
+                "NODE_ENV": "cmsDev"
             },
-            "program": "${workspaceFolder}\\apps\\ums-server\\app.js"
-        }
+            "program": "${workspaceFolder}\\apps\\cms-server\\app.js"
+        },
     ]
 }

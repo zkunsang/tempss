@@ -93,7 +93,7 @@ async function processLoginPictureSlot(inventoryService, userInventoryList) {
     const honeySlotList = invenMap['honey'];
 
     if(!honeySlotList) { 
-        const honey = InventoryService.makeInventoryObject('honey', 5000);
+        const honey = InventoryService.makeInventoryObject('honey', 50);
         itemList.push(honey);
     }
 
