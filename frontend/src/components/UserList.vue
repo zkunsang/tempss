@@ -80,6 +80,12 @@
                   label="가입일"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field
+                  v-model="editedItem.fcmToken"
+                  label="fcmToken"
+                ></v-text-field>
+              </v-col>
             </v-row>
             <v-row>
               <v-col cols="8">
@@ -234,7 +240,6 @@ export default {
         { text: '상태', value: 'status' },
         { text: '로그인', value: 'lastLoginDate' },
         { text: '가입일', value: 'createDate' },
-        { text: '가입일', value: 'actions' },
       ],
       itemHeaders: [
         { text: '아이템', value: 'itemId' },

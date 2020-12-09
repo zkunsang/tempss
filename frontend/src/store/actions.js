@@ -41,6 +41,12 @@ const actions = {
     UPDATE_DNN_RESOURCE_MANY(_, resourceList) {
         return api.dnnResource.updateMany(resourceList);
     },
+    LIST_ARSTICKER_RESOURCE(_) {
+        return api.arStickerResource.list();
+    },
+    UPDATE_ARSTICKER_RESOURCE(_, resourceList) {
+        return api.arStickerResource.update(resourceList);
+    },
     UPDATE_AOS_RESOURCE(_, resourceList) {
         return api.resource.update(resourceList);
     },
@@ -180,9 +186,12 @@ const actions = {
     },
     INSERT_SERVER_STATUS(_, serverStatus) {
         return api.serverStatus.create(serverStatus);
-    }
+    },
 
-    
+    INSERT_PUSH_MESSAGE(_, message) {
+        console.log(message);
+        return api.pushMessage.create(message);
+    }
 }
 
 export default actions;

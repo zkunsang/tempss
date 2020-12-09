@@ -11,7 +11,7 @@ const Schema = {
     UPDATE_DATE: { key: 'updateDate', required: true, type: ValidType.UNIX_TIMESTAMP },
 }
 
-class CommonResource extends Model {
+class ARStickerResource extends Model {
     constructor({ resourceId, version, size, crc32, updateDate }) {
         super();
 
@@ -35,5 +35,5 @@ class CommonResource extends Model {
     }
 }
 
-module.exports = CommonResource;
+module.exports = ARStickerResource;
 module.exports.Schema = Schema;

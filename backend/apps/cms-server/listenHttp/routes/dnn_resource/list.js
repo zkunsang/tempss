@@ -1,4 +1,4 @@
-const CommonResourceDao = require('@ss/daoMongo/CommonResourceDao');
+const DNNResourceDao = require('@ss/daoMongo/DNNResourceDao');
 
 const DateUtil = require('@ss/util/DateUtil');
 
@@ -9,12 +9,12 @@ function utsToDsObj(dataTableList) {
 }
 
 module.exports = async (ctx, next) => {
-    const commonResourceDao = new CommonResourceDao(ctx.$dbMongo);
-    const commonResourceList = await commonResourceDao.findAll();
+    const dnnResourceDao = new DNNResourceDao(ctx.$dbMongo);
+    const dnnResourceList = await dnnResourceDao.findAll();
 
-    utsToDsObj(commonResourceList);
+    utsToDsObj(dnnResourceList);
     
     ctx.status = 200;
-    ctx.body.data = commonResourceList || [];
+    ctx.body.data = dnnResourceList || [];
     await next();
 }

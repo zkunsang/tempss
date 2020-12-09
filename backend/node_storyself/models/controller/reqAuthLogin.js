@@ -17,11 +17,12 @@ const Schema = {
     DEVICE_NAME: { key: 'deviceName', required: true, type: ValidType.STRING },
     GAME_LANGUAGE: { key: 'gameLanguage', required: true, type: ValidType.STRING },
     OS_VERSION: { key: 'osVersion', required: true, type: ValidType.STRING },
+    FCM_TOKEN: { key: 'fcmToken', required: false, type: ValidType.STRING },
     // IS_EMULATE: { key: 'isEmulate', required: true, type: ValidType.BOOLEAN},
 }
 
 class ReqAuthLogin extends Model {
-    constructor({ uid, email, provider, deviceId, platform, clientVersion, appStore, deviceName, gameLanguage, osVersion }) {
+    constructor({ uid, email, provider, deviceId, platform, clientVersion, appStore, deviceName, gameLanguage, osVersion, fcmToken }) {
         super();
         this[Schema.UID.key] = uid;
         this[Schema.EMAIL.key] = email;
@@ -33,6 +34,7 @@ class ReqAuthLogin extends Model {
         this[Schema.DEVICE_NAME.key] = deviceName;
         this[Schema.GAME_LANGUAGE.key] = gameLanguage;
         this[Schema.OS_VERSION.key] = osVersion;
+        this[Schema.FCM_TOKEN.key] = fcmToken;
     }
 
     getUID() {

@@ -80,6 +80,15 @@ export const resource = {
   }
 }
 
+export const arStickerResource = {
+  list() {
+    return request('post', '/ar_sticker/list', null);
+  },
+  update(resourceList) {
+    return request('post', '/ar_sticker/update', resourceList);
+  },
+}
+
 export const dnnResource = {
   list() {
     return request('post', '/dnn_resource/list', null);
@@ -258,5 +267,11 @@ export const serverStatus = {
   },
   create(item) {
     return request('post', '/serverStatus/create', item);
+  }
+}
+
+export const pushMessage = {
+  create(item) {
+    return request('post', '/push/create', item);
   }
 }

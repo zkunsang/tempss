@@ -14,11 +14,12 @@ const Schema = {
     // LOGIN_DATE: { key: 'loginDate', required: true, type: ValidType.UNIX_TIMESTAMP },
     LAST_LOGIN_DATE: { key: 'lastLoginDate', required: true, type: ValidType.UNIX_TIMESTAMP },
     POLICY_VERSION: { key: 'policyVersion', required: false, type: ValidType.STRING },
-    SESSION_ID: { key: 'sessionId', required: false, type: ValidType.STRING }
+    SESSION_ID: { key: 'sessionId', required: false, type: ValidType.STRING },
+    FCM_TOKEN: { key: 'fcmToken', required: false, type: ValidType.STRING }
 }
 
 class User extends Model {
-    constructor({ uid, email, provider, status, createDate, lastLoginDate, policyVersion, sessionId }) {
+    constructor({ uid, email, provider, status, createDate, lastLoginDate, policyVersion, sessionId, fcmToken }) {
         super();
         
         this[Schema.UID.key] = ValidateUtil.setNullUndefined(uid);
@@ -30,6 +31,7 @@ class User extends Model {
         this[Schema.LAST_LOGIN_DATE.key] = ValidateUtil.setNullUndefined(lastLoginDate);
         this[Schema.POLICY_VERSION.key] = ValidateUtil.setNullUndefined(policyVersion);
         this[Schema.SESSION_ID.key] = ValidateUtil.setNullUndefined(sessionId);
+        this[Schema.FCM_TOKEN.key] = ValidateUtil.setNullUndefined(fcmToken);
     }
 
     getSessionId() {

@@ -1,18 +1,18 @@
-const ReqDNNResourceUpdate = require('@ss/models/cmsController/ReqDNNResourceUpdate');
+const ReqARStickerResourceUpdate = require('@ss/models/cmsController/ReqARStickerResourceUpdate');
 
-const DNNResource = require('@ss/models/mongo/DNNResource');
-const DNNResourceDao = require('@ss/daoMongo/DNNResourceDao');
+const ARStickerResource = require('@ss/models/mongo/ARStickerResource');
+const ARStickerResourceDao = require('@ss/daoMongo/ARStickerResourceDao');
 
 module.exports = async (ctx, next) => {
     const updateDate = ctx.$date;
 
-    const reqCommonResourceUpdate = new ReqDNNResourceUpdate(ctx.request.body);
-    ReqDNNResourceUpdate.validModel(reqCommonResourceUpdate);
+    const reqARStickerUpdate = new ReqARStickerResourceUpdate(ctx.request.body);
+    ReqARStickerResourceUpdate.validModel(reqARStickerUpdate);
 
-    const dnnResourceDao = new DNNResourceDao(ctx.$dbMongo);
+    const dnnResourceDao = new ARStickerResourceDao(ctx.$dbMongo);
 
-    const updateList = DNNResourceDao.mappingList(reqCommonResourceUpdate.getUpdateList()); 
-    const insertList = DNNResourceDao.mappingList(reqCommonResourceUpdate.getInsertList());
+    const updateList = ARStickerResourceDao.mappingList(reqARStickerUpdate.getUpdateList()); 
+    const insertList = ARStickerResourceDao.mappingList(reqARStickerUpdate.getInsertList());
 
     console.log(updateList);
     console.log(insertList);
@@ -30,7 +30,7 @@ async function updateResourceList(dnnResourceDao, updateList, updateDate) {
         const resourceId = updateItem.getResourceId();
         updateItem.setUpdateDate(updateDate);
 
-        delete updateItem[DNNResource.Schema.RESOURCE_ID.key];
+        delete updateItem[ARStickerResource.Schema.RESOURCE_ID.key];
 
         await dnnResourceDao.updateOne({ resourceId }, updateItem);
     }

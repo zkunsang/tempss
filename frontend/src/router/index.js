@@ -18,7 +18,9 @@ import Coupon from '../components/Coupon.vue'
 import UserList  from '../components/UserList.vue'
 import IpList  from '../components/IpList.vue'
 import ServerStatus  from '../components/ServerStatus.vue'
+import PushMessage  from '../components/PushMessage.vue'
 import AppVersion  from '../components/AppVersion.vue'
+import ArSticker  from '../components/ArSticker.vue'
 
 import Home from '../components/Home.vue'
 
@@ -83,6 +85,11 @@ function getUmsRoutes() {
             path: '/server',
             beforeEnter: requireAuth,
             component: ServerStatus
+        },
+        {
+            path: '/push_message',
+            beforeEnter: requireAuth,
+            component: PushMessage
         },
     ]
 }
@@ -152,6 +159,12 @@ function getCmsRoutes() {
             path: '/dnnResource',
             component: DnnResource,
             beforeEnter: requireAuth
+        },
+        {
+            path: '/arSticker',
+            component: ArSticker,
+            beforeEnter: requireAuth
+            
         },
         {
             path: '/coupon',
