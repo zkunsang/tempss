@@ -1,6 +1,7 @@
 const http = require('http');
 const Koa = require('koa');
 const koaBodyParser = require('koa-bodyparser');
+const serve = require('koa-static');
 const KoaRouter = require('@ex/koa-router');
 const Cors = require('@koa/cors');
 const ss = require('@ss');
@@ -19,6 +20,7 @@ function initKoa() {
 
     koa.use(router.routes());
     koa.use(swagger.routes(path));
+    koa.use(serve(path + '/healthcheck'));
 
     koa.on('error', (err) => {
         console.error(err);
