@@ -65,7 +65,6 @@ module.exports = async (ctx, next) => {
 
             helper.slack.sendMessage(err.makeErrorMessage());
         } else {
-            console.log(ctx.status);
             helper.slack.sendMessage(err.stack);
             uncaughtError(ctx, err);
         }

@@ -28,8 +28,10 @@ const UserStatus = {
 
 const Provider = {
     GOOGLE: 'google',
+    APPLE: 'apple',
     FACEBOOK: 'facebook',
-    EMAIL: 'email'
+    EMAIL: 'email',
+    ETC: 'etc',
 }
 
 const Platform = {

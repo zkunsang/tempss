@@ -63,12 +63,12 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "[local]UMS",
+            "name": "[dev]UMS",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "env": {
-                "NODE_ENV": "umsLocal"
+                "NODE_ENV": "umsDev"
             },
             "program": "${workspaceFolder}\\apps\\ums-server\\app.js"
         },
