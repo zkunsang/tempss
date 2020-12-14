@@ -40,7 +40,9 @@ module.exports = async (ctx, next) => {
 
     let policyVersion = userInfo ? userInfo.policyVersion : "0";
     const sessionId = shortid.generate();
-    
+
+    let isNewUser = false;
+
     if (userInfo) {
         const oldSessionId = userInfo.getSessionId();
         userInfo.setSessionId(sessionId);
@@ -49,6 +51,8 @@ module.exports = async (ctx, next) => {
         await sessionDao.del(oldSessionId);
     }
     else {
+        isNewUser = true;
+
         const userCountDao = new UserCountDao(dbRedis);
         const userCountInfo = await userCountDao.incr();
         
@@ -61,19 +65,19 @@ module.exports = async (ctx, next) => {
         userInfo.setProvider(provider, providerId);
 
         await userDao.insertOne(userInfo);
-
-        await processUserInitInventory(inventoryService, userInventoryList);
     }    
+
+    const inventoryService = new InventoryService(inventoryDao, userInfo, loginDate);
+
+    const userInventoryList = await inventoryService.getUserInventoryList();
+
+    if(isNewUser) {
+        await processUserInitInventory(inventoryService, userInventoryList);
+    }
 
     const fcmToken = userInfo.fcmToken;
 
     sessionDao.set(sessionId, userInfo);
-
-    const inventoryService = new InventoryService(inventoryDao, userInfo, loginDate);
-    
-    const userInventoryList = await inventoryService.getUserInventoryList();
-
-    
     
     InventoryService.removeObjectIdList(userInventoryList);
 
