@@ -52,7 +52,8 @@
     "umsLocal": "env NODE_ENV=umsLocal pm2 start apps/ums-server/app.js",
     "apiLocal": "env NODE_ENV=apiLocal pm2 start apps/api-server/app.js",
     "apiks": "env NODE_ENV=apiKS pm2 start apps/api-server/app.js",
-    "apiDev": "env NODE_ENV=apiDev pm2 start apps/api-server/app.js  -i max"
+    "apiDev": "env NODE_ENV=apiDev pm2 start apps/api-server/app.js  -i max",
+    "apiLive": "env NODE_ENV=apiLive pm2 start apps/api-server/app.js -i max"
   },
   "author": "",
   "license": "ISC"
