@@ -6,6 +6,7 @@ const helper = require('@ss/helper');
 const UserDao = require('@ss/daoMongo/UserDao');
 const InventoryDao = require('@ss/daoMongo/InventoryDao');
 const SessionDao = require('@ss/daoRedis/SessionDao');
+const UserCountDao = require('@ss/daoRedis/UserCountDao');
 
 const InventoryService =require('@ss/service/InventoryService');
 
@@ -25,17 +26,23 @@ module.exports = async (ctx, next) => {
     const reqAuthLogin = new ReqAuthLogin(ctx.request.body);
     ReqAuthLogin.validModel(reqAuthLogin);
 
-    const uid = reqAuthLogin.getUID();
-
+    const provider = reqAuthLogin.getProvider();
+    const providerId = reqAuthLogin.getProviderId();
+    
     const userDao = new UserDao(dbMongo);
     const sessionDao = new SessionDao(dbRedis);
     const inventoryDao = new InventoryDao(dbMongo);
 
-    let userInfo = await userDao.findOne({ uid });
+    const providerInfo = {}
+    providerInfo[provider] = providerId;
+
+    let userInfo = await userDao.findOne(providerInfo);
 
     let policyVersion = userInfo ? userInfo.policyVersion : "0";
     const sessionId = shortid.generate();
-    
+
+    let isNewUser = false;
+
     if (userInfo) {
         const oldSessionId = userInfo.getSessionId();
         userInfo.setSessionId(sessionId);
@@ -44,38 +51,49 @@ module.exports = async (ctx, next) => {
         await sessionDao.del(oldSessionId);
     }
     else {
+        isNewUser = true;
+
+        const userCountDao = new UserCountDao(dbRedis);
+        const userCountInfo = await userCountDao.incr();
+        
+        reqAuthLogin.uid = userCountInfo.toString();
         userInfo = new User(reqAuthLogin);
         userInfo.setStatus(UserStatus.NONE);
         userInfo.setSessionId(sessionId);
         userInfo.setLastLoginDate(loginDate);
         userInfo.setCreateDate(loginDate);
+        userInfo.setProvider(provider, providerId);
 
         await userDao.insertOne(userInfo);
     }    
-    
-    sessionDao.set(sessionId, userInfo);
 
     const inventoryService = new InventoryService(inventoryDao, userInfo, loginDate);
-    
+
     const userInventoryList = await inventoryService.getUserInventoryList();
 
-    await processUserLoginInventory(inventoryService, userInventoryList);
+    if(isNewUser) {
+        await processUserInitInventory(inventoryService, userInventoryList);
+    }
+
+    const fcmToken = userInfo.fcmToken;
+
+    sessionDao.set(sessionId, userInfo);
     
     InventoryService.removeObjectIdList(userInventoryList);
 
     ctx.$res.success({ 
         sessionId,
         inventoryList: userInventoryList,
-        policyVersion
+        policyVersion,
+        fcmToken
     });
-    
 
     helper.fluent.sendLog('login', new LoginLog(reqAuthLogin, { ip: ctx.$res.clientIp, loginDate }));
 
     await next();
 };
 
-async function processUserLoginInventory(inventoryService, userInventoryList) {
+async function processUserInitInventory(inventoryService, userInventoryList) {
     // pictureSlot아이템이 존재 하지 않으면 제공
     await processLoginPictureSlot(inventoryService, userInventoryList);
 }
@@ -93,7 +111,7 @@ async function processLoginPictureSlot(inventoryService, userInventoryList) {
     const honeySlotList = invenMap['honey'];
 
     if(!honeySlotList) { 
-        const honey = InventoryService.makeInventoryObject('honey', 50);
+        const honey = InventoryService.makeInventoryObject('honey', 5000);
         itemList.push(honey);
     }
 

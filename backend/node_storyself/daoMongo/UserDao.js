@@ -13,7 +13,6 @@ class UserDao extends Dao {
     static requireInsertFieldList() {
         return [
             User.Schema.UID.key,
-            User.Schema.PROVIDER.key,
             User.Schema.EMAIL.key,
             User.Schema.LAST_LOGIN_DATE.key,
             User.Schema.CREATE_DATE.key,
@@ -23,6 +22,8 @@ class UserDao extends Dao {
     static allowWhereFieldList() {
         return [
             User.Schema.UID.key,
+            User.Schema.GOOGLE.key,
+            User.Schema.APPLE.key,
             User.Schema.EMAIL.key
         ];
     }
@@ -31,6 +32,9 @@ class UserDao extends Dao {
         return [
             User.Schema.LAST_LOGIN_DATE.key,
             User.Schema.POLICY_VERSION.key,
+            User.Schema.FCM_TOKEN.key,
+            User.Schema.GOOGLE.key,
+            User.Schema.APPLE.key,
         ]
     };
 
@@ -39,7 +43,6 @@ class UserDao extends Dao {
             User.Schema.UID.key,
             User.Schema.EMAIL.key,
             User.Schema.CREATE_DATE.key,
-            User.Schema.PROVIDER.key
         ]
     };
 }
