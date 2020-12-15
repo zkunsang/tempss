@@ -10,7 +10,8 @@
     "umsLocal": "env NODE_ENV=umsLocal vue-cli-service serve",
     "umsLive": "env NODE_ENV=umsLive vue-cli-service serve",
     "umsDev": "env NODE_ENV=umsDev vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "buildUmsLive": "env NODE_ENV=umsLive vue-cli-service build --dest umsLive",
+    "buildCmsLive": "env NODE_ENV=cmsLive vue-cli-service build --dest cmsLive",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
