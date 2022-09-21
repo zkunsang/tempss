@@ -32,7 +32,7 @@
     "vue": "^2.6.10",
     "vue-json-excel": "^0.2.98",
     "vue-router": "^3.1.5",
-    "vuetify": "^2.1.0",
+    "vuetify": "^2.6.10",
     "vuetify-datetime-picker": "^2.1.1",
     "vuex": "^3.1.2",
     "xlsx": "^0.15.5"
